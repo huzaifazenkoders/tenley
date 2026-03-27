@@ -4,13 +4,18 @@ import OtpInput from "@/components/ui/otp-input.component";
 import { TypographyStyles } from "@/styes/common-typography";
 import { ReactDispatch } from "@/types/common";
 import Image from "next/image";
-import { ForgotPasswordForm } from "../types/componentsTypes";
+import { ForgotPasswordForm, SignUpForm } from "../types/componentsTypes";
 
-interface Props {
+interface PropsA {
+  type: "forgot-password";
   setView: ReactDispatch<ForgotPasswordForm>;
 }
+interface PropsB {
+  type: "sign-up";
+  setView: ReactDispatch<SignUpForm>;
+}
 
-const OtpVerificationForm = ({ setView }: Props) => {
+const OtpVerificationForm = ({ setView, type }: PropsA | PropsB) => {
   return (
     <div className="flex flex-col gap-7">
       <div className="flex-col-4 items-center text-center">
@@ -23,10 +28,24 @@ const OtpVerificationForm = ({ setView }: Props) => {
       </div>
       <OtpInput />
       <div className="flex-col-3 items-center">
-        <Button size={"full"} onClick={() => setView("set-password")}>
+        <Button
+          size={"full"}
+          onClick={() =>
+            type === "forgot-password"
+              ? setView("set-password")
+              : setView("otp-verification")
+          }
+        >
           Verify OTP{" "}
         </Button>
-        <Button variant={"link"} onClick={() => setView("forgot-password")}>
+        <Button
+          variant={"link"}
+          onClick={() =>
+            type === "forgot-password"
+              ? setView("forgot-password")
+              : setView("sign-up")
+          }
+        >
           Go Back
         </Button>
       </div>

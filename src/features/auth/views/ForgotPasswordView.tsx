@@ -18,7 +18,7 @@ const ForgotPasswordView = () => {
     case "otp-verification":
       return (
         <AuthFormWrapper>
-          <OtpVerificationForm setView={setView} />
+          <OtpVerificationForm type="forgot-password" setView={setView} />
         </AuthFormWrapper>
       );
     case "set-password":
