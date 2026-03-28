@@ -1,7 +1,7 @@
 import SignLogo from "@/../public/assets/auth/forgot-password.png";
 import { Button } from "@/components/ui/button";
 import TextInput from "@/components/ui/text-input";
-import { TypographyStyles } from "@/styes/common-typography";
+import { TypographyStyles } from "@/styles/common-typography";
 import { ReactDispatch } from "@/types/common";
 import Image from "next/image";
 import { ForgotPasswordForm } from "../types/componentsTypes";

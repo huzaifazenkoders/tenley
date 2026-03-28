@@ -2,6 +2,11 @@ import { cn } from "@/lib/utils";
 import { ReactDispatch } from "@/types/common";
 import React from "react";
 import LabelContainer from "./label-container";
+import {
+  endIconStyles,
+  inputStyles,
+  startIconStyles
+} from "@/styles/ui/inputStyles";
 
 const TextInput = ({
   label,
@@ -36,21 +41,12 @@ const TextInput = ({
       required={rest.required}
     >
       <div className={cn("relative", "flex", "items-center")}>
-        {hasStartIcon && (
-          <span className="pointer-events-auto absolute left-3 inline-flex items-center">
-            {startIcon}
-          </span>
-        )}
+        {hasStartIcon && <span className={startIconStyles}>{startIcon}</span>}
         <input
           {...rest}
           type="text"
           className={cn(
-            "h-11 w-full",
-            "rounded-lg border border-border-primary",
-            "bg-input",
-            "px-3 py-2",
-            "text-base text-text-primary",
-            "placeholder:text-text-secondary",
+            inputStyles,
             hasStartIcon && "pl-10",
             hasEndIcon && "pr-10",
             rest.className
@@ -61,11 +57,7 @@ const TextInput = ({
             rest.onChange?.(e);
           }}
         />
-        {hasEndIcon && (
-          <span className="pointer-events-auto absolute right-3 inline-flex items-center">
-            {endIcon}
-          </span>
-        )}
+        {hasEndIcon && <span className={endIconStyles}>{endIcon}</span>}
       </div>
     </LabelContainer>
   );

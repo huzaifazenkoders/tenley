@@ -2,7 +2,7 @@ import SignLogo from "@/../public/assets/auth/SignLogo.png";
 import { Button } from "@/components/ui/button";
 import PasswordInput from "@/components/ui/password-input";
 import TextInput from "@/components/ui/text-input";
-import { TypographyStyles } from "@/styes/common-typography";
+import { TypographyStyles } from "@/styles/common-typography";
 import { ReactDispatch } from "@/types/common";
 import Image from "next/image";
 import { SignUpForm } from "../types/componentsTypes";

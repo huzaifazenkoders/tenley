@@ -1,7 +1,7 @@
 import Logo from "@/../public/assets/auth/otp-verification.png";
 import { Button } from "@/components/ui/button";
-import OtpInput from "@/components/ui/otp-input.component";
-import { TypographyStyles } from "@/styes/common-typography";
+import OtpInput from "@/components/ui/otp-input";
+import { TypographyStyles } from "@/styles/common-typography";
 import { ReactDispatch } from "@/types/common";
 import Image from "next/image";
 import { ForgotPasswordForm, SignUpForm } from "../types/componentsTypes";

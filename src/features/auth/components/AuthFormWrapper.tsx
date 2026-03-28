@@ -3,7 +3,7 @@ import { formStyles } from "../styles/formStyles";
 import AuthLogo from "@/../public/assets/auth/auth-logo.png";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { TypographyStyles } from "@/styes/common-typography";
+import { TypographyStyles } from "@/styles/common-typography";
 
 const AuthFormWrapper = ({ children }: { children: React.ReactNode }) => {
   return (

@@ -1,7 +1,7 @@
 import React from "react";
 import SignLogo from "@/../public/assets/auth/SignLogo.png";
 import Image from "next/image";
-import { TypographyStyles } from "@/styes/common-typography";
+import { TypographyStyles } from "@/styles/common-typography";
 import TextInput from "@/components/ui/text-input";
 import PasswordInput from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
