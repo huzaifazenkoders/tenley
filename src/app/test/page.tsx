@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 import moment from "moment";
 import React from "react";
+import { Button } from "@/components/ui/button";
 
 const page = () => {
   const [selectedRole, setSelectedRole] = React.useState("");
@@ -83,13 +84,21 @@ const page = () => {
         <DateSelector value={selectedDate} setValue={setSelectedDate} />
         <p className="text-sm text-text-secondary">
           Date:{" "}
-          {selectedDate ? moment(selectedDate).format("DD MMM YYYY") : "Nothing selected"}
+          {selectedDate
+            ? moment(selectedDate).format("DD MMM YYYY")
+            : "Nothing selected"}
         </p>
         <TimeSelector value={selectedTime} setValue={setSelectedTime} />
         <p className="text-sm text-text-secondary">
-          Time: {selectedTime ? moment(selectedTime, "HH:mm").format("hh:mm A") : "Nothing selected"}
+          Time:{" "}
+          {selectedTime
+            ? moment(selectedTime, "HH:mm").format("hh:mm A")
+            : "Nothing selected"}
         </p>
-        <DateTimeSelector value={selectedDateTime} setValue={setSelectedDateTime} />
+        <DateTimeSelector
+          value={selectedDateTime}
+          setValue={setSelectedDateTime}
+        />
         <p className="text-sm text-text-secondary">
           Date & time:{" "}
           {selectedDateTime
@@ -146,6 +155,7 @@ const page = () => {
         </p>
         <OtpInput />
         <PhoneInput />
+        <Button>Hello</Button>
       </div>
     </div>
   );
