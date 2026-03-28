@@ -16,7 +16,7 @@ const otpInputCellClassName = cn(
   "relative flex h-12 w-12 items-center justify-center rounded-lg border border-border-primary bg-input text-base text-text-primary outline-none transition-all",
   "first:ms-0",
   "ms-3",
-  "data-[active=true]:border-primary data-[active=true]:ring-3 data-[active=true]:ring-primary/20",
+  "data-[active=true]:ring-primary data-[active=true]:ring-2",
   "aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20"
 );
 

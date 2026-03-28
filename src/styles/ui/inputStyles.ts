@@ -6,7 +6,8 @@ export const inputStyles = cn(
   "bg-input",
   "px-3 py-2",
   "text-base text-text-primary",
-  "placeholder:text-text-secondary"
+  "placeholder:text-text-secondary",
+  "focus:outline-primary"
 );
 
 export const startIconStyles = cn(

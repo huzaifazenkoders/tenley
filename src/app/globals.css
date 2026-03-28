@@ -6,6 +6,7 @@
 @theme inline {
   --color-primary:var(--primary);
   --color-background: var(--background);
+  --color-input: var(--background);
   --color-text-primary:var(--text-primary);
   --color-text-secondary:var(--text-secondary);
   --color-border-primary:var(--border-primary);
@@ -13,12 +14,15 @@
 }
 
 :root {
-  --primary:#000000;
+  --primary:#DB3E31;
   --background: oklch(1 0 0);
+  --input: #ffffff;
   --text-primary:#000000;
   --text-secondary:#6D6D6D;
   --border-primary:#DCDFE4;
   --gradient:linear-gradient(180deg, #ED5346 100%, #DB3E31 100%);
+   --custom-scrollbar: #e4e4e4;
+   --custom-scrollbar-2: #000000;
 }
 
 
@@ -26,6 +30,9 @@
 /* ========================|| Util Classes ||======================== */
 
 @layer base {
+  *{
+    @apply focus:outline-primary
+  }
   body {
     @apply bg-background text-text-primary;
   }
@@ -53,6 +60,15 @@
   }
 }
 
+/* ========================|| Input Auto Fill Color Handler ||======================== */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--input) inset !important;
+  color: var(--text-primary) !important;
+}
+
 /* ========================|| Button Ripple Animation ||======================== */
 
 .ripple {
@@ -67,4 +83,63 @@
     transform: scale(4);
     opacity: 0;
   }
+}
+
+/* ========================|| My Custom Animations ||======================== */
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.4s ease-out;
+}
+
+/* ========================|| Custom Thin Scrollbar Variant ||======================== */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 6px;
+  width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--custom-scrollbar);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--custom-scrollbar-2);
+}
+
+.scrollbar-h-3::-webkit-scrollbar {
+  height: 3px;
+}
+
+/* ========================|| Invisible Scrollbar Variant ||======================== */
+.custom-no-scrollbar::-webkit-scrollbar {
+  height: 0px;
+  width: 0px;
+}
+
+.custom-no-scrollbar::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+.custom-no-scrollbar::-webkit-scrollbar-thumb {
+  background: #e4e4e4;
+  border-radius: 0px;
+}
+
+.custom-no-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #c5c3c3;
 }
