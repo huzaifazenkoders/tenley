@@ -12,6 +12,25 @@
   --color-text-secondary:var(--text-secondary);
   --color-border-primary:var(--border-primary);
   --gradient:var(--gradient);
+  --color-surface:var(--surface);
+  --color-brand-base-black:var(--brand-base-black);
+  --color-brand-base-white:var(--brand-base-white);
+  --color-brand-Text-50:var(--brand-Text-50);
+  --color-brand-Text-100:var(--brand-Text-100);
+  --color-brand-Text-200:var(--brand-Text-200);
+  --color-brand-Text-300:var(--brand-Text-300);
+  --color-brand-Text-400:var(--brand-Text-400);
+  --color-brand-Text-500:var(--brand-Text-500);
+  --color-brand-Text-600:var(--brand-Text-600);
+  --color-brand-Text-700:var(--brand-Text-700);
+  --color-brand-Text-950-d:var(--brand-Text-950-d);
+  --color-brand-primary-red-200:var(--brand-primary-red-200);
+  --color-brand-primary-red-300:var(--brand-primary-red-300);
+  --color-brand-primary-red-400:var(--brand-primary-red-400);
+  --color-brand-primary-red-500:var(--brand-primary-red-500);
+  --color-brand-primary-red-600-d:var(--brand-primary-red-600-d);
+  --color-brand-primary-red-700:var(--brand-primary-red-700);
+  --color-Primary-Green-50:var(--Primary-Green-50);
 }
 
 :root {
@@ -23,8 +42,27 @@
   --text-secondary:#6D6D6D;
   --border-primary:#DCDFE4;
   --gradient:linear-gradient(180deg, #ED5346 100%, #DB3E31 100%);
-   --custom-scrollbar: #e4e4e4;
-   --custom-scrollbar-2: #000000;
+  --custom-scrollbar: #e4e4e4;
+  --custom-scrollbar-2: #000000;
+  --surface:#FFFFFF;
+  --brand-base-black:#000000;
+  --brand-base-white:#FFFFFF;
+  --brand-Text-950-d:#1E1E1E;
+  --brand-Text-700:#3D3D3D;
+  --brand-Text-600:#5D5D5D;
+  --brand-Text-500:#737373;
+  --brand-Text-400:#888888;
+  --brand-Text-300:#B0B0B0;
+  --brand-Text-200:#D0D0D0;
+  --brand-Text-100:#E7E7E7;
+  --brand-Text-50:#F6F6F6;
+  --brand-primary-red-700:#B52E23;
+  --brand-primary-red-600-d:#DB3E31;
+  --brand-primary-red-500:#ED5346;
+  --brand-primary-red-400:#F67D73;
+  --brand-primary-red-300:#F9A09A;
+  --brand-primary-red-200:#FDCFCB;
+  --Primary-Green-50:#21AB70;
 }
 
 

@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import AuthLogo from "@/../public/assets/auth/auth-logo.png";
+import AuthLogo from "@/../public/assets/auth/auth-logo.svg";
 import React from "react";
 
 const OnboardingLayout = ({ children }: { children: React.ReactNode }) => {

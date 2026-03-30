@@ -1,6 +1,6 @@
 import React from "react";
 import { formStyles } from "../styles/formStyles";
-import AuthLogo from "@/../public/assets/auth/auth-logo.png";
+import AuthLogo from "@/../public/assets/auth/auth-logo.svg";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { TypographyStyles } from "@/styles/common-typography";
