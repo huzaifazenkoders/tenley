@@ -5,6 +5,7 @@
 
 @theme inline {
   --color-primary:var(--primary);
+  --color-primary-green:var(--primary-green);
   --color-background: var(--background);
   --color-input: var(--background);
   --color-text-primary:var(--text-primary);
@@ -15,6 +16,7 @@
 
 :root {
   --primary:#DB3E31;
+  --primary-green:#21AB70;
   --background: oklch(1 0 0);
   --input: #ffffff;
   --text-primary:#000000;
@@ -45,6 +47,13 @@
   .center {
     @apply items-center justify-center;
   }
+}
+
+@utility flex-* {
+  display: flex;
+  flex-direction: row;
+  gap: --spacing(--value(integer));
+  gap: --value([length], [percentage]);
 }
 
 @utility flex-col-* {

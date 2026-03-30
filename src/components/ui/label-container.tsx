@@ -26,9 +26,8 @@ const LabelContainer = ({
         <label
           htmlFor={htmlFor}
           className={cn(
-            "text-[0.95rem]",
+            "text-sm",
             "font-medium",
-            "leading-6",
             "text-text-primary",
             labelClassName
           )}

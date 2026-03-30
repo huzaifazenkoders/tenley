@@ -20,6 +20,8 @@
 # production
 /build
 
+/agent_docs
+
 # misc
 .DS_Store
 *.pem

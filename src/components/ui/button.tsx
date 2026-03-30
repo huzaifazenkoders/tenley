@@ -13,13 +13,14 @@ const buttonVariants = cva(
     "whitespace-nowrap cursor-pointer rounded-md outline-none",
     "font-semibold transition-all duration-200 disabled:cursor-not-allowed data-[externaldisabled=true]:opacity/90",
     "[&_svg]:pointer-events-none shrink-0 [&_svg]:shrink-0",
-    "relative overflow-hidden hover:shadow-lg"
+    "relative overflow-hidden",
+    "disabled:opacity-60"
   ),
   {
     variants: {
       variant: {
         default:
-          "bg-[image:var(--gradient)] [&_.loader-container]:bg-[image:var(--gradient)] text-primary-foreground hover:opacity-90",
+          "bg-[image:var(--gradient)] [&_.loader-container]:bg-[image:var(--gradient)] hover:opacity-90 text-white",
         outline: "",
         secondary: "",
         ghost: "",
@@ -33,7 +34,8 @@ const buttonVariants = cva(
         lg: "h-12 px-10",
         icon: "size-9",
         xlg: "h-12 px-12",
-        full: "h-12 w-full"
+        full: "h-12 w-full",
+        fit: "h-12 w-fit px-0"
       }
     },
     defaultVariants: {
