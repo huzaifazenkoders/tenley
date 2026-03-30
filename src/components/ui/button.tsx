@@ -21,6 +21,8 @@ const buttonVariants = cva(
       variant: {
         default:
           "bg-[image:var(--gradient)] [&_.loader-container]:bg-[image:var(--gradient)] hover:opacity-90 text-white",
+        ["outline-transparent"]:
+          "text-text-primary border border-border-primary hover:bg-black/5 disabled:hover:bg-transparent shadow-[0px_1px_2px_0px_#00000014]",
         outline: "",
         secondary: "",
         ghost: "",
@@ -83,7 +85,8 @@ function Button({
         data-externaldisabled={`${props.disabled}`}
         onMouseDown={(e) => {
           handleRippleAnimation(
-            e as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>
+            e as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>,
+            variant === "outline-transparent" ? "bg-black/50" : undefined
           );
           props.onMouseDown?.(
             e as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -102,7 +105,10 @@ function Button({
       className={cn(buttonVariants({ variant, size, className }))}
       data-externaldisabled={`${props.disabled}`}
       onMouseDown={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        handleRippleAnimation(e);
+        handleRippleAnimation(
+          e,
+          variant === "outline-transparent" ? "bg-black/50" : undefined
+        );
         props.onMouseDown?.(e);
       }}
     >

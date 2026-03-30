@@ -16,6 +16,7 @@ import { useState } from "react";
 import AuthLogo from "@/../public/assets/auth/auth-logo.svg";
 import AuthLogoCollapsed from "@/../public/assets/auth/auth-logo-collapsed.svg";
 import { useDebounce } from "use-debounce";
+import AvatarImage from "@/../public/assets/mock/person1.png";
 
 const navSections = [
   {
@@ -196,7 +197,7 @@ const Sidebar = () => {
       >
         <div className="relative shrink-0">
           <Image
-            src="https://placehold.co/40x40"
+            src={AvatarImage}
             alt="Avatar"
             width={40}
             height={40}

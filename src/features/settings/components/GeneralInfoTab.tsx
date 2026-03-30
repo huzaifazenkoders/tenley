@@ -25,10 +25,9 @@ const GeneralInfoTab = () => {
             </span>
           </div>
           {editingInfo ? (
-            <div className="flex justify-end gap-5">
+            <div className="flex justify-end gap-3">
               <Button
-                variant="link"
-                size="fit"
+                variant="outline-transparent"
                 onClick={() => setEditingInfo(false)}
               >
                 Cancel
@@ -38,12 +37,13 @@ const GeneralInfoTab = () => {
               </Button>
             </div>
           ) : (
-            <button
+            <Button
+              size={"icon"}
+              variant="outline-transparent"
               onClick={() => setEditingInfo((p) => !p)}
-              className="p-2 bg-white rounded-lg cursor-pointer outline outline-1 outline-brand-Text-100 flex items-center gap-2"
             >
               <Pencil className="size-5 text-brand-Text-700" />
-            </button>
+            </Button>
           )}
         </div>
 
@@ -94,10 +94,9 @@ const GeneralInfoTab = () => {
             </span>
           </div>
           {editingPassword ? (
-            <div className="flex justify-end gap-5">
+            <div className="flex justify-end gap-3">
               <Button
-                variant="link"
-                size="fit"
+                variant="outline-transparent"
                 onClick={() => setEditingPassword(false)}
               >
                 Cancel
@@ -107,12 +106,13 @@ const GeneralInfoTab = () => {
               </Button>
             </div>
           ) : (
-            <button
+            <Button
+              size={"icon"}
+              variant="outline-transparent"
               onClick={() => setEditingPassword((p) => !p)}
-              className="p-2 bg-white rounded-lg cursor-pointer outline outline-1 outline-brand-Text-100 flex items-center gap-2"
             >
               <Pencil className="size-5 text-brand-Text-700" />
-            </button>
+            </Button>
           )}
         </div>
 

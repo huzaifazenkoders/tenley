@@ -3,6 +3,8 @@ import { cn } from "@/lib/utils";
 import { Building2, CreditCard, User, Wallet } from "lucide-react";
 import { useQueryState } from "nuqs";
 import GeneralInfoTab from "../components/GeneralInfoTab";
+import CompanyInfoTab from "../components/CompanyInfoTab";
+import BillingTab from "../components/BillingTab";
 
 const tabs = [
   { id: "general", label: "General Info", icon: User },
@@ -49,12 +51,8 @@ const SettingsView = () => {
 
       {/* Tab Content */}
       {tab === "general" && <GeneralInfoTab />}
-      {tab === "company" && (
-        <div className="text-brand-Text-500">Company Info — coming soon</div>
-      )}
-      {tab === "billing" && (
-        <div className="text-brand-Text-500">Billing — coming soon</div>
-      )}
+      {tab === "company" && <CompanyInfoTab />}
+      {tab === "billing" && <BillingTab />}
       {tab === "payment" && (
         <div className="text-brand-Text-500">Payment Methods — coming soon</div>
       )}
