@@ -32,6 +32,12 @@
   --color-brand-primary-red-600-d:var(--brand-primary-red-600-d);
   --color-brand-primary-red-700:var(--brand-primary-red-700);
   --color-Primary-Green-50:var(--Primary-Green-50);
+  --color-gray-light-50:var(--gray-light-50);
+  --color-Colors-background-primary:var(--Colors-background-primary);
+  --color-Error-Red-60:var(--Error-Red-60);
+  --color-Error-Red-50:var(--Error-Red-50);
+  --color-Neutral-Grey-0:var(--Neutral-Grey-0);
+  --color-Neutral-Grey-10:var(--Neutral-Grey-10);
 }
 
 :root {
@@ -65,6 +71,12 @@
   --brand-primary-red-200:#FDCFCB;
   --brand-primary-red-50:#FEF0EF;
   --Primary-Green-50:#21AB70;
+  --gray-light-50:#fafafa;
+  --Colors-background-primary:#ffffff;
+  --Error-Red-60:#E53935;
+  --Error-Red-50:#FFEBEE;
+  --Neutral-Grey-0:#F9F9F9;
+  --Neutral-Grey-10:#EBEBEB;
 }
 
 

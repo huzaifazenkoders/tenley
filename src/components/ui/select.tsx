@@ -1,18 +1,19 @@
 "use client";
 
-import * as React from "react";
-import { ChevronDown, Check } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { Select as RadixSelect } from "radix-ui";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
-import { ReactDispatch } from "@/types/common";
 import {
   endIconStyles,
   inputStyles,
   startIconStyles
 } from "@/styles/ui/inputStyles";
+import { ReactDispatch } from "@/types/common";
 
 import LabelContainer from "./label-container";
+import { handleRippleAnimation } from "@/lib/ui/handleRippleAnimation";
 
 type SelectOption = {
   value: string;
@@ -91,12 +92,18 @@ const Select = ({
           aria-invalid={Boolean(error)}
           className={cn(
             inputStyles,
-            "relative flex items-center justify-between gap-3 text-left",
+            "relative flex items-center justify-between gap-3 text-left overflow-hidden",
             "disabled:cursor-not-allowed disabled:opacity-50",
             hasStartIcon && "pl-10",
             (hasEndIcon || !endIcon) && "pr-10",
             triggerClassName
           )}
+          onPointerDown={(e) => {
+            handleRippleAnimation(
+              e as unknown as React.MouseEvent<HTMLButtonElement>,
+              "bg-black/50"
+            );
+          }}
         >
           {hasStartIcon && (
             <span className={cn(startIconStyles, "pointer-events-none")}>
@@ -138,8 +145,15 @@ const Select = ({
                   disabled={option.disabled}
                   className={cn(
                     "relative flex cursor-pointer select-none items-center rounded-md px-3 py-2 pr-8 text-sm text-text-primary outline-none",
-                    "focus:bg-primary/10 data-disabled:pointer-events-none data-disabled:opacity-50"
+                    "focus:bg-primary/10 data-disabled:pointer-events-none data-disabled:opacity-50",
+                    "overflow-hidden"
                   )}
+                  onMouseDown={(e) => {
+                    handleRippleAnimation(
+                      e as unknown as React.MouseEvent<HTMLButtonElement>,
+                      "bg-primary/50"
+                    );
+                  }}
                 >
                   <RadixSelect.ItemText>{option.label}</RadixSelect.ItemText>
                   <RadixSelect.ItemIndicator className="absolute right-3 inline-flex items-center">

@@ -59,6 +59,7 @@ interface ButtonProps {
 
 interface Props extends ContentProps {
   hideTrigger?: boolean;
+  trigger?: React.ReactNode;
   open?: boolean;
   onOpenChange?: ReactDispatch<boolean>;
 }
@@ -139,7 +140,7 @@ const DateSelectorContent = ({
   return (
     <DropdownMenu.Content
       translate="no"
-      className={cn("w-[310px] p-3", BackgroundColor, MainBorder)}
+      className={cn("w-77.5 p-3 z-50", BackgroundColor, MainBorder)}
     >
       <div className="flex justify-between items-center mb-5">
         <button
@@ -403,14 +404,24 @@ const Button = ({ onClick, children, className, disabled }: ButtonProps) => (
   </button>
 );
 
-const DateSelector = ({ hideTrigger, open, onOpenChange, ...rest }: Props) => {
+const DateSelector = ({
+  hideTrigger,
+  trigger,
+  open,
+  onOpenChange,
+  ...rest
+}: Props) => {
   return (
     <DropdownMenu.DropdownMenu
       key={`${rest.value?.toISOString()}`}
       onOpenChange={onOpenChange}
       open={open}
     >
-      {hideTrigger ? null : (
+      {trigger ? (
+        <DropdownMenu.DropdownMenuTrigger asChild>
+          {trigger}
+        </DropdownMenu.DropdownMenuTrigger>
+      ) : hideTrigger ? null : (
         <DropdownMenu.DropdownMenuTrigger
           translate="no"
           className="bg-background-secondary px-3 2xl:py-3 py-2 text-text-primary rounded-lg whitespace-nowrap cursor-pointer text-sm 2xl:text-base"

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 export const inputStyles = cn(
-  "h-11 w-full",
+  "h-9 w-full",
   "rounded-lg border border-border-primary",
   "bg-input",
   "px-3 py-2",
