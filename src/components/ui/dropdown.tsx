@@ -70,6 +70,7 @@ const Dropdown = ({
               <DropdownMenu.Item
                 key={item.value}
                 disabled={item.disabled}
+                onSelect={() => item.onClick?.(item.value)}
                 onMouseDown={(e) => {
                   handleRippleAnimation(
                     e as unknown as React.MouseEvent<

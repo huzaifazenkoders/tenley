@@ -23,9 +23,12 @@
   --color-brand-Text-500:var(--brand-Text-500);
   --color-brand-Text-600:var(--brand-Text-600);
   --color-brand-Text-700:var(--brand-Text-700);
+  --color-brand-Text-800:var(--brand-Text-800);
   --color-brand-Text-950-d:var(--brand-Text-950-d);
   --color-brand-primary-red-200:var(--brand-primary-red-200);
   --color-brand-primary-red-50:var(--brand-primary-red-50);
+  --color-brand-primary-blue-100:var(--brand-primary-blue-100);
+  --color-brand-primary-blue-700:var(--brand-primary-blue-700);
   --color-brand-primary-red-300:var(--brand-primary-red-300);
   --color-brand-primary-red-400:var(--brand-primary-red-400);
   --color-brand-primary-red-500:var(--brand-primary-red-500);
@@ -38,6 +41,11 @@
   --color-Error-Red-50:var(--Error-Red-50);
   --color-Neutral-Grey-0:var(--Neutral-Grey-0);
   --color-Neutral-Grey-10:var(--Neutral-Grey-10);
+  --color-Neutral-Grey-20:var(--Neutral-Grey-20);
+  --color-Static-White:var(--Static-White);
+  --color-Colors-Card-stroke2:var(--Colors-Card-stroke2);
+  --color-Base-White:var(--Base-White);
+  --color-Transparent-Error:var(--Transparent-Error);
 }
 
 :root {
@@ -55,6 +63,7 @@
   --brand-base-black:#000000;
   --brand-base-white:#FFFFFF;
   --brand-Text-950-d:#1E1E1E;
+  --brand-Text-800:#2D2D2D;
   --brand-Text-700:#3D3D3D;
   --brand-Text-600:#5D5D5D;
   --brand-Text-500:#737373;
@@ -70,6 +79,8 @@
   --brand-primary-red-300:#F9A09A;
   --brand-primary-red-200:#FDCFCB;
   --brand-primary-red-50:#FEF0EF;
+  --brand-primary-blue-100:#DBEAFE;
+  --brand-primary-blue-700:#1D4ED8;
   --Primary-Green-50:#21AB70;
   --gray-light-50:#fafafa;
   --Colors-background-primary:#ffffff;
@@ -77,6 +88,11 @@
   --Error-Red-50:#FFEBEE;
   --Neutral-Grey-0:#F9F9F9;
   --Neutral-Grey-10:#EBEBEB;
+  --Neutral-Grey-20:#D6D6D6;
+  --Static-White:#FFFFFF;
+  --Colors-Card-stroke2:#DCDFE4;
+  --Base-White:#FFFFFF;
+  --Transparent-Error:#E53935;
 }
 
 
