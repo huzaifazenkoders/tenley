@@ -1,4 +1,3 @@
-import AuthLayout from "@/features/auth/layout/AuthLayout";
 import OnboardingLayout from "@/features/onboarding/layout/OnboardingLayout";
 import React from "react";
 

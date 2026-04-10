@@ -3,7 +3,7 @@ import { Check } from "lucide-react";
 
 const stepLabels = ["Company Profile", "Subscription", "Terms & Privacy"];
 
-type StepStatus = (typeof steps)[number]["status"];
+type StepStatus = string;
 
 const Connector = ({ status }: { status: "complete" | "upcoming" }) => (
   <div
@@ -50,14 +50,20 @@ const OnboardingStepper = ({ currentStep }: { currentStep: number }) => {
   const steps = stepLabels.map((label, i) => ({
     id: i + 1,
     label,
-    status: i + 1 < currentStep ? "complete" : i + 1 === currentStep ? "current" : "upcoming",
+    status:
+      i + 1 < currentStep
+        ? "complete"
+        : i + 1 === currentStep
+          ? "current"
+          : "upcoming"
   })) as { id: number; label: string; status: StepStatus }[];
 
   return (
     <div className="grid w-full max-w-85 grid-cols-[minmax(0,1fr)_48px] gap-x-12">
       {steps.map((step, index) => {
         const isLast = index === steps.length - 1;
-        const connectorStatus = steps[index].status === "complete" ? "complete" : "upcoming";
+        const connectorStatus =
+          steps[index].status === "complete" ? "complete" : "upcoming";
 
         return (
           <>

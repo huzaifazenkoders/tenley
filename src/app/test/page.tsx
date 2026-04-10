@@ -18,7 +18,7 @@ import moment from "moment";
 import React from "react";
 import { Button } from "@/components/ui/button";
 
-const page = () => {
+const Page = () => {
   const [selectedRole, setSelectedRole] = React.useState("");
   const [selectedDate, setSelectedDate] = React.useState<Date>();
   const [selectedTime, setSelectedTime] = React.useState<string | null>(null);
@@ -161,4 +161,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

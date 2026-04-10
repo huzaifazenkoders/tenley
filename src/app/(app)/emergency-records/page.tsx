@@ -1,8 +1,12 @@
 import EmergencyRecordListView from "@/features/emergency-records/views/EmergencyRecordListView";
-import React from "react";
+import { Suspense } from "react";
 
 const page = () => {
-  return <EmergencyRecordListView />;
+  return (
+    <Suspense>
+      <EmergencyRecordListView />
+    </Suspense>
+  );
 };
 
 export default page;

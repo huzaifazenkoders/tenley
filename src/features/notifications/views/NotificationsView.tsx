@@ -112,8 +112,8 @@ const NotificationsView = () => {
           <div className="flex-col-2 max-w-100">
             <p className={TypographyStyles.title}>No Notifications Yet</p>
             <p className={TypographyStyles.subTitle}>
-              When something important happens, you'll see updates and alerts
-              here.
+              When something important happens, you&apos;ll see updates and
+              alerts here.
             </p>
           </div>
         </div>

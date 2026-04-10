@@ -2,13 +2,22 @@ import { cn } from "@/lib/utils";
 import React from "react";
 
 const Table = ({ className, ...props }: React.ComponentProps<"table">) => (
-  <div className="w-full overflow-auto">
-    <table className={cn("w-full caption-bottom text-sm", className)} {...props} />
+  <div className="w-full overflow-auto custom-scrollbar">
+    <table
+      className={cn("w-full caption-bottom text-sm", className)}
+      {...props}
+    />
   </div>
 );
 
-const TableHeader = ({ className, ...props }: React.ComponentProps<"thead">) => (
-  <thead className={cn("bg-brand-Text-50", className)} {...props} />
+const TableHeader = ({
+  className,
+  ...props
+}: React.ComponentProps<"thead">) => (
+  <thead
+    className={cn("sticky top-0 z-10 bg-brand-Text-50", className)}
+    {...props}
+  />
 );
 
 const TableBody = ({ className, ...props }: React.ComponentProps<"tbody">) => (
@@ -17,7 +26,10 @@ const TableBody = ({ className, ...props }: React.ComponentProps<"tbody">) => (
 
 const TableRow = ({ className, ...props }: React.ComponentProps<"tr">) => (
   <tr
-    className={cn("border-b border-brand-Text-100 bg-brand-base-white", className)}
+    className={cn(
+      "border-b border-brand-Text-100 bg-brand-base-white z-1",
+      className
+    )}
     {...props}
   />
 );
@@ -33,10 +45,7 @@ const TableHead = ({ className, ...props }: React.ComponentProps<"th">) => (
 );
 
 const TableCell = ({ className, ...props }: React.ComponentProps<"td">) => (
-  <td
-    className={cn("h-16 px-4 py-3.5 align-middle", className)}
-    {...props}
-  />
+  <td className={cn("h-16 px-4 py-3.5 align-middle", className)} {...props} />
 );
 
 export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell };

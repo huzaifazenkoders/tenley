@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Check, CheckCircle2, Download } from "lucide-react";
+import { CheckCircle2, Download } from "lucide-react";
 
 const plans = [
   {

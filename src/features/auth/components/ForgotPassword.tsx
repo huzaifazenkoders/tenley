@@ -17,7 +17,7 @@ const ForgotPassword = ({ setView }: Props) => {
         <Image src={SignLogo} alt="" height={104} width={104} />
         <h1 className={TypographyStyles.title}>Forgot Password?</h1>
         <p className={TypographyStyles.subTitle}>
-          No worries! Enter your email address and we'll send you an otp to
+          No worries! Enter your email address and we&apos;ll send you an otp to
           reset your password
         </p>
       </div>

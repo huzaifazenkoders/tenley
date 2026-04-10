@@ -1,12 +1,12 @@
 "use client";
-import { useState } from "react";
-import Image from "next/image";
-import { Users, ChevronUp } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
+import { Modal } from "@/components/ui/modal";
 import Select from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { Users } from "lucide-react";
+import Image from "next/image";
 import { Dialog } from "radix-ui";
+import { useState } from "react";
 
 const staffList = [
   {
@@ -67,7 +67,11 @@ const AssignStaffModal = ({ open, onOpenChange }: Props) => {
   const toggle = (id: string) =>
     setSelected((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
 

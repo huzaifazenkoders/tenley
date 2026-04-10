@@ -1,27 +1,26 @@
 "use client";
-import {
-  Search,
-  ChevronDown,
-  FileText,
-  ChevronLeft,
-  ChevronRight,
-  Eye
-} from "lucide-react";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell
-} from "@/components/ui/table";
-import StatusBadge from "./StatusBadge";
-import AvatarStack from "./AvatarStack";
-import TextInput from "@/components/ui/text-input";
+import { Button } from "@/components/ui/button";
 import DateSelector from "@/components/ui/date-selector";
 import Select from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "@/components/ui/table";
+import TextInput from "@/components/ui/text-input";
 import { handleRippleAnimation } from "@/lib/ui/handleRippleAnimation";
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  Search
+} from "lucide-react";
+import AvatarStack from "./AvatarStack";
+import StatusBadge from "./StatusBadge";
 
 type Status = "open" | "in-progress" | "completed";
 

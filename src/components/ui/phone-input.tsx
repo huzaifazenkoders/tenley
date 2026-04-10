@@ -47,7 +47,6 @@ const PhoneInput = forwardRef<HTMLInputElement, Props>(
   (
     {
       containerClassName,
-      maxLength,
       required,
       label,
       value,

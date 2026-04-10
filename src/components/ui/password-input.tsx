@@ -16,7 +16,6 @@ const PasswordInput = ({
   startIcon,
   containerClassName,
   labelClassName,
-  showToggle = true,
   ...rest
 }: Omit<React.ComponentProps<"input">, "type"> & {
   label?: string;
@@ -26,7 +25,6 @@ const PasswordInput = ({
   setValue?: ReactDispatch<string>;
   containerClassName?: string;
   labelClassName?: string;
-  showToggle?: boolean;
 }) => {
   const [isVisible, setIsVisible] = React.useState(false);
   const hasStartIcon = Boolean(startIcon);
