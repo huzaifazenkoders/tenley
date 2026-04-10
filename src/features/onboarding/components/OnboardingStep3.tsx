@@ -7,6 +7,7 @@ import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const Checkbox = ({
   checked,
@@ -46,6 +47,7 @@ const policies = [
 ];
 
 const OnboardingStep3 = ({ setStep }: { setStep: (step: number) => void }) => {
+  const router = useRouter();
   const [agreed, setAgreed] = useState({ terms: false, privacy: false });
 
   return (
@@ -99,7 +101,11 @@ const OnboardingStep3 = ({ setStep }: { setStep: (step: number) => void }) => {
       ))}
 
       <div className="flex flex-col items-center gap-3">
-        <Button size="full" disabled={!agreed.terms || !agreed.privacy}>
+        <Button
+          size="full"
+          disabled={!agreed.terms || !agreed.privacy}
+          onClick={() => router.replace("/")}
+        >
           Accept &amp; Continue <ChevronRight />
         </Button>
         <button

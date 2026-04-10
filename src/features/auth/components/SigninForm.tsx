@@ -5,8 +5,10 @@ import { TypographyStyles } from "@/styles/common-typography";
 import TextInput from "@/components/ui/text-input";
 import PasswordInput from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const SigninForm = () => {
+  const router = useRouter();
   return (
     <div className="flex flex-col gap-7">
       <div className="flex-col-4 items-center text-center">
@@ -23,7 +25,9 @@ const SigninForm = () => {
         <Button variant={"link"}>Forgot password?</Button>
       </div>
       <div className="flex-col-3 items-center">
-        <Button size={"full"}>Login</Button>
+        <Button onClick={() => router.replace("/onboarding")} size={"full"}>
+          Login
+        </Button>
         <p>
           Don’t have an account?{" "}
           <span>

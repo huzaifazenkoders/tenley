@@ -16,7 +16,8 @@ export const navSections = [
         id: "dashboard",
         label: "Dashboard",
         icon: LayoutDashboard,
-        badge: null
+        badge: null,
+        href: "/"
       }
     ]
   },
@@ -27,10 +28,23 @@ export const navSections = [
         id: "property",
         label: "Property Management",
         icon: Building2,
-        badge: null
+        badge: null,
+        href: "/property-management"
       },
-      { id: "staff", label: "Staff & Roles", icon: Users, badge: null },
-      { id: "tenants", label: "Tenants", icon: UserRound, badge: null }
+      {
+        id: "staff",
+        label: "Staff & Roles",
+        icon: Users,
+        badge: null,
+        href: "/staff-roles"
+      },
+      {
+        id: "tenants",
+        label: "Tenants",
+        icon: UserRound,
+        badge: null,
+        href: "/tenants"
+      }
     ]
   },
   {
@@ -40,10 +54,23 @@ export const navSections = [
         id: "emergencies",
         label: "Emergencies",
         icon: AlertTriangle,
-        badge: "03"
+        badge: "03",
+        href: "/emergency-records"
       },
-      { id: "notifications", label: "Notifications", icon: Bell, badge: "03" },
-      { id: "settings", label: "Settings", icon: Settings, badge: null }
+      {
+        id: "notifications",
+        label: "Notifications",
+        icon: Bell,
+        badge: "03",
+        href: "/notifications"
+      },
+      {
+        id: "settings",
+        label: "Settings",
+        icon: Settings,
+        badge: null,
+        href: "/settings"
+      }
     ]
   }
 ];

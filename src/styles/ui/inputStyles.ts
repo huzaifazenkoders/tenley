@@ -6,7 +6,7 @@ export const inputStyles = cn(
   "bg-input",
   "px-3 py-2",
   "text-base text-text-primary",
-  "placeholder:text-text-secondary",
+  "placeholder:text-text-secondary disabled:text-text-secondary disabled:cursor-not-allowed",
   "focus:outline-primary"
 );
 

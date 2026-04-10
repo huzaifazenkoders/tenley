@@ -6,6 +6,7 @@ import { MoreVertical } from "lucide-react";
 import Image from "next/image";
 import { Fragment } from "react";
 import { navSections } from "../constants/SidebarItems";
+import Link from "next/link";
 
 const SidebarExpanded = ({
   active,
@@ -39,11 +40,12 @@ const SidebarExpanded = ({
               {section.label}
             </span>
             <div className="flex flex-col gap-2">
-              {section.items.map(({ id, label, icon: Icon, badge }) => {
+              {section.items.map(({ id, label, icon: Icon, badge, href }) => {
                 const isActive = active === id;
                 return (
-                  <button
+                  <Link
                     key={id}
+                    href={href}
                     onClick={() => setActive(id)}
                     className={cn(
                       "flex items-center gap-2.5 px-4 py-2 rounded-lg transition-all duration-200 overflow-hidden",
@@ -75,7 +77,7 @@ const SidebarExpanded = ({
                         {badge}
                       </span>
                     )}
-                  </button>
+                  </Link>
                 );
               })}
             </div>

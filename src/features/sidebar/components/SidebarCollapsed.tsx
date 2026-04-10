@@ -5,6 +5,7 @@ import { ReactDispatch } from "@/types/common";
 import Image from "next/image";
 import { Fragment } from "react";
 import { navSections } from "../constants/SidebarItems";
+import Link from "next/link";
 
 const SidebarCollapsed = ({
   active,
@@ -37,11 +38,12 @@ const SidebarCollapsed = ({
               {section.label}
             </span>
             <div className="flex flex-col gap-2">
-              {section.items.map(({ id, icon: Icon }) => {
+              {section.items.map(({ id, icon: Icon, href }) => {
                 const isActive = active === id;
                 return (
-                  <button
+                  <Link
                     key={id}
+                    href={href}
                     onClick={() => setActive(id)}
                     className={cn(
                       "flex items-center gap-2.5 px-4 py-2 rounded-lg transition-all duration-200 overflow-hidden",
@@ -57,7 +59,7 @@ const SidebarCollapsed = ({
                         isActive ? "text-white" : "text-brand-Text-600"
                       )}
                     />
-                  </button>
+                  </Link>
                 );
               })}
             </div>
