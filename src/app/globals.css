@@ -29,6 +29,11 @@
   --color-brand-primary-red-50:var(--brand-primary-red-50);
   --color-brand-primary-blue-100:var(--brand-primary-blue-100);
   --color-brand-primary-blue-700:var(--brand-primary-blue-700);
+  --color-brand-primary-blue-50:var(--brand-primary-blue-50);
+  --color-brand-primary-blue-200:var(--brand-primary-blue-200);
+  --color-brand-primary-blue-600:var(--brand-primary-blue-600);
+  --color-Text-200:var(--Text-200);
+  --color-Active-Blue-50:var(--Active-Blue-50);
   --color-brand-primary-red-300:var(--brand-primary-red-300);
   --color-brand-primary-red-400:var(--brand-primary-red-400);
   --color-brand-primary-red-500:var(--brand-primary-red-500);
@@ -39,6 +44,7 @@
   --color-Colors-background-primary:var(--Colors-background-primary);
   --color-Error-Red-60:var(--Error-Red-60);
   --color-Error-Red-50:var(--Error-Red-50);
+  --color-Error-Red-20:var(--Error-Red-20);
   --color-Neutral-Grey-0:var(--Neutral-Grey-0);
   --color-Neutral-Grey-10:var(--Neutral-Grey-10);
   --color-Neutral-Grey-20:var(--Neutral-Grey-20);
@@ -81,11 +87,17 @@
   --brand-primary-red-50:#FEF0EF;
   --brand-primary-blue-100:#DBEAFE;
   --brand-primary-blue-700:#1D4ED8;
+  --brand-primary-blue-50:#EFF6FF;
+  --brand-primary-blue-200:#BFDBFE;
+  --brand-primary-blue-600:#2563EB;
+  --Text-200:#D0D0D0;
+  --Active-Blue-50:#2563EB;
   --Primary-Green-50:#21AB70;
   --gray-light-50:#fafafa;
   --Colors-background-primary:#ffffff;
   --Error-Red-60:#E53935;
   --Error-Red-50:#FFEBEE;
+  --Error-Red-20:#FFCDD2;
   --Neutral-Grey-0:#F9F9F9;
   --Neutral-Grey-10:#EBEBEB;
   --Neutral-Grey-20:#D6D6D6;

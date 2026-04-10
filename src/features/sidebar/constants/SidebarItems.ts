@@ -36,7 +36,7 @@ export const navSections = [
         label: "Staff & Roles",
         icon: Users,
         badge: null,
-        href: "/staff-roles"
+        href: "/staff-and-roles"
       },
       {
         id: "tenants",
