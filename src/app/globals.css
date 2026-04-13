@@ -27,6 +27,7 @@
   --color-brand-Text-950-d:var(--brand-Text-950-d);
   --color-brand-primary-red-100:var(--brand-primary-red-100);
   --color-brand-primary-red-200:var(--brand-primary-red-200);
+  --color-Warning-Yellow-60:var(--Warning-Yellow-60);
   --color-brand-primary-red-50:var(--brand-primary-red-50);
   --color-brand-primary-blue-100:var(--brand-primary-blue-100);
   --color-brand-primary-blue-700:var(--brand-primary-blue-700);
@@ -89,6 +90,7 @@
   --brand-primary-red-300:#F9A09A;
   --brand-primary-red-100:#FEE2E0;
   --brand-primary-red-200:#FDCFCB;
+  --Warning-Yellow-60:#F59E0B;
   --brand-primary-red-50:#FEF0EF;
   --brand-primary-blue-100:#DBEAFE;
   --brand-primary-blue-700:#1D4ED8;

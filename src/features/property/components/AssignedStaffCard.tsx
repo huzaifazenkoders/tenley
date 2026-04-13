@@ -46,11 +46,11 @@ const AssignedStaffCard = ({ staff }: Props) => {
             {staff.map((member) => (
               <div
                 key={member.id}
-                className="p-3 bg-stone-50 rounded-lg outline outline-1 -outline-offset-1 outline-brand-Text-100 flex items-center justify-between w-full gap-2"
+                className="p-3 bg-stone-50 rounded-lg outline-1 -outline-offset-1 outline-brand-Text-100 flex items-center justify-between w-full gap-2"
               >
                 <div className="flex-1 flex items-center gap-2">
                   <Image
-                    src="https://placehold.co/44x44"
+                    src="/assets/mock/person1.png"
                     alt={member.name}
                     width={44}
                     height={44}
