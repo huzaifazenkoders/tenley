@@ -44,15 +44,21 @@ const PropertyInfoStep = ({ data, onChange }: Props) => (
         </div>
         <div className="flex flex-col items-center gap-2 w-full text-center">
           <p className="text-base">
-            <span className="text-Neutral-Grey-100 font-semibold leading-5">Upload Property Images </span>
-            <span className="text-Neutral-Grey-70 font-semibold leading-5">(Optional)</span>
+            <span className="text-Neutral-Grey-100 font-semibold leading-5">
+              Upload Property Images{" "}
+            </span>
+            <span className="text-Neutral-Grey-70 font-semibold leading-5">
+              (Optional)
+            </span>
           </p>
           <span className="text-Neutral-Grey-60 text-base font-normal">
             Drag and drop your property images here, or click to browse
           </span>
         </div>
       </div>
-      <Button variant="outline-transparent" size="sm">Browse Files</Button>
+      <Button variant="outline-transparent" size="sm">
+        Browse Files
+      </Button>
     </div>
 
     {/* Property Type + Purpose */}
@@ -66,7 +72,7 @@ const PropertyInfoStep = ({ data, onChange }: Props) => (
           { label: "Bungalow", value: "bungalow" },
           { label: "Mall", value: "mall" },
           { label: "Office", value: "office" },
-          { label: "Apartment", value: "apartment" },
+          { label: "Apartment", value: "apartment" }
         ]}
       />
       <Select
@@ -76,7 +82,7 @@ const PropertyInfoStep = ({ data, onChange }: Props) => (
         placeholder="Select purpose"
         options={[
           { label: "Residential", value: "residential" },
-          { label: "Commercial", value: "commercial" },
+          { label: "Commercial", value: "commercial" }
         ]}
       />
     </div>

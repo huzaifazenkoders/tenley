@@ -29,7 +29,7 @@ export const navSections = [
         label: "Property Management",
         icon: Building2,
         badge: null,
-        href: "/property-management"
+        href: "/property"
       },
       {
         id: "staff",

@@ -95,12 +95,12 @@ const PhoneInput = forwardRef<HTMLInputElement, Props>(
               <button
                 type="button"
                 className={cn(
-                  "min-w-16 2xl:min-w-20",
+                  "min-w-20",
                   "flex items-center justify-center",
                   "px-2",
                   "border-r border-border-primary",
                   "mr-2",
-                  "h-[38px] 2xl:h-12",
+                  "h-9",
                   "bg-background rounded-l-md text-sm font-medium",
                   "cursor-pointer",
                   "whitespace-nowrap"
@@ -218,7 +218,7 @@ const PhoneInput = forwardRef<HTMLInputElement, Props>(
             placeholder={rest.placeholder}
             inputClass={cn(
               rest.disabled && "!cursor-default",
-              "!h-[48px] !w-full !bg-background",
+              "!h-9 !w-full !bg-background",
               "!ps-0 !border-none rounded-md !text-base"
             )}
             buttonStyle={{ display: "none" }}

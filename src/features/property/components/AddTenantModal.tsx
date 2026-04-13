@@ -23,13 +23,13 @@ type Tenant = {
 
 const roleBadge: Record<TenantRole, { bg: string; text: string }> = {
   "Head of Household": { bg: "bg-indigo-500/10", text: "text-indigo-500" },
-  "Family Member": { bg: "bg-red-500/10", text: "text-red-500" },
+  "Family Member": { bg: "bg-red-500/10", text: "text-red-500" }
 };
 
 const InfoField = ({
   icon,
   label,
-  value,
+  value
 }: {
   icon: React.ReactNode;
   label: string;
@@ -40,8 +40,12 @@ const InfoField = ({
       {icon}
     </div>
     <div className="flex flex-col">
-      <span className="text-brand-Text-500 text-xs font-normal leading-4">{label}</span>
-      <span className="text-brand-Text-800 text-xs font-medium leading-4">{value}</span>
+      <span className="text-brand-Text-500 text-xs font-normal leading-4">
+        {label}
+      </span>
+      <span className="text-brand-Text-800 text-xs font-medium leading-4">
+        {value}
+      </span>
     </div>
   </div>
 );
@@ -54,7 +58,13 @@ type Props = {
   title?: string;
 };
 
-const AddTenantModal = ({ open, onOpenChange, tenants, prefill, title }: Props) => {
+const AddTenantModal = ({
+  open,
+  onOpenChange,
+  tenants,
+  prefill,
+  title
+}: Props) => {
   const [view, setView] = useState<"list" | "form">(prefill ? "form" : "list");
   const [name, setName] = useState(prefill?.name ?? "");
   const [email, setEmail] = useState(prefill?.email ?? "");
@@ -83,7 +93,8 @@ const AddTenantModal = ({ open, onOpenChange, tenants, prefill, title }: Props) 
               </div>
               <Dialog.Description asChild>
                 <p className="text-brand-Text-500 text-sm font-normal leading-5">
-                  Start adding tenants to track move-ins, lease details, and unit occupancy across your properties.
+                  Start adding tenants to track move-ins, lease details, and
+                  unit occupancy across your properties.
                 </p>
               </Dialog.Description>
             </div>
@@ -126,7 +137,9 @@ const AddTenantModal = ({ open, onOpenChange, tenants, prefill, title }: Props) 
                       />
                       <div className="w-36">
                         <InfoField
-                          icon={<Phone className="size-4 text-brand-Text-800" />}
+                          icon={
+                            <Phone className="size-4 text-brand-Text-800" />
+                          }
                           label="Phone Number"
                           value={t.phone}
                         />
@@ -154,8 +167,12 @@ const AddTenantModal = ({ open, onOpenChange, tenants, prefill, title }: Props) 
           <hr className="border-brand-Text-100" />
 
           {/* Footer */}
-          <div className="flex items-center gap-6 self-start">
-            <Button variant="outline-transparent" size="lg" onClick={() => handleClose(false)}>
+          <div className="flex items-center gap-6 justify-end w-full">
+            <Button
+              variant="outline-transparent"
+              size="lg"
+              onClick={() => handleClose(false)}
+            >
               Cancel
             </Button>
             <Button size="lg">Add Tenants</Button>
@@ -201,7 +218,7 @@ const AddTenantModal = ({ open, onOpenChange, tenants, prefill, title }: Props) 
                 containerClassName="flex-1"
                 options={[
                   { label: "Head of Household", value: "head" },
-                  { label: "Family Member", value: "family" },
+                  { label: "Family Member", value: "family" }
                 ]}
               />
             </div>
@@ -227,8 +244,12 @@ const AddTenantModal = ({ open, onOpenChange, tenants, prefill, title }: Props) 
           <hr className="border-brand-Text-100" />
 
           {/* Footer */}
-          <div className="flex items-center justify-end gap-6">
-            <Button variant="outline-transparent" size="lg" onClick={() => handleClose(false)}>
+          <div className="flex items-center justify-end w-full gap-6">
+            <Button
+              variant="outline-transparent"
+              size="lg"
+              onClick={() => handleClose(false)}
+            >
               Cancel
             </Button>
             <Button size="lg">Invite & Assign</Button>
