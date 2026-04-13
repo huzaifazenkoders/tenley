@@ -5,8 +5,9 @@ import Link from "next/link";
 import AssignedStaffCard from "../components/AssignedStaffCard";
 import PropertyInfoCard from "../components/PropertyInfoCard";
 import UnitsSection from "../components/UnitsSection";
+import ResidentialPropertyView from "./ResidentialPropertyView";
 
-const MOCK_PROPERTY = {
+const MOCK_COMMERCIAL = {
   id: "1",
   name: "Victoria Apartments",
   address: "123 Main Street, Los Angeles, CA 90001",
@@ -30,8 +31,34 @@ const MOCK_PROPERTY = {
   ]
 };
 
+const MOCK_RESIDENTIAL = {
+  id: "2",
+  name: "Sunset Gardens",
+  address: "123 Main Street, Los Angeles, CA 90001",
+  type: "Residential",
+  propertyAddress: "123 Main Street Boulevard",
+  propertyName: "123 Main Street Boulevard",
+  units: 1,
+  floors: 2,
+  city: "Austin",
+  state: "TX",
+  images: [
+    "https://placehold.co/100x100",
+    "https://placehold.co/100x100",
+    "https://placehold.co/100x100"
+  ],
+  staff: []
+};
+
+// Toggle between "Commercial" and "Residential" to preview each layout
+const ACTIVE_TYPE: "Commercial" | "Residential" = "Residential";
+
 const PropertyByIdView = () => {
-  const property = MOCK_PROPERTY;
+  const property = ACTIVE_TYPE === "Residential" ? MOCK_RESIDENTIAL : MOCK_COMMERCIAL;
+
+  if (property.type === "Residential") {
+    return <ResidentialPropertyView property={property} />;
+  }
 
   return (
     <div className="px-6 pt-10 pb-6 flex flex-col gap-6 w-full">
