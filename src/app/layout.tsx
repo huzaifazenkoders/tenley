@@ -31,21 +31,21 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://tenley.app",
+    url: "https://tenley-tnt4.vercel.app/",
     title: "Tenley - Property Management Platform",
     description:
       "Comprehensive property management platform for managing properties, tenants, staff, and maintenance with ease.",
     images: [
       {
-        url: "https://tenley.app/og-image.png",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Tenley - Property Management Platform",
         type: "image/png"
       },
       {
-        url: "https://tenley.app/og-image.png",
-        // url: "https://tenley.app/og-image-square.png",
+        url: "/og-image.png",
+        // url: "/og-image-square.png",
         width: 800,
         height: 800,
         alt: "Tenley - Property Management Platform",
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     title: "Tenley - Property Management Platform",
     description:
       "Comprehensive property management platform for managing properties, tenants, staff, and maintenance with ease.",
-    images: ["https://tenley.app/og-image.png"],
+    images: ["/og-image.png"],
     creator: "@zenkoders"
   },
   robots: {
