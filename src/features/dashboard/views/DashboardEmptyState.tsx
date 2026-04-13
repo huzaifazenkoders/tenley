@@ -1,9 +1,11 @@
 const DashboardEmptyState = () => (
   <div className="flex-1 flex items-center justify-center py-20">
     <div className="relative w-[654px] flex flex-col items-center gap-8">
-
       {/* Decorative blurred illustration */}
-      <div aria-hidden className="absolute inset-0 flex flex-wrap justify-center items-center gap-2 opacity-40 pointer-events-none blur-[1px]">
+      <div
+        aria-hidden
+        className="absolute inset-0 flex flex-wrap justify-center items-center gap-2 opacity-40 pointer-events-none blur-[1px]"
+      >
         <div className="w-5 h-12 bg-gray-200" />
         <div className="w-px h-14 bg-neutral-200" />
         <div className="w-10 h-2.5 bg-neutral-200" />
@@ -61,11 +63,11 @@ const DashboardEmptyState = () => (
           Welcome to Tenley!
         </h1>
         <p className="text-brand-Text-600 text-base font-normal leading-5">
-          Once your platform starts receiving data, you'll see your insights and metrics here,
-          giving you a clear view of all your property activities and tasks.
+          Once your platform starts receiving data, you&apos;ll see your
+          insights and metrics here, giving you a clear view of all your
+          property activities and tasks.
         </p>
       </div>
-
     </div>
   </div>
 );

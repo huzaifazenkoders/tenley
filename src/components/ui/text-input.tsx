@@ -1,12 +1,11 @@
 import { cn } from "@/lib/utils";
-import { ReactDispatch } from "@/types/common";
-import React from "react";
-import LabelContainer from "./label-container";
 import {
   endIconStyles,
   inputStyles,
   startIconStyles
 } from "@/styles/ui/inputStyles";
+import React from "react";
+import LabelContainer from "./label-container";
 
 const TextInput = ({
   label,
