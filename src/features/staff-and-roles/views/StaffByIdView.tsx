@@ -3,12 +3,14 @@ import AssignedPropertiesTable from "../components/AssignedPropertiesTable";
 import StaffProfileCard from "../components/StaffProfileCard";
 
 const StaffByIdView = () => (
-  <div className="px-6 pt-10 pb-6 flex flex-col gap-6 w-full overflow-hidden">
+  <div className="px-6 pt-10 pb-6 flex flex-col gap-6 w-full">
     <div className="flex flex-col gap-8">
       {/* Back nav */}
       <div className="flex items-center gap-2">
         <ChevronLeft className="size-5 text-brand-Text-950-d" />
-        <span className="text-brand-Text-950-d text-base font-normal leading-5">Staff list</span>
+        <span className="text-brand-Text-950-d text-base font-normal leading-5">
+          Staff list
+        </span>
       </div>
 
       <div className="flex flex-col gap-6">
@@ -28,7 +30,9 @@ const StaffByIdView = () => (
             <div className="p-2 bg-brand-primary-red-50 rounded-lg">
               <Building2 className="size-5 text-brand-primary-red-600-d" />
             </div>
-            <span className="text-brand-Text-950-d text-xl font-semibold leading-6">Assigned Properties</span>
+            <span className="text-brand-Text-950-d text-xl font-semibold leading-6">
+              Assigned Properties
+            </span>
           </div>
           <AssignedPropertiesTable />
         </div>

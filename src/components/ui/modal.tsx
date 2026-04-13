@@ -26,11 +26,17 @@ const Modal = ({ open, onOpenChange, children, className }: ModalProps) => (
           "outline -outline-offset-1 outline-brand-Text-100",
           "focus:outline-none",
           "duration-100 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
-
-          className
+          ""
         )}
       >
-        {children}
+        <div
+          className={cn(
+            "overflow-y-auto custom-scrollbar max-h-[95dvh]",
+            className
+          )}
+        >
+          {children}
+        </div>
       </Dialog.Content>
     </Dialog.Portal>
   </Dialog.Root>

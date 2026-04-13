@@ -14,9 +14,10 @@ const Sidebar = () => {
   return (
     <div
       className={cn(
-        "relative self-stretch px-4 py-6 bg-brand-base-white rounded-2xl outline -outline-offset-1 outline-brand-Text-100 flex flex-col gap-6 transition-all duration-300 ease-in-out",
+        "sticky top-2 self-start px-4 py-6 bg-brand-base-white rounded-2xl outline -outline-offset-1 outline-brand-Text-100 flex flex-col gap-6 transition-all duration-300 ease-in-out",
         collapsed ? "w-22" : "w-68"
       )}
+      style={{ height: "calc(100vh - 1rem)" }}
     >
       {/* Toggle button */}
       <button
