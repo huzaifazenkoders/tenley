@@ -2,6 +2,8 @@
 import { Button } from "@/components/ui/button";
 import { Building2, ChevronLeft, FileUp, MapPin } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import ImportPropertyCSVModal from "../components/ImportPropertyCSVModal";
 import AssignedStaffCard from "../components/AssignedStaffCard";
 import PropertyInfoCard from "../components/PropertyInfoCard";
 import UnitsSection from "../components/UnitsSection";
@@ -54,7 +56,9 @@ const MOCK_RESIDENTIAL = {
 const ACTIVE_TYPE: "Commercial" | "Residential" = "Residential";
 
 const PropertyByIdView = () => {
-  const property = ACTIVE_TYPE === "Residential" ? MOCK_RESIDENTIAL : MOCK_COMMERCIAL;
+  const [csvModalOpen, setCsvModalOpen] = useState(false);
+  const property =
+    ACTIVE_TYPE === "Residential" ? MOCK_RESIDENTIAL : MOCK_COMMERCIAL;
 
   if (property.type === "Residential") {
     return <ResidentialPropertyView property={property} />;
@@ -95,7 +99,7 @@ const PropertyByIdView = () => {
             </span>
           </div>
         </div>
-        <Button size="sm">
+        <Button size="sm" onClick={() => setCsvModalOpen(true)}>
           <FileUp className="size-4" /> Import CSV
         </Button>
       </div>
@@ -119,6 +123,10 @@ const PropertyByIdView = () => {
 
       {/* Units section */}
       <UnitsSection totalUnits={property.units} />
+      <ImportPropertyCSVModal
+        open={csvModalOpen}
+        onOpenChange={setCsvModalOpen}
+      />
     </div>
   );
 };

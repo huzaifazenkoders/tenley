@@ -2,11 +2,14 @@
 import { Button } from "@/components/ui/button";
 import { FileUp, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import ImportPropertyCSVModal from "../components/ImportPropertyCSVModal";
 import NoPropertiesEmptyState from "../components/NoPropertiesEmptyState";
 import PropertiesTable from "../components/PropertiesTable";
 
 const PropertyListingsView = () => {
   const router = useRouter();
+  const [csvModalOpen, setCsvModalOpen] = useState(false);
   const properties = [1]; // replace with real data
 
   return (
@@ -22,7 +25,11 @@ const PropertyListingsView = () => {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline-transparent" size="sm">
+          <Button
+            variant="outline-transparent"
+            size="sm"
+            onClick={() => setCsvModalOpen(true)}
+          >
             <FileUp className="size-4 text-brand-Text-500" /> Import CSV
           </Button>
           <Button
@@ -41,6 +48,10 @@ const PropertyListingsView = () => {
       ) : (
         <PropertiesTable />
       )}
+      <ImportPropertyCSVModal
+        open={csvModalOpen}
+        onOpenChange={setCsvModalOpen}
+      />
     </div>
   );
 };
