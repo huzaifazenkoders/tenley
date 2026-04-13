@@ -1,8 +1,12 @@
 import StaffAndRolesListingsView from "@/features/staff-and-roles/views/StaffAndRolesListingsView";
-import React from "react";
+import React, { Suspense } from "react";
 
 const page = () => {
-  return <StaffAndRolesListingsView />;
+  return (
+    <Suspense>
+      <StaffAndRolesListingsView />
+    </Suspense>
+  );
 };
 
 export default page;
