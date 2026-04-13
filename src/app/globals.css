@@ -25,6 +25,7 @@
   --color-brand-Text-700:var(--brand-Text-700);
   --color-brand-Text-800:var(--brand-Text-800);
   --color-brand-Text-950-d:var(--brand-Text-950-d);
+  --color-brand-primary-red-100:var(--brand-primary-red-100);
   --color-brand-primary-red-200:var(--brand-primary-red-200);
   --color-brand-primary-red-50:var(--brand-primary-red-50);
   --color-brand-primary-blue-100:var(--brand-primary-blue-100);
@@ -48,6 +49,9 @@
   --color-Neutral-Grey-0:var(--Neutral-Grey-0);
   --color-Neutral-Grey-10:var(--Neutral-Grey-10);
   --color-Neutral-Grey-20:var(--Neutral-Grey-20);
+  --color-Neutral-Grey-60:var(--Neutral-Grey-60);
+  --color-Neutral-Grey-70:var(--Neutral-Grey-70);
+  --color-Neutral-Grey-100:var(--Neutral-Grey-100);
   --color-Static-White:var(--Static-White);
   --color-Colors-Card-stroke2:var(--Colors-Card-stroke2);
   --color-Base-White:var(--Base-White);
@@ -83,6 +87,7 @@
   --brand-primary-red-500:#ED5346;
   --brand-primary-red-400:#F67D73;
   --brand-primary-red-300:#F9A09A;
+  --brand-primary-red-100:#FEE2E0;
   --brand-primary-red-200:#FDCFCB;
   --brand-primary-red-50:#FEF0EF;
   --brand-primary-blue-100:#DBEAFE;
@@ -101,6 +106,9 @@
   --Neutral-Grey-0:#F9F9F9;
   --Neutral-Grey-10:#EBEBEB;
   --Neutral-Grey-20:#D6D6D6;
+  --Neutral-Grey-60:#8C8C8C;
+  --Neutral-Grey-70:#737373;
+  --Neutral-Grey-100:#1A1A1A;
   --Static-White:#FFFFFF;
   --Colors-Card-stroke2:#DCDFE4;
   --Base-White:#FFFFFF;

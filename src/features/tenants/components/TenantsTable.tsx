@@ -18,10 +18,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Eye,
+  FileUp,
   Home,
   Search
 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
+import ImportCsvModal from "./ImportCsvModal";
 
 type PropertyType = "Commercial" | "Residential";
 
@@ -49,7 +51,11 @@ const PropertyTypeBadge = ({ type }: { type: PropertyType }) => {
 };
 
 const TenantsTable = () => {
+  const [importOpen, setImportOpen] = useState(false);
+
   return (
+    <>
+    <ImportCsvModal open={importOpen} onOpenChange={setImportOpen} />
     <div className="w-full bg-brand-base-white rounded-[20px] shadow-[0px_0px_0px_1px_rgba(220,223,228,1.00)] flex flex-col overflow-hidden">
       {/* Toolbar */}
       <div className="px-6 py-4 border-b border-Colors-Card-stroke2 flex items-center gap-4">
@@ -59,6 +65,9 @@ const TenantsTable = () => {
           containerClassName="w-96"
         />
         <div className="flex items-center gap-4 ml-auto">
+          <Button size="sm" onClick={() => setImportOpen(true)}>
+            <FileUp className="size-4" /> Import CSV
+          </Button>
           <DateSelector
             trigger={
               <Button
@@ -147,6 +156,7 @@ const TenantsTable = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
