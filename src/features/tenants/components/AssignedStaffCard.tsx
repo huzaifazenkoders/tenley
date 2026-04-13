@@ -37,28 +37,30 @@ const AssignedStaffCard = () => (
           <div className="size-11 bg-zinc-200 rounded-full flex items-center justify-center shrink-0">
             <User className="size-5 text-gray-600" />
           </div>
-          <div className="flex-1 flex flex-col gap-1">
-            <span className="text-brand-Text-950-d text-base font-semibold leading-5">
+          <div className="flex-1 flex flex-col gap-1 w-fit">
+            <span className="text-brand-Text-950-d text-base font-semibold leading-5 w-fit">
               {s.name}
             </span>
-            <span className="text-brand-Text-500 text-xs font-normal leading-4">
+            <span className="text-brand-Text-500 text-xs font-normal leading-4 w-fit">
               {s.role}
             </span>
           </div>
           <span className="px-3 py-1 bg-brand-primary-blue-100 rounded-full outline outline-1 -outline-offset-1 outline-brand-primary-blue-100 text-brand-primary-blue-700 text-sm font-medium leading-5">
             {s.status}
           </span>
-          <Dropdown
-            items={[
-              { value: "unassign", label: "Unassign" },
-              { value: "view", label: "View Profile" }
-            ]}
-            contentClassName="min-w-36"
-          >
-            <Button size="icon" variant="ghost" className="size-6">
-              <MoreVertical className="size-4 text-brand-Text-800" />
-            </Button>
-          </Dropdown>
+          <div className="">
+            <Dropdown
+              items={[
+                { value: "unassign", label: "Unassign" },
+                { value: "view", label: "View Profile" }
+              ]}
+              contentClassName="min-w-36"
+            >
+              <Button size="icon" variant="ghost" className="size-6">
+                <MoreVertical className="size-4 text-brand-Text-800" />
+              </Button>
+            </Dropdown>
+          </div>
         </div>
       ))}
     </div>

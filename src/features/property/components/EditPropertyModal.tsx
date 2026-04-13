@@ -5,14 +5,25 @@ import { Button } from "@/components/ui/button";
 import Select from "@/components/ui/select";
 import TextInput from "@/components/ui/text-input";
 import { FileUp } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+type PropertyData = {
+  address?: string;
+  name?: string;
+  city?: string;
+  state?: string;
+  units?: string;
+  floors?: string;
+  type?: string;
+};
 
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  propertyData?: PropertyData;
 };
 
-const EditPropertyModal = ({ open, onOpenChange }: Props) => {
+const EditPropertyModal = ({ open, onOpenChange, propertyData }: Props) => {
   const [propertyType, setPropertyType] = useState("apartment");
   const [propertyPurpose, setPropertyPurpose] = useState("residential");
   const [address, setAddress] = useState("123 Main Street");
@@ -23,6 +34,18 @@ const EditPropertyModal = ({ open, onOpenChange }: Props) => {
   const [gateCode, setGateCode] = useState("G-153");
   const [city, setCity] = useState("Austin");
   const [state, setState] = useState("TX");
+
+  useEffect(() => {
+    if (open && propertyData) {
+      setAddress(propertyData.address || "");
+      setName(propertyData.name || "");
+      setCity(propertyData.city || "");
+      setState(propertyData.state || "");
+      setUnits(propertyData.units || "");
+      setFloors(propertyData.floors || "");
+      setPropertyType(propertyData.type?.toLowerCase() || "apartment");
+    }
+  }, [open, propertyData]);
 
   return (
     <Modal open={open} onOpenChange={onOpenChange} className="w-[836px] p-6">
@@ -65,7 +88,9 @@ const EditPropertyModal = ({ open, onOpenChange }: Props) => {
             </div>
 
             <div className="flex flex-col items-center gap-2 text-center">
-              <p className="text-Neutral-Grey-100 text-base font-semibold leading-5">Upload Property Images</p>
+              <p className="text-Neutral-Grey-100 text-base font-semibold leading-5">
+                Upload Property Images
+              </p>
               <p className="text-Neutral-Grey-60 text-base font-normal">
                 Drag and drop your property images here, or click to browse
               </p>
@@ -80,7 +105,10 @@ const EditPropertyModal = ({ open, onOpenChange }: Props) => {
         {/* Image thumbnails */}
         <div className="flex items-center gap-5">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="size-24 relative rounded-xl bg-brand-Text-50 outline outline-1 outline-brand-Text-200" />
+            <div
+              key={i}
+              className="size-24 relative rounded-xl bg-brand-Text-50 outline outline-1 outline-brand-Text-200"
+            />
           ))}
         </div>
 
@@ -94,7 +122,7 @@ const EditPropertyModal = ({ open, onOpenChange }: Props) => {
             options={[
               { value: "apartment", label: "Apartment" },
               { value: "house", label: "House" },
-              { value: "commercial", label: "Commercial" },
+              { value: "commercial", label: "Commercial" }
             ]}
           />
           <Select
@@ -104,7 +132,7 @@ const EditPropertyModal = ({ open, onOpenChange }: Props) => {
             containerClassName="flex-1"
             options={[
               { value: "residential", label: "Residential" },
-              { value: "commercial", label: "Commercial" },
+              { value: "commercial", label: "Commercial" }
             ]}
           />
         </div>
@@ -120,14 +148,16 @@ const EditPropertyModal = ({ open, onOpenChange }: Props) => {
         {/* Property Name + ID Prefix */}
         <div className="flex items-start gap-6">
           <div className="flex-1 flex flex-col gap-1">
-            <TextInput
-              label="Property Name"
-              value={name}
-              setValue={setName}
-            />
+            <TextInput label="Property Name" value={name} setValue={setName} />
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" defaultChecked className="accent-brand-primary-red-600-d size-4" />
-              <span className="text-brand-Text-950-d text-sm font-medium leading-5">Same as property address</span>
+              <input
+                type="checkbox"
+                defaultChecked
+                className="accent-brand-primary-red-600-d size-4"
+              />
+              <span className="text-brand-Text-950-d text-sm font-medium leading-5">
+                Same as property address
+              </span>
             </label>
           </div>
           <div className="flex-1 flex flex-col gap-1">
@@ -164,10 +194,7 @@ const EditPropertyModal = ({ open, onOpenChange }: Props) => {
             <span className="text-sm font-medium text-text-primary">
               Gate Code <span className="text-brand-Text-600">(Optional)</span>
             </span>
-            <TextInput
-              value={gateCode}
-              setValue={setGateCode}
-            />
+            <TextInput value={gateCode} setValue={setGateCode} />
           </div>
           <TextInput
             label="City"
@@ -188,7 +215,10 @@ const EditPropertyModal = ({ open, onOpenChange }: Props) => {
 
         {/* Footer */}
         <div className="flex justify-end items-center gap-6">
-          <Button variant="outline-transparent" onClick={() => onOpenChange(false)}>
+          <Button
+            variant="outline-transparent"
+            onClick={() => onOpenChange(false)}
+          >
             Cancel
           </Button>
           <Button onClick={() => onOpenChange(false)}>

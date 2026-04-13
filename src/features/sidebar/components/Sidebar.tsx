@@ -2,14 +2,15 @@
 import { cn } from "@/lib/utils";
 import { ChevronLeft } from "lucide-react";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import SidebarExpanded from "./SidebarExpanded";
 import SidebarCollapsed from "./SidebarCollapsed";
 import { useDebounce } from "use-debounce";
 
 const Sidebar = () => {
+  const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [collapsedD] = useDebounce(collapsed, 200);
-  const [active, setActive] = useState("dashboard");
 
   return (
     <div
@@ -39,7 +40,7 @@ const Sidebar = () => {
           !collapsedD ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
       >
-        <SidebarExpanded active={active} setActive={setActive} />
+        <SidebarExpanded currentPathname={pathname} />
       </div>
       <div
         className={cn(
@@ -50,7 +51,7 @@ const Sidebar = () => {
           collapsedD ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
       >
-        <SidebarCollapsed active={active} setActive={setActive} />
+        <SidebarCollapsed currentPathname={pathname} />
       </div>
     </div>
   );

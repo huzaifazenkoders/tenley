@@ -7,7 +7,9 @@ import { ChevronDown, Mail, Phone, User, Users } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import AssignPropertyModal from "./AssignPropertyModal";
+import ReassignPropertyModal from "./ReassignPropertyModal";
 import { Dialog } from "radix-ui";
+import { ReactDispatch } from "@/types/common";
 
 type PropertyEntry = {
   id: string;
@@ -97,7 +99,13 @@ const TenantAvatars = ({ count }: { count: number }) => (
   </div>
 );
 
-const PropertyAccordionItem = ({ prop }: { prop: PropertyEntry }) => (
+const PropertyAccordionItem = ({
+  prop,
+  setReassignOpen
+}: {
+  prop: PropertyEntry;
+  setReassignOpen: ReactDispatch<boolean>;
+}) => (
   <Accordion.Item
     value={prop.id}
     className="bg-brand-base-white rounded-lg outline outline-1 outline-brand-Text-100 overflow-hidden"
@@ -113,7 +121,10 @@ const PropertyAccordionItem = ({ prop }: { prop: PropertyEntry }) => (
               variant="outline"
               size="xs"
               className="text-brand-primary-red-500 border-brand-primary-red-300 hover:bg-brand-primary-red-50 text-xs font-medium"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                setReassignOpen(true);
+              }}
             >
               Re-assign Property
             </Button>
@@ -171,10 +182,15 @@ type Props = {
 
 const ArchivedTenantSheet = ({ open, onOpenChange }: Props) => {
   const [assignOpen, setAssignOpen] = useState(false);
+  const [reassignOpen, setReassignOpen] = useState(false);
 
   return (
     <>
       <AssignPropertyModal open={assignOpen} onOpenChange={setAssignOpen} />
+      <ReassignPropertyModal
+        open={reassignOpen}
+        onOpenChange={setReassignOpen}
+      />
       <Sheet
         open={open}
         onOpenChange={onOpenChange}
@@ -196,7 +212,7 @@ const ArchivedTenantSheet = ({ open, onOpenChange }: Props) => {
         {/* Body */}
         <div className="flex-1 p-6 flex flex-col gap-6 overflow-y-auto custom-scrollbar">
           {/* Tenant summary card */}
-          <div className="p-3 bg-brand-base-white rounded-xl outline outline-1 outline-brand-Text-100 flex flex-col gap-2.5 overflow-hidden shadow-[0px_1px_10px_0px_rgba(0,0,0,0.08)]">
+          <div className="p-3 bg-brand-base-white rounded-xl outline outline-1 outline-brand-Text-100 flex flex-col gap-2.5 overflow-hidden shrink-0 shadow-[0px_1px_10px_0px_rgba(0,0,0,0.08)]">
             <div className="flex flex-col gap-4">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
@@ -255,7 +271,11 @@ const ArchivedTenantSheet = ({ open, onOpenChange }: Props) => {
             className="flex flex-col gap-4"
           >
             {properties.map((prop) => (
-              <PropertyAccordionItem key={prop.id} prop={prop} />
+              <PropertyAccordionItem
+                key={prop.id}
+                prop={prop}
+                setReassignOpen={setReassignOpen}
+              />
             ))}
           </Accordion.Root>
         </div>

@@ -43,56 +43,58 @@ const Dropdown = ({
   onOpenChange
 }: Props) => {
   return (
-    <LabelContainer
-      error={error}
-      label={label}
-      className={containerClassName}
-      labelClassName={labelClassName}
-      required={required}
-    >
-      <DropdownMenu.Root
-        open={open}
-        defaultOpen={defaultOpen}
-        onOpenChange={onOpenChange}
+    <div>
+      <LabelContainer
+        error={error}
+        label={label}
+        className={containerClassName}
+        labelClassName={labelClassName}
+        required={required}
       >
-        <DropdownMenu.Trigger asChild>{children}</DropdownMenu.Trigger>
+        <DropdownMenu.Root
+          open={open}
+          defaultOpen={defaultOpen}
+          onOpenChange={onOpenChange}
+        >
+          <DropdownMenu.Trigger asChild>{children}</DropdownMenu.Trigger>
 
-        <DropdownMenu.Portal>
-          <DropdownMenu.Content
-            sideOffset={8}
-            align="start"
-            className={cn(
-              "z-50 min-w-(--radix-dropdown-menu-trigger-width) overflow-hidden rounded-lg border border-border-primary bg-background p-1 shadow-sm",
-              contentClassName
-            )}
-          >
-            {items.map((item) => (
-              <DropdownMenu.Item
-                key={item.value}
-                disabled={item.disabled}
-                onSelect={() => item.onClick?.(item.value)}
-                onMouseDown={(e) => {
-                  handleRippleAnimation(
-                    e as unknown as React.MouseEvent<
-                      HTMLButtonElement,
-                      MouseEvent
-                    >,
-                    "bg-primary"
-                  );
-                }}
-                className={cn(
-                  "relative flex w-full cursor-pointer select-none items-center rounded-md px-3 py-2 text-left text-sm text-text-primary outline-none overflow-hidden",
-                  "focus:bg-primary/10",
-                  item.disabled && "pointer-events-none opacity-50"
-                )}
-              >
-                {item.label}
-              </DropdownMenu.Item>
-            ))}
-          </DropdownMenu.Content>
-        </DropdownMenu.Portal>
-      </DropdownMenu.Root>
-    </LabelContainer>
+          <DropdownMenu.Portal>
+            <DropdownMenu.Content
+              sideOffset={8}
+              align="start"
+              className={cn(
+                "z-50 min-w-(--radix-dropdown-menu-trigger-width) overflow-hidden rounded-lg border border-border-primary bg-background p-1 shadow-sm",
+                contentClassName
+              )}
+            >
+              {items.map((item) => (
+                <DropdownMenu.Item
+                  key={item.value}
+                  disabled={item.disabled}
+                  onSelect={() => item.onClick?.(item.value)}
+                  onMouseDown={(e) => {
+                    handleRippleAnimation(
+                      e as unknown as React.MouseEvent<
+                        HTMLButtonElement,
+                        MouseEvent
+                      >,
+                      "bg-primary"
+                    );
+                  }}
+                  className={cn(
+                    "relative flex w-full cursor-pointer select-none items-center rounded-md px-3 py-2 text-left text-sm text-text-primary outline-none overflow-hidden",
+                    "focus:bg-primary/10",
+                    item.disabled && "pointer-events-none opacity-50"
+                  )}
+                >
+                  {item.label}
+                </DropdownMenu.Item>
+              ))}
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
+      </LabelContainer>
+    </div>
   );
 };
 

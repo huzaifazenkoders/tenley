@@ -248,7 +248,11 @@ const StaffTable = () => (
               <StatusBadge status={row.status} />
             </TableCell>
             <TableCell>
-              <Button size="icon" variant="ghost">
+              <Button
+                size="icon"
+                variant="ghost"
+                link="/staff-and-roles/staff/1"
+              >
                 <Eye className="size-5 text-brand-Text-700" />
               </Button>
             </TableCell>

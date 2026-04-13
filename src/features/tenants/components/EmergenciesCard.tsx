@@ -17,21 +17,46 @@ type EmergencyRecord = {
 };
 
 const records: EmergencyRecord[] = [
-  { id: 1, summary: "AC not working in unit A2", dateReported: "03/05/2025", status: "in-progress", type: "Emergency", staffAvatars: 2 },
-  { id: 2, summary: "AC not working in unit A2", dateReported: "05/03/2025", status: "in-progress", type: "Emergency", staffAvatars: 2 },
+  {
+    id: 1,
+    summary: "AC not working in unit A2",
+    dateReported: "03/05/2025",
+    status: "in-progress",
+    type: "Emergency",
+    staffAvatars: 2
+  },
+  {
+    id: 2,
+    summary: "AC not working in unit A2",
+    dateReported: "05/03/2025",
+    status: "in-progress",
+    type: "Emergency",
+    staffAvatars: 2
+  }
 ];
 
 const statusTabs = ["Open", "In Progress", "Completed"] as const;
 
 const StatusBadge = ({ status }: { status: RecordStatus }) => {
-  const map: Record<RecordStatus, { bg: string; text: string; label: string }> = {
-    "open": { bg: "bg-blue-500/10", text: "text-blue-600", label: "Open" },
-    "in-progress": { bg: "bg-amber-500/10", text: "text-yellow-600", label: "In Progress" },
-    "completed": { bg: "bg-green-500/10", text: "text-green-600", label: "Completed" },
-  };
+  const map: Record<RecordStatus, { bg: string; text: string; label: string }> =
+    {
+      open: { bg: "bg-blue-500/10", text: "text-blue-600", label: "Open" },
+      "in-progress": {
+        bg: "bg-amber-500/10",
+        text: "text-yellow-600",
+        label: "In Progress"
+      },
+      completed: {
+        bg: "bg-green-500/10",
+        text: "text-green-600",
+        label: "Completed"
+      }
+    };
   const s = map[status];
   return (
-    <span className={`px-2.5 py-[3px] ${s.bg} rounded-xl text-sm font-normal leading-5 ${s.text}`}>
+    <span
+      className={`px-2.5 py-[3px] ${s.bg} rounded-xl text-sm font-normal leading-5 ${s.text}`}
+    >
       {s.label}
     </span>
   );
@@ -47,12 +72,20 @@ const RecordCard = ({ record }: { record: EmergencyRecord }) => (
   <div className="p-4 bg-brand-base-white rounded-xl outline outline-1 outline-brand-Text-100 flex flex-col gap-3 overflow-hidden">
     <div className="flex justify-between items-center">
       <div className="flex flex-col gap-1">
-        <span className="text-brand-Text-600 text-sm font-normal leading-5">Issue Summary</span>
-        <span className="text-brand-Text-950-d text-sm font-medium leading-5">{record.summary}</span>
+        <span className="text-brand-Text-600 text-sm font-normal leading-5">
+          Issue Summary
+        </span>
+        <span className="text-brand-Text-950-d text-sm font-medium leading-5">
+          {record.summary}
+        </span>
       </div>
       <div className="flex flex-col gap-1 text-right">
-        <span className="text-brand-Text-600 text-sm font-normal leading-5">Date Reported</span>
-        <span className="text-brand-Text-950-d text-sm font-medium leading-5">{record.dateReported}</span>
+        <span className="text-brand-Text-600 text-sm font-normal leading-5">
+          Date Reported
+        </span>
+        <span className="text-brand-Text-950-d text-sm font-medium leading-5">
+          {record.dateReported}
+        </span>
       </div>
     </div>
     <div className="flex justify-between items-center">
@@ -61,12 +94,14 @@ const RecordCard = ({ record }: { record: EmergencyRecord }) => (
     </div>
     <div className="h-px bg-brand-Text-100" />
     <div className="flex justify-between items-center">
-      <span className="text-brand-Text-600 text-sm font-normal leading-5">Assigned Staff</span>
+      <span className="text-brand-Text-600 text-sm font-normal leading-5">
+        Assigned Staff
+      </span>
       <div className="flex items-center">
         {Array.from({ length: record.staffAvatars }).map((_, i) => (
           <Image
             key={i}
-            src="https://placehold.co/32x32"
+            src="/assets/mock/person1.png"
             alt="staff"
             width={32}
             height={32}
@@ -80,7 +115,7 @@ const RecordCard = ({ record }: { record: EmergencyRecord }) => (
 
 const innerTabs = [
   { id: "emergency", label: "Emergency", icon: AlertTriangle },
-  { id: "work-orders", label: "Work Orders", icon: ClipboardList },
+  { id: "work-orders", label: "Work Orders", icon: ClipboardList }
 ];
 
 const EmergenciesCard = () => {
@@ -94,7 +129,9 @@ const EmergenciesCard = () => {
           <div className="p-2 bg-brand-primary-red-50 rounded-lg">
             <Zap className="size-5 text-brand-primary-red-600-d" />
           </div>
-          <span className="text-brand-Text-950-d text-xl font-semibold leading-6">Emergencies &amp; Work Orders</span>
+          <span className="text-brand-Text-950-d text-xl font-semibold leading-6">
+            Emergencies &amp; Work Orders
+          </span>
         </div>
 
         <div className="flex flex-col gap-4">
@@ -129,12 +166,15 @@ const EmergenciesCard = () => {
                   key={t}
                   onClick={() => setStatusTab(t)}
                   className={cn(
+                    "flex center",
                     "flex-1 py-4 text-sm font-medium leading-5 transition-colors relative",
                     isActive ? "text-brand-primary-red-600-d" : "text-gray-500"
                   )}
                 >
                   {t}
-                  {isActive && <span className="absolute bottom-0 left-0 right-0 h-1 bg-brand-primary-red-600-d rounded-t" />}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-0 right-0 h-1 bg-brand-primary-red-600-d rounded-t" />
+                  )}
                 </button>
               );
             })}

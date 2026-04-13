@@ -12,7 +12,7 @@ const ROLES = [
   "Property Manager",
   "Maintenance Technician",
   "Manager Supervisor",
-  "Regional Supervisor",
+  "Regional Supervisor"
 ];
 
 type Props = {
@@ -22,7 +22,12 @@ type Props = {
   onInviteNew?: () => void;
 };
 
-const StaffSelectDropdown = ({ staff, selected, onToggle, onInviteNew }: Props) => {
+const StaffSelectDropdown = ({
+  staff,
+  selected,
+  onToggle,
+  onInviteNew
+}: Props) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [activeRole, setActiveRole] = useState("All Staff");
@@ -38,7 +43,9 @@ const StaffSelectDropdown = ({ staff, selected, onToggle, onInviteNew }: Props) 
       <Popover.Trigger asChild>
         <button className="w-56 px-4 py-2 rounded-lg outline outline-1 -outline-offset-1 outline-brand-primary-red-600-d inline-flex items-center justify-between gap-2 text-brand-Text-600 text-sm font-medium">
           Select Staff
-          <ChevronUp className={cn("size-4 transition-transform", !open && "rotate-180")} />
+          <ChevronUp
+            className={cn("size-4 transition-transform", !open && "rotate-180")}
+          />
         </button>
       </Popover.Trigger>
 
@@ -46,7 +53,7 @@ const StaffSelectDropdown = ({ staff, selected, onToggle, onInviteNew }: Props) 
         <Popover.Content
           align="start"
           sideOffset={8}
-          className="w-80 bg-white rounded-2xl shadow-[0px_1px_18px_0px_rgba(0,0,0,0.08)] flex flex-col z-50 outline outline-1 -outline-offset-1 outline-brand-Text-100"
+          className="bg-white rounded-2xl shadow-[0px_1px_18px_0px_rgba(0,0,0,0.08)] flex flex-col z-50 outline outline-1 -outline-offset-1 outline-brand-Text-100"
         >
           {/* Search + Filter */}
           <div className="px-5 py-5 border-b border-border-primary flex items-center gap-3">
@@ -102,13 +109,19 @@ const StaffSelectDropdown = ({ staff, selected, onToggle, onInviteNew }: Props) 
                   {member.name.charAt(0)}
                 </div>
                 <div className="flex flex-col">
-                  <span className={cn(
-                    "text-sm font-medium",
-                    selected.includes(member.id) ? "text-brand-primary-red-500" : "text-brand-Text-950-d"
-                  )}>
+                  <span
+                    className={cn(
+                      "text-sm font-medium",
+                      selected.includes(member.id)
+                        ? "text-brand-primary-red-500"
+                        : "text-brand-Text-950-d"
+                    )}
+                  >
                     {member.name}
                   </span>
-                  <span className="text-brand-Text-500 text-xs font-normal">{member.role}</span>
+                  <span className="text-brand-Text-500 text-xs font-normal">
+                    {member.role}
+                  </span>
                 </div>
               </button>
             ))}

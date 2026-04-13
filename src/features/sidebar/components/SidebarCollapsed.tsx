@@ -1,19 +1,12 @@
 import AuthLogoCollapsed from "@/../public/assets/auth/auth-logo-collapsed.svg";
 import AvatarImage from "@/../public/assets/mock/person1.png";
 import { cn } from "@/lib/utils";
-import { ReactDispatch } from "@/types/common";
 import Image from "next/image";
 import { Fragment } from "react";
 import { navSections } from "../constants/SidebarItems";
 import Link from "next/link";
 
-const SidebarCollapsed = ({
-  active,
-  setActive
-}: {
-  active: string;
-  setActive: ReactDispatch<string>;
-}) => {
+const SidebarCollapsed = ({ currentPathname }: { currentPathname: string }) => {
   return (
     <Fragment>
       <div className="h-14 flex center overflow-hidden">
@@ -39,12 +32,13 @@ const SidebarCollapsed = ({
             </span>
             <div className="flex flex-col gap-2">
               {section.items.map(({ id, icon: Icon, href }) => {
-                const isActive = active === id;
+                const isActive =
+                  currentPathname === href ||
+                  (currentPathname.startsWith(href) && href !== "/");
                 return (
                   <Link
                     key={id}
                     href={href}
-                    onClick={() => setActive(id)}
                     className={cn(
                       "flex items-center gap-2.5 px-4 py-2 rounded-lg transition-all duration-200 overflow-hidden",
                       isActive

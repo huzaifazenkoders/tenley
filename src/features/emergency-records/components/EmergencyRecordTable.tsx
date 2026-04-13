@@ -232,7 +232,11 @@ const EmergencyRecordTable = () => {
                 <StatusBadge status={row.status} />
               </TableCell>
               <TableCell>
-                <Button size={"icon"} variant={"ghost"}>
+                <Button
+                  size={"icon"}
+                  variant={"ghost"}
+                  link="/emergency-records/1"
+                >
                   <Eye className="size-5 text-brand-Text-700" />
                 </Button>
               </TableCell>

@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import AssignStaffStep from "../components/AssignStaffStep";
 import SelectStaffStep from "../components/SelectStaffStep";
-import PropertyInfoStep, { PropertyFormData } from "../components/PropertyInfoStep";
+import PropertyInfoStep, {
+  PropertyFormData
+} from "../components/PropertyInfoStep";
 import UnitInfoStep from "../components/UnitInfoStep";
 
 const defaultFormData: PropertyFormData = {
@@ -19,7 +21,7 @@ const defaultFormData: PropertyFormData = {
   floors: "",
   gateCode: "",
   city: "",
-  state: "",
+  state: ""
 };
 
 const AddManualPropertyView = () => {
@@ -50,7 +52,7 @@ const AddManualPropertyView = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex flex-col">
+    <div className="min-h-screen bg-neutral-50 flex flex-col w-full relative">
       {/* Page header */}
       <div className="px-6 pt-10 pb-4 flex items-center justify-between gap-4">
         <div className="flex flex-col gap-1 flex-1">
@@ -61,7 +63,11 @@ const AddManualPropertyView = () => {
             Create a new property by entering details manually.
           </p>
         </div>
-        <Button variant="outline-transparent" size="lg" onClick={() => router.back()}>
+        <Button
+          variant="outline-transparent"
+          size="lg"
+          onClick={() => router.back()}
+        >
           Cancel
         </Button>
         {step >= 3 && (
@@ -94,7 +100,7 @@ const AddManualPropertyView = () => {
       </div>
 
       {/* Sticky footer */}
-      <div className="fixed bottom-0 left-0 right-0 px-10 py-5 bg-brand-base-white border-t border-zinc-200 flex items-center justify-between z-10">
+      <div className="absolute bottom-0 left-0 right-0 px-10 py-5 bg-brand-base-white border-t border-zinc-200 flex items-center justify-between z-10">
         <Button
           variant="outline-transparent"
           size="lg"

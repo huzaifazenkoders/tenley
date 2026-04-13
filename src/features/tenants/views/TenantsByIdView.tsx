@@ -48,7 +48,20 @@ const TenantsByIdView = () => (
     <div className="flex gap-6">
       {/* Left column */}
       <div className="flex-1 flex flex-col gap-6">
-        <PropertyInfoCard />
+        <PropertyInfoCard
+          name="Sunset Gardens"
+          address="123 Main Street, Los Angeles, CA 90001"
+          city="Los Angeles"
+          state="CA"
+          type="Residential"
+          units={1}
+          floors={2}
+          images={[
+            "/assets/mock/mock1.jpeg",
+            "/assets/mock/mock1.jpeg",
+            "/assets/mock/mock1.jpeg"
+          ]}
+        />
         <TenantInfoCard />
       </div>
 

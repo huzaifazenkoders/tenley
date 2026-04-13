@@ -1,20 +1,13 @@
 import AuthLogo from "@/../public/assets/auth/auth-logo.svg";
 import AvatarImage from "@/../public/assets/mock/person1.png";
 import { cn } from "@/lib/utils";
-import { ReactDispatch } from "@/types/common";
 import { MoreVertical } from "lucide-react";
 import Image from "next/image";
 import { Fragment } from "react";
 import { navSections } from "../constants/SidebarItems";
 import Link from "next/link";
 
-const SidebarExpanded = ({
-  active,
-  setActive
-}: {
-  active: string;
-  setActive: ReactDispatch<string>;
-}) => {
+const SidebarExpanded = ({ currentPathname }: { currentPathname: string }) => {
   return (
     <Fragment>
       <div className="h-14 flex items-center overflow-hidden">
@@ -42,12 +35,13 @@ const SidebarExpanded = ({
             </span>
             <div className="flex flex-col gap-2">
               {section.items.map(({ id, label, icon: Icon, badge, href }) => {
-                const isActive = active === id;
+                const isActive =
+                  currentPathname === href ||
+                  (currentPathname.startsWith(href) && href !== "/");
                 return (
                   <Link
                     key={id}
                     href={href}
-                    onClick={() => setActive(id)}
                     className={cn(
                       "flex items-center gap-2.5 px-4 py-2 rounded-lg transition-all duration-200 overflow-hidden",
                       isActive
