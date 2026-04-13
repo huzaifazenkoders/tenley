@@ -19,7 +19,10 @@ import { inputStyles, startIconStyles } from "@/styles/ui/inputStyles";
 
 countriesLib.registerLocale(enLocale);
 
-type Props = Omit<React.InputHTMLAttributes<HTMLInputElement>, "children"> & {
+type Props = Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "children" | "onChange"
+> & {
   label?: string;
   error?: string;
   value?: string;

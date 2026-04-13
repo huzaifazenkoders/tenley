@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Building2, MapPin, Pencil } from "lucide-react";
+import { Building2, Pencil } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import EditPropertyModal from "./EditPropertyModal";
@@ -30,9 +30,9 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => (
 );
 
 const PropertyInfoCard = ({
-  name,
-  address,
-  type,
+  // name,
+  // address,
+  // type,
   images,
   propertyAddress,
   propertyName,

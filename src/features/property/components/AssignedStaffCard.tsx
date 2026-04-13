@@ -15,7 +15,7 @@ const AssignedStaffCard = ({ staff }: Props) => {
   const hasStaff = staff.length > 0;
   const [modalOpen, setModalOpen] = useState(false);
   const [unassignOpen, setUnassignOpen] = useState(false);
-  const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
+  const [, setSelectedMemberId] = useState<string | null>(null);
 
   return (
     <>

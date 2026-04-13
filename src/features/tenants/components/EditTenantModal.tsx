@@ -27,7 +27,9 @@ const EditTenantModal = ({ open, onOpenChange, tenantName = "" }: Props) => {
         <div className="p-2 bg-brand-primary-red-50 rounded-lg">
           <Users className="size-5 text-brand-primary-red-600-d" />
         </div>
-        <h2 className="text-brand-Text-950-d text-xl font-semibold leading-6">Edit Tenant</h2>
+        <h2 className="text-brand-Text-950-d text-xl font-semibold leading-6">
+          Edit Tenant
+        </h2>
       </div>
 
       {/* Body */}
@@ -61,7 +63,7 @@ const EditTenantModal = ({ open, onOpenChange, tenantName = "" }: Props) => {
           label="Phone Number"
           placeholder="Enter phone number"
           value={phone}
-          onChange={setPhone}
+          onChange={(r) => setPhone(r)}
           defaultCountry="us"
         />
 
@@ -72,19 +74,21 @@ const EditTenantModal = ({ open, onOpenChange, tenantName = "" }: Props) => {
           onValueChange={setRole}
           options={[
             { label: "Head of Household", value: "head" },
-            { label: "Family Member", value: "family" },
+            { label: "Family Member", value: "family" }
           ]}
         />
       </div>
 
       {/* Footer */}
       <div className="px-6 pb-6 flex justify-end items-center gap-4">
-        <Button variant="outline-transparent" size="lg" onClick={() => onOpenChange(false)}>
+        <Button
+          variant="outline-transparent"
+          size="lg"
+          onClick={() => onOpenChange(false)}
+        >
           Cancel
         </Button>
-        <Button size="lg">
-          Save Changes
-        </Button>
+        <Button size="lg">Save Changes</Button>
       </div>
     </Modal>
   );

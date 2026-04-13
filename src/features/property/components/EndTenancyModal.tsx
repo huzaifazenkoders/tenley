@@ -30,7 +30,8 @@ const EndTenancyModal = ({ open, onOpenChange }: Props) => {
             </div>
             <Dialog.Description asChild>
               <p className="text-brand-Text-500 text-base font-medium leading-5">
-                This will end the tenant's lease and archive their record. The unit will be marked as vacant.
+                This will end the tenant&apos;s lease and archive their record.
+                The unit will be marked as vacant.
               </p>
             </Dialog.Description>
           </div>
@@ -50,7 +51,11 @@ const EndTenancyModal = ({ open, onOpenChange }: Props) => {
 
         {/* Footer */}
         <div className="flex items-center justify-end gap-6">
-          <Button variant="outline-transparent" size="lg" onClick={() => onOpenChange(false)}>
+          <Button
+            variant="outline-transparent"
+            size="lg"
+            onClick={() => onOpenChange(false)}
+          >
             Cancel
           </Button>
           <Button size="lg" onClick={() => onOpenChange(false)}>

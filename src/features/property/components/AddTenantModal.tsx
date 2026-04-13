@@ -234,7 +234,7 @@ const AddTenantModal = ({
                 label="Phone Number"
                 placeholder="Enter phone number"
                 value={phone}
-                onChange={setPhone}
+                onChange={(p) => setPhone(p)}
                 defaultCountry="us"
                 containerClassName="flex-1"
               />
