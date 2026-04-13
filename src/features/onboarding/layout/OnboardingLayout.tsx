@@ -9,9 +9,10 @@ const OnboardingLayout = ({ children }: { children: React.ReactNode }) => {
       <div className="flex-col-4 justify-between items-center md:items-start min-h-dvh h-full py-6 px-10 w-full">
         <Image
           src={AuthLogo}
-          alt=""
+          alt="Tenley Logo"
           height={77}
           width={177}
+          priority
           className="hidden md:block"
         />
         {children}

@@ -24,6 +24,7 @@ const SidebarExpanded = ({
           alt="Logo"
           width={128}
           height={56}
+          priority
           className=""
         />
       </div>

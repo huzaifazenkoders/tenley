@@ -10,9 +10,10 @@ const AuthFormWrapper = ({ children }: { children: React.ReactNode }) => {
     <div className="flex-col-4 justify-between items-center md:items-start h-full py-6 px-10">
       <Image
         src={AuthLogo}
-        alt=""
+        alt="Tenley Logo"
         height={77}
         width={177}
+        priority
         className="hidden md:block"
       />
       <div className="flex center w-full">
