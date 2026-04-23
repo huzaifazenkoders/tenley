@@ -21,7 +21,8 @@ const defaultFormData: PropertyFormData = {
   floors: "",
   gateCode: "",
   city: "",
-  state: ""
+  state: "",
+  accessDetails: ""
 };
 
 const AddManualPropertyView = () => {

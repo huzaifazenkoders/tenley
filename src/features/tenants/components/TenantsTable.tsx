@@ -145,9 +145,9 @@ const TenantsTable = () => {
             containerClassName="w-96"
           />
           <div className="flex items-center gap-4 ml-auto">
-            <Button size="sm" onClick={() => setImportOpen(true)}>
+            {/* <Button size="sm" onClick={() => setImportOpen(true)}>
               <FileUp className="size-4" /> Import CSV
-            </Button>
+            </Button> */}
             <DateSelector
               trigger={
                 <Button

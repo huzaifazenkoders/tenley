@@ -86,15 +86,15 @@ const stats = [
         <path
           d="M22 18C22 18.75 21.79 19.46 21.42 20.06C21.21 20.42 20.94 20.74 20.63 21C19.93 21.63 19.01 22 18 22C16.54 22 15.27 21.22 14.58 20.06C14.21 19.46 14 18.75 14 18C14 16.74 14.58 15.61 15.5 14.88C16.19 14.33 17.06 14 18 14C20.21 14 22 15.79 22 18Z"
           stroke="#DB3E31"
-          stroke-width="1.5"
-          stroke-miterlimit="10"
+          strokeWidth="1.5"
+          strokeMiterlimit="10"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
           d="M16.4414 18.0005L17.4314 18.9905L19.5614 17.0205"
           stroke="#DB3E31"
-          stroke-width="1.5"
+          strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -115,28 +115,28 @@ const stats = [
         <path
           d="M9.15859 10.87C9.05859 10.86 8.93859 10.86 8.82859 10.87C6.44859 10.79 4.55859 8.84 4.55859 6.44C4.55859 3.99 6.53859 2 8.99859 2C11.4486 2 13.4386 3.99 13.4386 6.44C13.4286 8.84 11.5386 10.79 9.15859 10.87Z"
           stroke="#DB3E31"
-          stroke-width="1.5"
+          strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
           d="M16.4112 4C18.3512 4 19.9112 5.57 19.9112 7.5C19.9112 9.39 18.4113 10.93 16.5413 11C16.4613 10.99 16.3713 10.99 16.2812 11"
           stroke="#DB3E31"
-          stroke-width="1.5"
+          strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
           d="M4.15875 14.56C1.73875 16.18 1.73875 18.82 4.15875 20.43C6.90875 22.27 11.4188 22.27 14.1688 20.43C16.5888 18.81 16.5888 16.17 14.1688 14.56C11.4288 12.73 6.91875 12.73 4.15875 14.56Z"
           stroke="#DB3E31"
-          stroke-width="1.5"
+          strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
           d="M18.3398 20C19.0598 19.85 19.7398 19.56 20.2998 19.13C21.8598 17.96 21.8598 16.03 20.2998 14.86C19.7498 14.44 19.0798 14.16 18.3698 14"
           stroke="#DB3E31"
-          stroke-width="1.5"
+          strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -157,35 +157,35 @@ const stats = [
         <path
           d="M2 22H22"
           stroke="#DB3E31"
-          stroke-width="1.5"
+          strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
           d="M12 6C7.03 6 3 10.03 3 15V22H21V15C21 10.03 16.97 6 12 6Z"
           stroke="#DB3E31"
-          stroke-width="1.5"
+          strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
           d="M12 2V3"
           stroke="#DB3E31"
-          stroke-width="1.5"
+          strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
           d="M4 4L5 5"
           stroke="#DB3E31"
-          stroke-width="1.5"
+          strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
           d="M20 4L19 5"
           stroke="#DB3E31"
-          stroke-width="1.5"
+          strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />

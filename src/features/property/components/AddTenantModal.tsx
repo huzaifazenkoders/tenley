@@ -199,46 +199,38 @@ const AddTenantModal = ({
           </Dialog.Title>
 
           {/* Form */}
-          <div className="flex flex-col gap-6">
-            <div className="flex gap-6">
-              <TextInput
-                label="Email"
-                placeholder="Enter email address"
-                value={email}
-                setValue={setEmail}
-                type="email"
-                containerClassName="flex-1"
-                disabled={!!prefill}
-              />
-              <Select
-                label="Tenant Type"
-                placeholder="Select tenant type"
-                value={role}
-                onValueChange={setRole}
-                containerClassName="flex-1"
-                options={[
-                  { label: "Head of Household", value: "head" },
-                  { label: "Family Member", value: "family" }
-                ]}
-              />
-            </div>
-            <div className="flex gap-6">
-              <TextInput
-                label="Tenant Name"
-                placeholder="Enter tenant name"
-                value={name}
-                setValue={setName}
-                containerClassName="flex-1"
-              />
-              <PhoneInput
-                label="Phone Number"
-                placeholder="Enter phone number"
-                value={phone}
-                onChange={(p) => setPhone(p)}
-                defaultCountry="us"
-                containerClassName="flex-1"
-              />
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <TextInput
+              label="Email"
+              placeholder="Enter email address"
+              value={email}
+              setValue={setEmail}
+              type="email"
+              disabled={!!prefill}
+            />
+            <Select
+              label="Tenant Type"
+              placeholder="Select tenant type"
+              value={role}
+              onValueChange={setRole}
+              options={[
+                { label: "Head of Household", value: "head" },
+                { label: "Family Member", value: "family" }
+              ]}
+            />
+            <TextInput
+              label="Tenant Name"
+              placeholder="Enter tenant name"
+              value={name}
+              setValue={setName}
+            />
+            <PhoneInput
+              label="Phone Number"
+              placeholder="Enter phone number"
+              value={phone}
+              onChange={(p) => setPhone(p)}
+              defaultCountry="us"
+            />
           </div>
 
           <hr className="border-brand-Text-100" />

@@ -1,35 +1,12 @@
 "use client";
-import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
-import { Check } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { TypographyStyles } from "@/styles/common-typography";
 import { ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
-const Checkbox = ({
-  checked,
-  onCheckedChange
-}: {
-  checked: boolean;
-  onCheckedChange: (v: boolean) => void;
-}) => (
-  <CheckboxPrimitive.Root
-    checked={checked}
-    onCheckedChange={onCheckedChange}
-    className={cn(
-      "cursor-pointer",
-      "size-6 rounded-md border-2 border-primary flex items-center justify-center transition-colors",
-      checked && "bg-primary border-primary"
-    )}
-  >
-    <CheckboxPrimitive.Indicator>
-      <Check className="size-4 text-white" strokeWidth={2.5} />
-    </CheckboxPrimitive.Indicator>
-  </CheckboxPrimitive.Root>
-);
+import Checkbox from "@/components/ui/checkbox";
 
 const policies = [
   {

@@ -14,8 +14,7 @@ type Props = {
 };
 
 const EditTenantModal = ({ open, onOpenChange, tenantName = "" }: Props) => {
-  const [firstName, setFirstName] = useState(tenantName.split(" ")[0] ?? "");
-  const [lastName, setLastName] = useState(tenantName.split(" ")[1] ?? "");
+  const [fulltName, setFullName] = useState(tenantName.split(" ")[0] ?? "");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [role, setRole] = useState("");
@@ -33,23 +32,14 @@ const EditTenantModal = ({ open, onOpenChange, tenantName = "" }: Props) => {
       </div>
 
       {/* Body */}
-      <div className="p-6 flex flex-col gap-4">
-        <div className="flex gap-4">
-          <TextInput
-            label="First Name"
-            placeholder="Enter first name"
-            value={firstName}
-            setValue={setFirstName}
-            containerClassName="flex-1"
-          />
-          <TextInput
-            label="Last Name"
-            placeholder="Enter last name"
-            value={lastName}
-            setValue={setLastName}
-            containerClassName="flex-1"
-          />
-        </div>
+      <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <TextInput
+          label="Full Name"
+          placeholder="Enter full name"
+          value={fulltName}
+          setValue={setFullName}
+          containerClassName="flex-1"
+        />
 
         <TextInput
           label="Email Address"

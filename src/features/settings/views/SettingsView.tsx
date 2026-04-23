@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Building2, CreditCard, User, Wallet } from "lucide-react";
+import { Building2, CreditCard, User } from "lucide-react";
 import { useQueryState } from "nuqs";
 import GeneralInfoTab from "../components/GeneralInfoTab";
 import CompanyInfoTab from "../components/CompanyInfoTab";
@@ -9,8 +9,8 @@ import BillingTab from "../components/BillingTab";
 const tabs = [
   { id: "general", label: "General Info", icon: User },
   { id: "company", label: "Company Info", icon: Building2 },
-  { id: "billing", label: "Billing", icon: CreditCard },
-  { id: "payment", label: "Payment Methods", icon: Wallet }
+  { id: "billing", label: "Billing", icon: CreditCard }
+  // { id: "payment", label: "Payment Methods", icon: Wallet }
 ];
 
 const SettingsView = () => {

@@ -14,7 +14,11 @@ const EmergencyRecordByIdView = ({ id }: { id: string }) => {
     <div className="px-6 py-10 flex flex-col gap-6 w-full">
       {/* Breadcrumb */}
       <div className="">
-        <Button variant={"ghost"} className="font-normal px-2">
+        <Button
+          variant={"ghost"}
+          className="font-normal px-2"
+          link="/emergency-records"
+        >
           <ArrowLeft className="size-4" />
           Emergency List
         </Button>
@@ -44,9 +48,9 @@ const EmergencyRecordByIdView = ({ id }: { id: string }) => {
       </div>
 
       {/* Content */}
-      <div className="flex gap-6 items-start">
+      <div className="flex flex-col md:flex-row gap-6 items-start">
         {/* Left column */}
-        <div className="w-[474px] shrink-0 flex flex-col gap-6">
+        <div className="w-full md:w-[42%] shrink-0 flex flex-col gap-6">
           <EmergencyDetails />
           <AssignedStaff />
         </div>

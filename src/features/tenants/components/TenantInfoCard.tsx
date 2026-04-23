@@ -123,7 +123,7 @@ const TenantMemberCard = ({
                   label: (
                     <span className="flex items-center gap-2 text-Error-Red-60">
                       <UserMinus className="size-4" />
-                      Remove Tenant
+                      End Tenant
                     </span>
                   ),
                   onClick: () => onRemove()

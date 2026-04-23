@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
+import { Fragment } from "react/jsx-runtime";
 
 const stepLabels = ["Company Profile", "Subscription", "Terms & Privacy"];
 
@@ -66,7 +67,7 @@ const OnboardingStepper = ({ currentStep }: { currentStep: number }) => {
           steps[index].status === "complete" ? "complete" : "upcoming";
 
         return (
-          <>
+          <Fragment key={index}>
             <div
               key={`label-${step.id}`}
               className="flex min-h-12 items-center justify-end text-base text-text-primary"
@@ -87,7 +88,7 @@ const OnboardingStepper = ({ currentStep }: { currentStep: number }) => {
                 </div>
               </>
             )}
-          </>
+          </Fragment>
         );
       })}
     </div>

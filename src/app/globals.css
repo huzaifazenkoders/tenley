@@ -40,6 +40,7 @@
   --color-brand-primary-red-400:var(--brand-primary-red-400);
   --color-brand-primary-red-500:var(--brand-primary-red-500);
   --color-brand-primary-red-600-d:var(--brand-primary-red-600-d);
+  --color-brand-primary-red-950:var(--brand-primary-red-950);
   --color-brand-primary-red-700:var(--brand-primary-red-700);
   --color-Primary-Green-50:var(--Primary-Green-50);
   --color-gray-light-50:var(--gray-light-50);
@@ -67,7 +68,7 @@
   --text-primary:#000000;
   --text-secondary:#6D6D6D;
   --border-primary:#DCDFE4;
-  --gradient:linear-gradient(180deg, #ED5346 100%, #DB3E31 100%);
+  --gradient: linear-gradient(180deg, #ED5346 0%, #DB3E31 100%);;
   --custom-scrollbar: #e4e4e4;
   --custom-scrollbar-2: #000000;
   --surface:#FFFFFF;
@@ -85,6 +86,7 @@
   --brand-Text-50:#F6F6F6;
   --brand-primary-red-700:#B52E23;
   --brand-primary-red-600-d:#DB3E31;
+  --brand-primary-red-950:#3B0A08;
   --brand-primary-red-500:#ED5346;
   --brand-primary-red-400:#F67D73;
   --brand-primary-red-300:#F9A09A;

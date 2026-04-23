@@ -1,9 +1,8 @@
 "use client";
-import Image from "next/image";
-import React from "react";
-import Logo from "@/../public/assets/notifications/tenley-logo.svg";
 import NoData from "@/../public/assets/notifications/no-notifications.svg";
+import Logo from "@/../public/assets/notifications/tenley-logo.svg";
 import { TypographyStyles } from "@/styles/common-typography";
+import Image from "next/image";
 
 const notifications = [
   {

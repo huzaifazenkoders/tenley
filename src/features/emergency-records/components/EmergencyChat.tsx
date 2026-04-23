@@ -39,7 +39,7 @@ const messages: Message[] = [
 ];
 
 const EmergencyChat = () => (
-  <div className="flex-1 bg-brand-base-white rounded-[20px] shadow-[0px_1px_10px_0px_rgba(0,0,0,0.08)] outline -outline-offset-1 outline-brand-Text-100 flex flex-col min-h-0">
+  <div className="flex-1 h-full bg-brand-base-white rounded-[20px] shadow-[0px_1px_10px_0px_rgba(0,0,0,0.08)] outline -outline-offset-1 outline-brand-Text-100 flex flex-col min-h-0">
     <div className="p-6 flex items-center gap-3">
       <div className="p-2 bg-brand-primary-red-50 rounded-lg">
         <MessageSquare className="size-5 text-brand-primary-red-600-d" />

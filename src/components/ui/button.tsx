@@ -10,7 +10,7 @@ import NextLink from "next/link";
 const buttonVariants = cva(
   cn(
     "inline-flex items-center justify-center gap-2 relative",
-    "whitespace-nowrap cursor-pointer rounded-md outline-none",
+    "whitespace-nowrap cursor-pointer rounded-lg outline-none",
     "font-semibold transition-all duration-200 disabled:cursor-not-allowed data-[externaldisabled=true]:opacity/90",
     "[&_svg]:pointer-events-none shrink-0 [&_svg]:shrink-0",
     "relative overflow-hidden",
@@ -20,7 +20,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-[image:var(--gradient)] [&_.loader-container]:bg-[image:var(--gradient)] hover:opacity-90 text-white",
+          "bg-[image:var(--gradient)] [&_.loader-container]:bg-[image:var(--gradient)] hover:opacity-90 text-white border border-[#B72A1E]",
         ["outline-transparent"]:
           "text-text-primary border border-border-primary hover:bg-black/5 disabled:hover:bg-transparent shadow-[0px_1px_2px_0px_#00000014]",
         outline:

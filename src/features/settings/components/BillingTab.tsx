@@ -1,6 +1,8 @@
 "use client";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Download } from "lucide-react";
+import InvoiceSheet from "./InvoiceSheet";
 
 const plans = [
   {
@@ -88,6 +90,7 @@ const FeatureItem = ({ label }: { label: string }) => (
 );
 
 const BillingTab = () => {
+  const [invoiceOpen, setInvoiceOpen] = useState(false);
   return (
     <div className="flex flex-col gap-6">
       {/* Plan Cards */}
@@ -207,9 +210,13 @@ const BillingTab = () => {
                     </span>
                   </td>
                   <td className="px-4 py-3.5 h-16">
-                    <button className="text-brand-Text-600 hover:text-brand-Text-950-d transition-colors">
-                      <Download className="size-5" />
-                    </button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setInvoiceOpen(true)}
+                    >
+                      <Download className="size-5 text-brand-Text-600" />
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -217,6 +224,7 @@ const BillingTab = () => {
           </table>
         </div>
       </div>
+      <InvoiceSheet open={invoiceOpen} onOpenChange={setInvoiceOpen} />
     </div>
   );
 };

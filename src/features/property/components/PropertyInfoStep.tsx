@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import Select from "@/components/ui/select";
 import TextInput from "@/components/ui/text-input";
+import Textarea from "@/components/ui/textarea";
 import { CloudUpload } from "lucide-react";
 
 export type PropertyFormData = {
@@ -15,12 +16,15 @@ export type PropertyFormData = {
   gateCode: string;
   city: string;
   state: string;
+  accessDetails: string;
 };
 
 type Props = {
   data: PropertyFormData;
   onChange: (patch: Partial<PropertyFormData>) => void;
 };
+
+const isBungalow = (type: string) => type === "bungalow";
 
 const PropertyInfoStep = ({ data, onChange }: Props) => (
   <div className="p-6 bg-brand-base-white rounded-[20px] shadow-[0px_1px_10px_0px_rgba(0,0,0,0.08)] outline outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col gap-6">
@@ -63,28 +67,32 @@ const PropertyInfoStep = ({ data, onChange }: Props) => (
 
     {/* Property Type + Purpose */}
     <div className="flex items-start gap-6">
-      <Select
-        label="Property Type"
-        value={data.propertyType}
-        onValueChange={(v) => onChange({ propertyType: v })}
-        placeholder="Select type"
-        options={[
-          { label: "Bungalow", value: "bungalow" },
-          { label: "Mall", value: "mall" },
-          { label: "Office", value: "office" },
-          { label: "Apartment", value: "apartment" }
-        ]}
-      />
-      <Select
-        label="Property Purpose"
-        value={data.propertyPurpose}
-        onValueChange={(v) => onChange({ propertyPurpose: v })}
-        placeholder="Select purpose"
-        options={[
-          { label: "Residential", value: "residential" },
-          { label: "Commercial", value: "commercial" }
-        ]}
-      />
+      <div className="w-1/2">
+        <Select
+          label="Property Type"
+          value={data.propertyType}
+          onValueChange={(v) => onChange({ propertyType: v })}
+          placeholder="Select type"
+          options={[
+            { label: "Bungalow", value: "bungalow" },
+            { label: "Mall", value: "mall" },
+            { label: "Office", value: "office" },
+            { label: "Apartment", value: "apartment" }
+          ]}
+        />
+      </div>
+      <div className="w-1/2">
+        <Select
+          label="Property Purpose"
+          value={data.propertyPurpose}
+          onValueChange={(v) => onChange({ propertyPurpose: v })}
+          placeholder="Select purpose"
+          options={[
+            { label: "Residential", value: "residential" },
+            { label: "Commercial", value: "commercial" }
+          ]}
+        />
+      </div>
     </div>
 
     {/* Property Address */}
@@ -130,34 +138,37 @@ const PropertyInfoStep = ({ data, onChange }: Props) => (
     </div>
 
     {/* Units + Floors */}
-    <div className="flex items-start gap-6">
-      <TextInput
-        label="Number of Units"
-        value={data.units}
-        setValue={(v) => onChange({ units: v })}
-        placeholder="e.g. 60"
-        type="number"
-        containerClassName="flex-1"
-      />
-      <TextInput
-        label="Number of Floors (Optional)"
-        value={data.floors}
-        setValue={(v) => onChange({ floors: v })}
-        placeholder="e.g. 10"
-        type="number"
-        containerClassName="flex-1"
-      />
-    </div>
+    {!isBungalow(data.propertyType) && (
+      <div className="flex items-start gap-6">
+        <TextInput
+          label="Number of Units"
+          value={data.units}
+          setValue={(v) => onChange({ units: v })}
+          placeholder="e.g. 60"
+          type="number"
+          containerClassName="flex-1"
+        />
+        <TextInput
+          label="Number of Floors (Optional)"
+          value={data.floors}
+          setValue={(v) => onChange({ floors: v })}
+          placeholder="e.g. 10"
+          type="number"
+          containerClassName="flex-1"
+        />
+      </div>
+    )}
+
+    {/* Access Details */}
+    <Textarea
+      label="Access Details (Optional)"
+      value={data.accessDetails}
+      onChange={(e) => onChange({ accessDetails: e.target.value })}
+      placeholder="e.g. Gate code, key location, entry instructions..."
+    />
 
     {/* Gate Code + City + State */}
     <div className="flex items-start gap-6">
-      <TextInput
-        label="Gate Code (Optional)"
-        value={data.gateCode}
-        setValue={(v) => onChange({ gateCode: v })}
-        placeholder="e.g. G-153"
-        containerClassName="flex-1"
-      />
       <TextInput
         label="City"
         value={data.city}

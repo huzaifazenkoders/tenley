@@ -215,13 +215,7 @@ const EmergencyRecordTable = () => {
                 </span>
               </TableCell>
               <TableCell>
-                {row.staffCount === 0 ? (
-                  <Button variant={"outline"} size={"sm"}>
-                    Assign
-                  </Button>
-                ) : (
-                  <AvatarStack count={row.staffCount} />
-                )}
+                <AvatarStack count={row.staffCount} />
               </TableCell>
               <TableCell>
                 <span className="text-brand-Text-500 text-sm font-normal">

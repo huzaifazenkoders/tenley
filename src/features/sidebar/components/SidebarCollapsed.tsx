@@ -31,7 +31,7 @@ const SidebarCollapsed = ({ currentPathname }: { currentPathname: string }) => {
               {section.label}
             </span>
             <div className="flex flex-col gap-2">
-              {section.items.map(({ id, icon: Icon, href }) => {
+              {section.items.map(({ id, icon, href }) => {
                 const isActive =
                   currentPathname === href ||
                   (currentPathname.startsWith(href) && href !== "/");
@@ -47,12 +47,7 @@ const SidebarCollapsed = ({ currentPathname }: { currentPathname: string }) => {
                       "w-full justify-center"
                     )}
                   >
-                    <Icon
-                      className={cn(
-                        "size-5 shrink-0",
-                        isActive ? "text-white" : "text-brand-Text-600"
-                      )}
-                    />
+                    {icon(isActive)}
                   </Link>
                 );
               })}

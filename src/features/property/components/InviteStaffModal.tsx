@@ -17,7 +17,7 @@ const ROLES = [
   { label: "Maintenance Supervisor", value: "maintenance_supervisor" },
   { label: "Property Manager", value: "property_manager" },
   { label: "Leasing Agent", value: "leasing_agent" },
-  { label: "Office Coordinator", value: "office_coordinator" },
+  { label: "Office Coordinator", value: "office_coordinator" }
 ];
 
 const ALL_PERMISSIONS = [
@@ -28,7 +28,7 @@ const ALL_PERMISSIONS = [
   { key: "emergencies", label: "Emergencies" },
   { key: "notifications", label: "Notifications" },
   { key: "analytics", label: "Analytics & Reports" },
-  { key: "settings", label: "Settings" },
+  { key: "settings", label: "Settings" }
 ];
 
 const DEFAULT_PERMISSIONS: Record<string, boolean> = {
@@ -39,10 +39,16 @@ const DEFAULT_PERMISSIONS: Record<string, boolean> = {
   emergencies: true,
   notifications: true,
   analytics: true,
-  settings: true,
+  settings: true
 };
 
-const Toggle = ({ checked, onChange }: { checked: boolean; onChange: () => void }) => (
+const Toggle = ({
+  checked,
+  onChange
+}: {
+  checked: boolean;
+  onChange: () => void;
+}) => (
   <button
     type="button"
     role="switch"
@@ -50,7 +56,9 @@ const Toggle = ({ checked, onChange }: { checked: boolean; onChange: () => void 
     onClick={onChange}
     className={cn(
       "w-9 h-5 p-0.5 rounded-xl flex items-center transition-colors duration-200",
-      checked ? "bg-brand-primary-red-600-d justify-end" : "bg-Text-200 justify-start"
+      checked
+        ? "bg-brand-primary-red-600-d justify-end"
+        : "bg-Text-200 justify-start"
     )}
   >
     <div className="size-4 bg-white rounded-full shadow-[0px_1px_2px_0px_rgba(16,24,40,0.06),0px_1px_3px_0px_rgba(16,24,40,0.10)]" />
@@ -62,7 +70,8 @@ const InviteStaffModal = ({ open, onOpenChange }: Props) => {
   const [name, setName] = useState("");
   const [designation, setDesignation] = useState("");
   const [role, setRole] = useState("");
-  const [permissions, setPermissions] = useState<Record<string, boolean>>(DEFAULT_PERMISSIONS);
+  const [permissions, setPermissions] =
+    useState<Record<string, boolean>>(DEFAULT_PERMISSIONS);
 
   const enabledCount = Object.values(permissions).filter(Boolean).length;
 
@@ -70,7 +79,11 @@ const InviteStaffModal = ({ open, onOpenChange }: Props) => {
     setPermissions((prev) => ({ ...prev, [key]: !prev[key] }));
 
   return (
-    <Modal open={open} onOpenChange={onOpenChange} className="w-[836px] p-6 flex flex-col gap-5 max-h-[90vh] overflow-y-auto custom-scrollbar">
+    <Modal
+      open={open}
+      onOpenChange={onOpenChange}
+      className="w-[836px] p-6 flex flex-col gap-5 max-h-[90vh] overflow-y-auto custom-scrollbar"
+    >
       {/* Header */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
@@ -85,50 +98,46 @@ const InviteStaffModal = ({ open, onOpenChange }: Props) => {
           <ModalClose />
         </div>
         <Dialog.Description className="text-brand-Text-500 text-sm font-normal leading-5">
-          Enter the employee&apos;s email address and assign their role. They&apos;ll receive an email invitation to join and manage assigned properties.
+          Enter the employee&apos;s email address and assign their role.
+          They&apos;ll receive an email invitation to join and manage assigned
+          properties.
         </Dialog.Description>
       </div>
 
       {/* Form */}
       <div className="p-4 rounded-2xl flex flex-col gap-6">
-        <div className="flex flex-col gap-6">
-          {/* Row 1: Email + Name */}
-          <div className="flex items-start gap-6">
-            <TextInput
-              label="Email"
-              value={email}
-              setValue={setEmail}
-              placeholder="alexander@example.com"
-              type="email"
-              containerClassName="flex-1"
-            />
-            <TextInput
-              label="Name"
-              value={name}
-              setValue={setName}
-              placeholder="Alexander McGurk"
-              containerClassName="flex-1"
-            />
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <TextInput
+            label="Email"
+            value={email}
+            setValue={setEmail}
+            placeholder="alexander@example.com"
+            type="email"
+            containerClassName="flex-1"
+          />
+          <TextInput
+            label="Name"
+            value={name}
+            setValue={setName}
+            placeholder="Alexander McGurk"
+            containerClassName="flex-1"
+          />
 
-          {/* Row 2: Designation + Role */}
-          <div className="flex items-start gap-6">
-            <TextInput
-              label="Designation"
-              value={designation}
-              setValue={setDesignation}
-              placeholder="Jr. Maintenance Supervisor"
-              containerClassName="flex-1"
-            />
-            <Select
-              label="Role"
-              value={role}
-              onValueChange={setRole}
-              placeholder="Select role"
-              options={ROLES}
-              containerClassName="flex-1"
-            />
-          </div>
+          <TextInput
+            label="Designation"
+            value={designation}
+            setValue={setDesignation}
+            placeholder="Jr. Maintenance Supervisor"
+            containerClassName="flex-1"
+          />
+          <Select
+            label="Role"
+            value={role}
+            onValueChange={setRole}
+            placeholder="Select role"
+            options={ROLES}
+            containerClassName="flex-1"
+          />
         </div>
 
         {/* Permissions — visible when role is selected */}
@@ -136,7 +145,9 @@ const InviteStaffModal = ({ open, onOpenChange }: Props) => {
           <div className="p-4 bg-brand-Text-50 rounded-xl flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <div className="flex flex-col gap-1">
-                <span className="text-brand-Text-950-d text-xl font-semibold leading-6">Permissions</span>
+                <span className="text-brand-Text-950-d text-xl font-semibold leading-6">
+                  Permissions
+                </span>
                 <span className="text-brand-Text-600 text-xs font-normal leading-4">
                   Configure specific access controls for this staff member
                 </span>
@@ -152,10 +163,13 @@ const InviteStaffModal = ({ open, onOpenChange }: Props) => {
                   key={key}
                   className={cn(
                     "px-4 py-2 bg-brand-Text-50 flex items-center justify-between",
-                    i < ALL_PERMISSIONS.length - 1 && "border-b border-brand-Text-100"
+                    i < ALL_PERMISSIONS.length - 1 &&
+                      "border-b border-brand-Text-100"
                   )}
                 >
-                  <span className="text-brand-Text-800 text-sm font-medium leading-5">{label}</span>
+                  <span className="text-brand-Text-800 text-sm font-medium leading-5">
+                    {label}
+                  </span>
                   <Toggle
                     checked={permissions[key] ?? false}
                     onChange={() => togglePermission(key)}
@@ -171,7 +185,11 @@ const InviteStaffModal = ({ open, onOpenChange }: Props) => {
       <hr className="border-brand-Text-100" />
       <Dialog.Close asChild>
         <div className="flex justify-end items-center gap-6">
-          <Button variant="outline-transparent" size="lg" onClick={() => onOpenChange(false)}>
+          <Button
+            variant="outline-transparent"
+            size="lg"
+            onClick={() => onOpenChange(false)}
+          >
             Cancel
           </Button>
           <Button size="lg">Assign Staff</Button>

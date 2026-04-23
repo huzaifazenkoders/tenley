@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { FileText, Upload } from "lucide-react";
+import { FileUp, PenLine } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ImportPropertyCSVModal from "../components/ImportPropertyCSVModal";
@@ -17,18 +17,18 @@ const methods: {
 }[] = [
   {
     id: "csv",
-    icon: <Upload className="size-8 text-brand-primary-red-600-d" />,
+    icon: <FileUp className="size-8 text-brand-primary-red-600-d" />,
     title: "Upload Property via CSV",
     description:
-      "Upload a CSV file to add multiple properties at once. Perfect for bulk imports.",
+      "Upload a CSV file to add multiple properties at once. Perfect for bulk imports."
   },
   {
     id: "manual",
-    icon: <FileText className="size-8 text-brand-Text-950-d" />,
+    icon: <PenLine className="size-8 text-brand-Text-950-d" />,
     title: "Enter Property Details Manually",
     description:
-      "Add one property at a time by filling out a guided form. Best for single or complex properties.",
-  },
+      "Add one property at a time by filling out a guided form. Best for single or complex properties."
+  }
 ];
 
 const AddPropertyView = () => {
@@ -38,7 +38,7 @@ const AddPropertyView = () => {
   const [manualModalOpen, setManualModalOpen] = useState(false);
 
   return (
-    <div className="px-6 pt-10 pb-6 flex flex-col gap-10 w-full">
+    <div className="px-6 pt-10 pb-6 flex flex-col gap-10 w-full h-full">
       {/* Header */}
       <div className="flex items-end justify-between gap-8">
         <div className="flex flex-col gap-3">
@@ -71,7 +71,7 @@ const AddPropertyView = () => {
       </div>
 
       {/* Method cards */}
-      <div className="flex items-center gap-10">
+      <div className="flex items-center gap-10 h-full justify-center">
         {methods.map(({ id, icon, title, description }) => {
           const isActive = selected === id;
           return (
@@ -87,6 +87,7 @@ const AddPropertyView = () => {
             >
               <div
                 className={cn(
+                  "w-fit",
                   "p-3 rounded-full inline-flex",
                   isActive ? "bg-brand-primary-red-50" : "bg-brand-Text-50"
                 )}
@@ -119,8 +120,14 @@ const AddPropertyView = () => {
           );
         })}
       </div>
-      <ImportPropertyCSVModal open={csvModalOpen} onOpenChange={setCsvModalOpen} />
-      <AddPropertyManualModal open={manualModalOpen} onOpenChange={setManualModalOpen} />
+      <ImportPropertyCSVModal
+        open={csvModalOpen}
+        onOpenChange={setCsvModalOpen}
+      />
+      <AddPropertyManualModal
+        open={manualModalOpen}
+        onOpenChange={setManualModalOpen}
+      />
     </div>
   );
 };

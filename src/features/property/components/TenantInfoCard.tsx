@@ -85,7 +85,7 @@ const TenantRow = ({ tenant }: { tenant: Tenant }) => {
                   value: "remove",
                   label: (
                     <span className="text-brand-primary-red-600-d">
-                      Remove Tenant
+                      End Tenant
                     </span>
                   ),
                   onClick: () => setEndOpen(true)

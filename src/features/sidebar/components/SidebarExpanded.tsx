@@ -1,13 +1,16 @@
+"use client";
 import AuthLogo from "@/../public/assets/auth/auth-logo.svg";
 import AvatarImage from "@/../public/assets/mock/person1.png";
 import { cn } from "@/lib/utils";
 import { MoreVertical } from "lucide-react";
 import Image from "next/image";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { navSections } from "../constants/SidebarItems";
 import Link from "next/link";
+import UpgradePlanModal from "./UpgradePlanModal";
 
 const SidebarExpanded = ({ currentPathname }: { currentPathname: string }) => {
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
   return (
     <Fragment>
       <div className="h-14 flex items-center overflow-hidden">
@@ -34,7 +37,7 @@ const SidebarExpanded = ({ currentPathname }: { currentPathname: string }) => {
               {section.label}
             </span>
             <div className="flex flex-col gap-2">
-              {section.items.map(({ id, label, icon: Icon, badge, href }) => {
+              {section.items.map(({ id, label, icon, badge, href }) => {
                 const isActive =
                   currentPathname === href ||
                   (currentPathname.startsWith(href) && href !== "/");
@@ -50,12 +53,7 @@ const SidebarExpanded = ({ currentPathname }: { currentPathname: string }) => {
                       "w-full"
                     )}
                   >
-                    <Icon
-                      className={cn(
-                        "size-5 shrink-0",
-                        isActive ? "text-white" : "text-brand-Text-600"
-                      )}
-                    />
+                    {icon(isActive)}
                     <span
                       className={cn(
                         "flex-1 text-sm font-medium leading-5 text-left whitespace-nowrap transition-all duration-300 overflow-hidden",
@@ -93,7 +91,10 @@ const SidebarExpanded = ({ currentPathname }: { currentPathname: string }) => {
             <div className="w-[52%] h-full bg-brand-primary-red-500 rounded-full" />
           </div>
         </div>
-        <button className="w-full px-4 py-1.5 bg-brand-primary-red-500 rounded-full text-white text-sm font-medium leading-5">
+        <button
+          onClick={() => setUpgradeOpen(true)}
+          className="w-full px-4 py-1.5 bg-brand-primary-red-500 rounded-full text-white text-sm font-medium leading-5"
+        >
           Upgrade Plan
         </button>
       </div>
@@ -125,6 +126,7 @@ const SidebarExpanded = ({ currentPathname }: { currentPathname: string }) => {
           <MoreVertical className="size-5 text-brand-Text-600 shrink-0" />
         </>
       </div>
+      <UpgradePlanModal open={upgradeOpen} onOpenChange={setUpgradeOpen} />
     </Fragment>
   );
 };

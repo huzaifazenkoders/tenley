@@ -15,13 +15,15 @@ const EmergencyRecordListView = () => {
   return (
     <div className="px-6 pt-10 pb-6 flex flex-col gap-5 w-full">
       <div className="flex flex-col gap-2">
-        <h1 className="text-brand-Text-950-d text-2xl font-bold leading-8">Emergencies</h1>
+        <h1 className="text-brand-Text-950-d text-2xl font-bold leading-8">
+          Emergencies
+        </h1>
         <p className="text-brand-Text-500 text-base font-normal leading-5">
           Monitor and manage emergency tickets
         </p>
       </div>
 
-      <div className="p-1 bg-[#F2F2F2] rounded-full inline-flex w-fit">
+      {/* <div className="p-1 bg-[#F2F2F2] rounded-full inline-flex w-fit">
         {tabs.map(({ id, label, icon: Icon }) => {
           const isActive = tab === id;
           return (
@@ -40,7 +42,7 @@ const EmergencyRecordListView = () => {
             </button>
           );
         })}
-      </div>
+      </div> */}
 
       <EmergencyRecordTable />
     </div>
