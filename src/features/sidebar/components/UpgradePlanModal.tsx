@@ -72,23 +72,23 @@ const UpgradePlanModal = ({ open, onOpenChange }: Props) => (
           <path
             d="M19.487 22.1439H8.52032C8.03032 22.1439 7.48198 21.7589 7.31865 21.2922L2.48865 7.78224C1.80032 5.84557 2.60532 5.25057 4.26198 6.44057L8.81198 9.69557C9.57032 10.2206 10.4337 9.95224 10.7603 9.10057L12.8137 3.62891C13.467 1.87891 14.552 1.87891 15.2053 3.62891L17.2587 9.10057C17.5853 9.95224 18.4487 10.2206 19.1953 9.69557L23.4653 6.65057C25.2853 5.34391 26.1603 6.00891 25.4137 8.12057L20.7003 21.3156C20.5253 21.7589 19.977 22.1439 19.487 22.1439Z"
             stroke="#DB3E31"
-            stroke-width="1.75"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.75"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M7.58594 25.668H20.4193"
             stroke="#DB3E31"
-            stroke-width="1.75"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.75"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M11.0859 16.332H16.9193"
             stroke="#DB3E31"
-            stroke-width="1.75"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.75"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg>
       </div>

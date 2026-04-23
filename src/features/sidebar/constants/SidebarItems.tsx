@@ -16,16 +16,16 @@ export const navSections = [
             <path
               d="M10 15V12.5"
               stroke={isActive ? "white" : "#5D5D5D"}
-              stroke-width="1.25"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M8.39172 2.35053L2.61672 6.97553C1.96672 7.49219 1.55006 8.58386 1.69172 9.40053L2.80006 16.0339C3.00006 17.2172 4.13339 18.1755 5.33339 18.1755H14.6667C15.8584 18.1755 17.0001 17.2089 17.2001 16.0339L18.3084 9.40053C18.4417 8.58386 18.0251 7.49219 17.3834 6.97553L11.6084 2.35886C10.7167 1.64219 9.27506 1.64219 8.39172 2.35053Z"
               stroke={isActive ? "white" : "#5D5D5D"}
-              stroke-width="1.25"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </svg>
         ),
@@ -95,31 +95,31 @@ export const navSections = [
             <path
               d="M9.9987 10.0013C12.2999 10.0013 14.1654 8.13582 14.1654 5.83464C14.1654 3.53345 12.2999 1.66797 9.9987 1.66797C7.69751 1.66797 5.83203 3.53345 5.83203 5.83464C5.83203 8.13582 7.69751 10.0013 9.9987 10.0013Z"
               stroke={isActive ? "white" : "#5D5D5D"}
-              stroke-width="1.25"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M2.83984 18.3333C2.83984 15.1083 6.04817 12.5 9.99817 12.5C10.7982 12.5 11.5732 12.6083 12.2982 12.8083"
               stroke={isActive ? "white" : "#5D5D5D"}
-              stroke-width="1.25"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M18.3346 15.0013C18.3346 15.6263 18.1596 16.218 17.8513 16.718C17.6763 17.018 17.4513 17.2846 17.193 17.5013C16.6096 18.0263 15.843 18.3346 15.0013 18.3346C13.7846 18.3346 12.7263 17.6846 12.1513 16.718C11.843 16.218 11.668 15.6263 11.668 15.0013C11.668 13.9513 12.1513 13.0096 12.918 12.4013C13.493 11.943 14.218 11.668 15.0013 11.668C16.843 11.668 18.3346 13.1596 18.3346 15.0013Z"
               stroke={isActive ? "white" : "#5D5D5D"}
-              stroke-width="1.25"
+              strokeWidth="1.25"
               stroke-miterlimit="10"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M13.7031 15.0002L14.5281 15.8252L16.3031 14.1836"
               stroke={isActive ? "white" : "#5D5D5D"}
-              stroke-width="1.25"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </svg>
         ),
@@ -192,16 +192,16 @@ export const navSections = [
             <path
               d="M12.5 6.25V15.6773C12.5001 15.7801 12.5255 15.8813 12.574 15.9719C12.6225 16.0626 12.6926 16.1398 12.7781 16.1969L13.6375 16.7695C13.7209 16.8251 13.8164 16.8598 13.9159 16.8708C14.0155 16.8817 14.1163 16.8686 14.2097 16.8324C14.3032 16.7963 14.3865 16.7382 14.4528 16.6631C14.5191 16.5879 14.5664 16.498 14.5906 16.4008L15.625 12.5"
               stroke={isActive ? "white" : "#5D5D5D"}
-              stroke-width="1.25"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M3.125 15.6241C3.12503 15.7431 3.15904 15.8596 3.22305 15.96C3.28705 16.0604 3.37837 16.1403 3.48629 16.1906C3.5942 16.2408 3.71421 16.2592 3.8322 16.2435C3.95019 16.2278 4.06126 16.1788 4.15234 16.1022C8.24609 12.6678 12.5 12.4991 12.5 12.4991H15.625C16.4538 12.4991 17.2487 12.1698 17.8347 11.5838C18.4208 10.9977 18.75 10.2029 18.75 9.37407C18.75 8.54527 18.4208 7.75041 17.8347 7.16436C17.2487 6.57831 16.4538 6.24907 15.625 6.24907H12.5C12.5 6.24907 8.24609 6.08032 4.15234 2.64673C4.06131 2.57015 3.95031 2.52114 3.83239 2.50546C3.71447 2.48977 3.59452 2.50807 3.48664 2.5582C3.37876 2.60832 3.28742 2.6882 3.22336 2.78844C3.1593 2.88867 3.12518 3.00511 3.125 3.12407V15.6241Z"
               stroke={isActive ? "white" : "#5D5D5D"}
-              stroke-width="1.25"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </svg>
         ),
@@ -227,37 +227,37 @@ export const navSections = [
             <path
               d="M1.66797 18.332H18.3346"
               stroke={isActive ? "white" : "#5D5D5D"}
-              stroke-width="1.25"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M10 5C5.85833 5 2.5 8.35833 2.5 12.5V18.3333H17.5V12.5C17.5 8.35833 14.1417 5 10 5Z"
               stroke={isActive ? "white" : "#5D5D5D"}
-              stroke-width="1.25"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M10 1.66797V2.5013"
               stroke={isActive ? "white" : "#5D5D5D"}
-              stroke-width="1.25"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M3.33203 3.33203L4.16536 4.16536"
               stroke={isActive ? "white" : "#5D5D5D"}
-              stroke-width="1.25"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M16.6654 3.33203L15.832 4.16536"
               stroke={isActive ? "white" : "#5D5D5D"}
-              stroke-width="1.25"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </svg>
         ),
@@ -306,18 +306,18 @@ export const navSections = [
             <path
               d="M10 12.5C11.3807 12.5 12.5 11.3807 12.5 10C12.5 8.61929 11.3807 7.5 10 7.5C8.61929 7.5 7.5 8.61929 7.5 10C7.5 11.3807 8.61929 12.5 10 12.5Z"
               stroke={isActive ? "white" : "#5D5D5D"}
-              stroke-width="1.25"
+              strokeWidth="1.25"
               stroke-miterlimit="10"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <path
               d="M1.66797 10.7319V9.26523C1.66797 8.39856 2.3763 7.6819 3.2513 7.6819C4.75964 7.6819 5.3763 6.61523 4.61797 5.3069C4.18464 4.5569 4.44297 3.5819 5.2013 3.14856L6.64297 2.32356C7.3013 1.9319 8.1513 2.16523 8.54297 2.82356L8.63464 2.9819C9.38464 4.29023 10.618 4.29023 11.3763 2.9819L11.468 2.82356C11.8596 2.16523 12.7096 1.9319 13.368 2.32356L14.8096 3.14856C15.568 3.5819 15.8263 4.5569 15.393 5.3069C14.6346 6.61523 15.2513 7.6819 16.7596 7.6819C17.6263 7.6819 18.343 8.39023 18.343 9.26523V10.7319C18.343 11.5986 17.6346 12.3152 16.7596 12.3152C15.2513 12.3152 14.6346 13.3819 15.393 14.6902C15.8263 15.4486 15.568 16.4152 14.8096 16.8486L13.368 17.6736C12.7096 18.0652 11.8596 17.8319 11.468 17.1736L11.3763 17.0152C10.6263 15.7069 9.39297 15.7069 8.63464 17.0152L8.54297 17.1736C8.1513 17.8319 7.3013 18.0652 6.64297 17.6736L5.2013 16.8486C4.44297 16.4152 4.18464 15.4402 4.61797 14.6902C5.3763 13.3819 4.75964 12.3152 3.2513 12.3152C2.3763 12.3152 1.66797 11.5986 1.66797 10.7319Z"
               stroke={isActive ? "white" : "#5D5D5D"}
-              stroke-width="1.25"
+              strokeWidth="1.25"
               stroke-miterlimit="10"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </svg>
         ),
