@@ -24,6 +24,11 @@ interface PropsB {
   email: string;
   setView: ReactDispatch<SignUpForm>;
 }
+interface PropsC {
+  type: "verify-email";
+  email: string;
+  setView: () => void;
+}
 
 const validationSchema = Yup.object({
   otp: Yup.string()
@@ -33,7 +38,7 @@ const validationSchema = Yup.object({
     .required("OTP is required")
 });
 
-const OtpVerificationForm = (props: PropsA | PropsB) => {
+const OtpVerificationForm = (props: PropsA | PropsB | PropsC) => {
   const { setView, type, email } = props;
   const router = useRouter();
 
@@ -46,11 +51,13 @@ const OtpVerificationForm = (props: PropsA | PropsB) => {
       if (type === "sign-up") {
         const { error } = await signupComplete({ email, otp: trimmedOtp });
         setSubmitting(false);
-        if (error) {
-          toast.error(error);
-          return;
-        }
+        if (error) { toast.error(error); return; }
         router.replace("/onboarding");
+      } else if (type === "verify-email") {
+        const { error } = await signupComplete({ email, otp: trimmedOtp });
+        setSubmitting(false);
+        if (error) { toast.error(error); return; }
+        router.replace("/");
       } else {
         const { error } = await verifyOtp({ email, otp: trimmedOtp });
         setSubmitting(false);
@@ -90,9 +97,9 @@ const OtpVerificationForm = (props: PropsA | PropsB) => {
           variant="link"
           onClick={() =>
             type === "forgot-password"
-              ? (setView as ReactDispatch<ForgotPasswordForm>)(
-                  "forgot-password"
-                )
+              ? (setView as ReactDispatch<ForgotPasswordForm>)("forgot-password")
+              : type === "verify-email"
+              ? (setView as PropsC["setView"])()
               : (setView as ReactDispatch<SignUpForm>)("sign-up")
           }
         >

@@ -10,7 +10,10 @@ import { useRouter } from "next/navigation";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { signIn } from "../services";
+import { createClient } from "@/features/supabase/client";
 import { toast } from "sonner";
+
+const supabase = createClient();
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -25,19 +28,25 @@ const validationSchema = Yup.object({
     .required("Password is required"),
 });
 
-const SigninForm = ({ onForgotPassword }: { onForgotPassword: () => void }) => {
+const SigninForm = ({ onForgotPassword, onEmailNotConfirmed }: { onForgotPassword: () => void; onEmailNotConfirmed: (email: string) => void }) => {
   const router = useRouter();
 
   const formik = useFormik({
     initialValues: { email: "", password: "" },
     validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
-      const { error } = await signIn({
-        email: values.email.trim().toLowerCase(),
+      const email = values.email.trim().toLowerCase();
+      const { error, code } = await signIn({
+        email,
         password: values.password.trim(),
       });
       setSubmitting(false);
       if (error) {
+        if (code === "email_not_confirmed" || error.toLowerCase().includes("email not confirmed")) {
+          supabase.auth.resend({ type: "signup", email }).catch(() => {});
+          onEmailNotConfirmed(email);
+          return;
+        }
         toast.error(error);
         return;
       }

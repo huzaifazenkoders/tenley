@@ -32,4 +32,5 @@ export interface SignupCompletePayload {
 export interface AuthResponse<T = unknown> {
   data: T | null;
   error: string | null;
+  code?: string;
 }

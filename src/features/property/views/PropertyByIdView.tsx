@@ -96,7 +96,13 @@ const PropertyByIdView = () => {
       </div>
 
       {/* Units section */}
-      <UnitsSection units={units} onRefetch={fetchProperty} />
+      <UnitsSection
+        propertyId={property.id}
+        totalUnitsRequired={property.number_of_unit ?? 0}
+        floors={property.number_of_floors ?? 1}
+        units={units}
+        onRefetch={fetchProperty}
+      />
 
       <ImportPropertyCSVModal
         open={csvModalOpen}

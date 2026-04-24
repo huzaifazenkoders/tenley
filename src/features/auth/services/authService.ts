@@ -39,7 +39,7 @@ export const signIn = async (payload: SignInPayload): Promise<AuthResponse> => {
     email: payload.email,
     password: payload.password,
   });
-  if (error) return { data: null, error: getErrorMessage(error) };
+  if (error) return { data: null, error: getErrorMessage(error), code: error.code };
   return { data, error: null };
 };
 

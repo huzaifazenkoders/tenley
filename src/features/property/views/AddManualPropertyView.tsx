@@ -31,17 +31,30 @@ const mapPropertyToFormData = (p: Property): PropertyFormData => ({
   propertyImages: p.property_images ?? []
 });
 
-const generateUnits = (p: Property): UnitEntry[] => {
-  const unitsPerFloor = p.number_of_unit ?? 0;
-  const floors = p.number_of_floors ?? 1;
+const buildUnits = (totalUnits: number, floors: number): UnitEntry[] => {
+  const safeTotalUnits = Math.max(0, totalUnits);
+  const safeFloors = Math.max(1, floors);
   const result: UnitEntry[] = [];
-  for (let f = 1; f <= floors; f++) {
-    for (let u = 1; u <= unitsPerFloor; u++) {
-      const num = `${f}${String(u).padStart(2, "0")}`;
+  let remainingUnits = safeTotalUnits;
+
+  for (let floor = 1; floor <= safeFloors && remainingUnits > 0; floor++) {
+    const floorsLeft = safeFloors - floor + 1;
+    const unitsOnThisFloor = Math.ceil(remainingUnits / floorsLeft);
+
+    for (let unit = 1; unit <= unitsOnThisFloor; unit++) {
+      const num = `${floor}${String(unit).padStart(2, "0")}`;
       result.push({ unit_name: num, unit_number: num });
     }
+
+    remainingUnits -= unitsOnThisFloor;
   }
+
   return result;
+};
+
+const generateUnits = (p: Property): UnitEntry[] => {
+  const floors = p.number_of_floors ?? 1;
+  return buildUnits(p.number_of_unit ?? 0, floors);
 };
 
 const AddManualPropertyView = () => {
@@ -108,13 +121,7 @@ const AddManualPropertyView = () => {
     setPropertyId(pid);
 
     const floors = parseInt(values.floors) || 1;
-    const generatedUnits: UnitEntry[] = [];
-    for (let f = 1; f <= floors; f++) {
-      for (let u = 1; u <= unitCount; u++) {
-        const num = `${f}${String(u).padStart(2, "0")}`;
-        generatedUnits.push({ unit_name: num, unit_number: num });
-      }
-    }
+    const generatedUnits = buildUnits(unitCount, floors);
     setUnits(generatedUnits);
     setIsSubmitting(false);
     syncUrl(2, pid);

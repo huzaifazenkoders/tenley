@@ -6,6 +6,7 @@ import TextInput from "@/components/ui/text-input";
 import { cn } from "@/lib/utils";
 import {
   Building2,
+  Loader2,
   Mail,
   MoreVertical,
   Phone,
@@ -17,9 +18,10 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import EditUnitModal from "./EditUnitModal";
 import DeleteUnitModal from "./DeleteUnitModal";
-import { toggleUnitStatus } from "../services";
+import { bulkUpsertUnits, toggleUnitStatus } from "../services";
 import type { Tenant, UnitWithTenants } from "../types";
 import { TenantType, UnitStatus } from "../types/enums";
+import { toast } from "sonner";
 
 const roleBadge: Record<
   TenantType,
@@ -211,13 +213,75 @@ const UnitCard = ({
 };
 
 type Props = {
+  propertyId: string;
+  totalUnitsRequired: number;
+  floors: number;
   units: UnitWithTenants[];
   onRefetch: () => void;
 };
 
-const UnitsSection = ({ units, onRefetch }: Props) => {
+const buildExpectedUnitNumbers = (totalUnits: number, floors: number) => {
+  const safeTotalUnits = Math.max(0, totalUnits);
+  const safeFloors = Math.max(1, floors);
+  const result: string[] = [];
+  let remainingUnits = safeTotalUnits;
+
+  for (let floor = 1; floor <= safeFloors && remainingUnits > 0; floor++) {
+    const floorsLeft = safeFloors - floor + 1;
+    const unitsOnThisFloor = Math.ceil(remainingUnits / floorsLeft);
+
+    for (let unit = 1; unit <= unitsOnThisFloor; unit++) {
+      result.push(`${floor}${String(unit).padStart(2, "0")}`);
+    }
+
+    remainingUnits -= unitsOnThisFloor;
+  }
+
+  return result;
+};
+
+const UnitsSection = ({
+  propertyId,
+  totalUnitsRequired,
+  floors,
+  units,
+  onRefetch
+}: Props) => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [isAddingUnit, setIsAddingUnit] = useState(false);
+
+  const expectedUnitNumbers = buildExpectedUnitNumbers(
+    totalUnitsRequired,
+    floors
+  );
+  const existingUnitNumbers = new Set(units.map((unit) => unit.unit_number));
+  const nextMissingUnitNumber = expectedUnitNumbers.find(
+    (unitNumber) => !existingUnitNumbers.has(unitNumber)
+  );
+  const canAddUnit = Boolean(nextMissingUnitNumber);
+
+  const handleAddUnit = async () => {
+    if (!nextMissingUnitNumber) {
+      toast.error("All required units have already been added");
+      return;
+    }
+
+    setIsAddingUnit(true);
+    const { error } = await bulkUpsertUnits([
+      {
+        property_id: propertyId,
+        unit_name: nextMissingUnitNumber,
+        unit_number: nextMissingUnitNumber
+      }
+    ]);
+    setIsAddingUnit(false);
+
+    if (error) return;
+
+    toast.success(`Unit ${nextMissingUnitNumber} added successfully`);
+    onRefetch();
+  };
 
   const filtered = units.filter((u) => {
     const matchesSearch =
@@ -281,9 +345,18 @@ const UnitsSection = ({ units, onRefetch }: Props) => {
             placeholder="Status"
             triggerClassName="whitespace-nowrap"
           />
-          {/* <Button size="sm">
-            <Plus className="size-4" /> Add Unit
-          </Button> */}
+          <Button
+            size="sm"
+            onClick={handleAddUnit}
+            disabled={!canAddUnit || isAddingUnit}
+          >
+            {isAddingUnit ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Plus className="size-4" />
+            )}{" "}
+            Add Unit
+          </Button>
         </div>
       </div>
 
