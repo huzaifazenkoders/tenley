@@ -1,8 +1,10 @@
 import AddManualPropertyView from "@/features/property/views/AddManualPropertyView";
-import React from "react";
+import { Suspense } from "react";
 
-const page = () => {
-  return <AddManualPropertyView />;
-};
+const Page = () => (
+  <Suspense>
+    <AddManualPropertyView />
+  </Suspense>
+);
 
-export default page;
+export default Page;

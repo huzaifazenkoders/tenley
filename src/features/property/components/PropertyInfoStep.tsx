@@ -1,12 +1,17 @@
-import { Button } from "@/components/ui/button";
+"use client";
+
 import Select from "@/components/ui/select";
 import TextInput from "@/components/ui/text-input";
 import Textarea from "@/components/ui/textarea";
-import { CloudUpload } from "lucide-react";
+import { useFormik } from "formik";
+import { forwardRef, useImperativeHandle } from "react";
+import * as Yup from "yup";
+import { PropertyPurpose, PropertyType } from "../types/enums";
+import PropertyImagesUploader from "./PropertyImagesUploader";
 
 export type PropertyFormData = {
-  propertyType: string;
-  propertyPurpose: string;
+  propertyType: PropertyType | "";
+  propertyPurpose: PropertyPurpose | "";
   address: string;
   propertyName: string;
   sameAsAddress: boolean;
@@ -17,174 +22,306 @@ export type PropertyFormData = {
   city: string;
   state: string;
   accessDetails: string;
+  propertyImages: string[];
+};
+
+export type PropertyInfoStepHandle = {
+  submitForm: () => void;
+};
+
+const BASE_INITIAL_VALUES: PropertyFormData = {
+  propertyType: "",
+  propertyPurpose: "",
+  address: "",
+  propertyName: "",
+  sameAsAddress: true,
+  idPrefix: "",
+  units: "",
+  floors: "",
+  gateCode: "",
+  city: "",
+  state: "",
+  accessDetails: "",
+  propertyImages: [],
 };
 
 type Props = {
-  data: PropertyFormData;
-  onChange: (patch: Partial<PropertyFormData>) => void;
+  onValidSubmit: (values: PropertyFormData) => Promise<void>;
+  defaultValues?: Partial<PropertyFormData>;
 };
 
-const isBungalow = (type: string) => type === "bungalow";
+const isBungalow = (type: PropertyType | "") => type === PropertyType.Bungalow;
 
-const PropertyInfoStep = ({ data, onChange }: Props) => (
-  <div className="p-6 bg-brand-base-white rounded-[20px] shadow-[0px_1px_10px_0px_rgba(0,0,0,0.08)] outline outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col gap-6">
-    <h2 className="text-brand-Text-800 text-xl font-bold leading-6">
-      Property Information
-    </h2>
+const validationSchema = Yup.object({
+  propertyType: Yup.string().required("Property type is required"),
+  propertyPurpose: Yup.string().required("Property purpose is required"),
+  address: Yup.string()
+    .trim()
+    .min(5, "Address must be at least 5 characters")
+    .required("Property address is required"),
+  propertyName: Yup.string()
+    .trim()
+    .min(2, "Property name must be at least 2 characters")
+    .required("Property name is required"),
+  idPrefix: Yup.string()
+    .trim()
+    .max(10, "ID prefix must be at most 10 characters")
+    .matches(/^[A-Za-z0-9]*$/, "Only letters and numbers allowed"),
+  units: Yup.string().when("propertyType", {
+    is: (v: string) => Boolean(v) && v !== PropertyType.Bungalow,
+    then: (s) =>
+      s
+        .required("Number of units is required")
+        .test("is-positive-int", "Must be a positive whole number", (v) => {
+          if (!v) return false;
+          const n = Number(v);
+          return Number.isInteger(n) && n > 0;
+        }),
+    otherwise: (s) => s.optional(),
+  }),
+  floors: Yup.string().test(
+    "is-positive-int-or-empty",
+    "Must be a positive whole number",
+    (v) => {
+      if (!v) return true;
+      const n = Number(v);
+      return Number.isInteger(n) && n > 0;
+    }
+  ),
+  city: Yup.string().trim().max(100, "City must be at most 100 characters"),
+  state: Yup.string().trim().max(100, "State must be at most 100 characters"),
+  accessDetails: Yup.string()
+    .trim()
+    .max(500, "Access details must be at most 500 characters"),
+});
 
-    {/* Image upload */}
-    <div className="p-6 bg-brand-Text-50 rounded-xl outline outline-1 outline-brand-Text-200 flex flex-col items-center gap-4">
-      <div className="flex flex-col items-center gap-4 w-full">
-        <div className="relative w-24 h-20 flex items-end justify-center">
-          <div className="absolute size-16 top-0 left-4 bg-gray-200 rounded-full" />
-          <div className="absolute w-20 h-11 left-3 top-2.5 bg-gray-50 rounded-lg shadow-[0px_5px_5px_-3px_rgba(16,24,40,0.03),0px_14px_16px_-3px_rgba(16,24,40,0.08)]" />
-          <div className="absolute size-1.5 left-2.5 top-2.5 bg-gray-100 rounded-full" />
-          <div className="absolute size-2.5 left-2 bottom-0 bg-gray-100 rounded-full" />
-          <div className="absolute size-2.5 right-0 top-5 bg-gray-100 rounded-full" />
-          <div className="absolute size-1.5 right-2 top-0.5 bg-gray-100 rounded-full" />
-          <div className="absolute left-1/2 -translate-x-1/2 bottom-0 size-8 bg-slate-700/40 rounded-3xl backdrop-blur-sm flex items-center justify-center">
-            <CloudUpload className="size-4 text-white" />
+const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
+  ({ onValidSubmit, defaultValues }, ref) => {
+    const formik = useFormik<PropertyFormData>({
+      initialValues: { ...BASE_INITIAL_VALUES, ...defaultValues },
+      enableReinitialize: true,
+      validationSchema,
+      onSubmit: async (values) => {
+        await onValidSubmit(values);
+      },
+    });
+
+    useImperativeHandle(ref, () => ({
+      submitForm: () => {
+        formik.handleSubmit();
+      },
+    }));
+
+    const handleAddressChange = (v: string) => {
+      formik.setFieldValue("address", v);
+      if (formik.values.sameAsAddress) {
+        formik.setFieldValue("propertyName", v);
+      }
+    };
+
+    const handleSameAsAddressChange = (
+      e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+      const checked = e.target.checked;
+      formik.setFieldValue("sameAsAddress", checked);
+      if (checked) {
+        formik.setFieldValue("propertyName", formik.values.address);
+        formik.setFieldTouched("propertyName", false);
+      }
+    };
+
+    return (
+      <div className="p-6 bg-brand-base-white rounded-[20px] shadow-[0px_1px_10px_0px_rgba(0,0,0,0.08)] outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col gap-6">
+        <h2 className="text-brand-Text-800 text-xl font-bold leading-6">
+          Property Information
+        </h2>
+
+        {/* Image upload */}
+        <PropertyImagesUploader
+          value={formik.values.propertyImages}
+          onChange={(urls) => formik.setFieldValue("propertyImages", urls)}
+        />
+
+        {/* Property Type + Purpose */}
+        <div className="flex items-start gap-6">
+          <div className="w-1/2">
+            <Select
+              label="Property Type"
+              value={formik.values.propertyType}
+              onValueChange={(v) => {
+                formik.setFieldValue("propertyType", v);
+                formik.setFieldTouched("propertyType", true);
+                // clear units if switching to bungalow
+                if (v === PropertyType.Bungalow) {
+                  formik.setFieldValue("units", "");
+                  formik.setFieldValue("floors", "");
+                }
+              }}
+              placeholder="Select type"
+              options={[
+                { label: "Bungalow", value: PropertyType.Bungalow },
+                { label: "Mall", value: PropertyType.Mall },
+                { label: "Office", value: PropertyType.Office },
+                { label: "Apartment", value: PropertyType.Apartment },
+              ]}
+              error={
+                formik.touched.propertyType
+                  ? formik.errors.propertyType
+                  : undefined
+              }
+            />
+          </div>
+          <div className="w-1/2">
+            <Select
+              label="Property Purpose"
+              value={formik.values.propertyPurpose}
+              onValueChange={(v) => {
+                formik.setFieldValue("propertyPurpose", v);
+                formik.setFieldTouched("propertyPurpose", true);
+              }}
+              placeholder="Select purpose"
+              options={[
+                { label: "Residential", value: PropertyPurpose.Residential },
+                { label: "Commercial", value: PropertyPurpose.Commercial },
+              ]}
+              error={
+                formik.touched.propertyPurpose
+                  ? formik.errors.propertyPurpose
+                  : undefined
+              }
+            />
           </div>
         </div>
-        <div className="flex flex-col items-center gap-2 w-full text-center">
-          <p className="text-base">
-            <span className="text-Neutral-Grey-100 font-semibold leading-5">
-              Upload Property Images{" "}
-            </span>
-            <span className="text-Neutral-Grey-70 font-semibold leading-5">
-              (Optional)
-            </span>
-          </p>
-          <span className="text-Neutral-Grey-60 text-base font-normal">
-            Drag and drop your property images here, or click to browse
-          </span>
+
+        {/* Property Address */}
+        <TextInput
+          id="address"
+          label="Property Address"
+          value={formik.values.address}
+          setValue={handleAddressChange}
+          onBlur={formik.handleBlur}
+          placeholder="123 Main Street"
+          error={formik.touched.address ? formik.errors.address : undefined}
+        />
+
+        {/* Property Name + ID Prefix */}
+        <div className="flex items-start gap-6">
+          <div className="flex-1 flex flex-col gap-1">
+            <TextInput
+              id="propertyName"
+              label="Property Name"
+              value={formik.values.propertyName}
+              setValue={(v) => formik.setFieldValue("propertyName", v)}
+              onBlur={formik.handleBlur}
+              placeholder="Enter property name"
+              disabled={formik.values.sameAsAddress}
+              error={
+                formik.touched.propertyName
+                  ? formik.errors.propertyName
+                  : undefined
+              }
+            />
+            <label className="flex items-center gap-1 cursor-pointer w-fit">
+              <input
+                type="checkbox"
+                checked={formik.values.sameAsAddress}
+                onChange={handleSameAsAddressChange}
+                className="accent-brand-primary-red-600-d size-4"
+              />
+              <span className="text-brand-Text-950-d text-sm font-medium leading-5">
+                Same as property address
+              </span>
+            </label>
+          </div>
+          <div className="flex-1 flex flex-col gap-1">
+            <TextInput
+              id="idPrefix"
+              label="Property ID prefix"
+              value={formik.values.idPrefix}
+              setValue={(v) => formik.setFieldValue("idPrefix", v)}
+              onBlur={formik.handleBlur}
+              placeholder="e.g. OAK"
+              error={
+                formik.touched.idPrefix ? formik.errors.idPrefix : undefined
+              }
+            />
+            <p className="text-brand-primary-blue-600 text-xs font-normal leading-5 tracking-wide">
+              Shown at the start of every Emergency ID. Example: OAK-000482
+            </p>
+          </div>
+        </div>
+
+        {/* Units + Floors — hidden for bungalow */}
+        {!isBungalow(formik.values.propertyType) && (
+          <div className="flex items-start gap-6">
+            <TextInput
+              id="units"
+              label="Number of Units"
+              value={formik.values.units}
+              setValue={(v) => formik.setFieldValue("units", v)}
+              onBlur={formik.handleBlur}
+              placeholder="e.g. 60"
+              type="number"
+              containerClassName="flex-1"
+              error={formik.touched.units ? formik.errors.units : undefined}
+            />
+            <TextInput
+              id="floors"
+              label="Number of Floors (Optional)"
+              value={formik.values.floors}
+              setValue={(v) => formik.setFieldValue("floors", v)}
+              onBlur={formik.handleBlur}
+              placeholder="e.g. 10"
+              type="number"
+              containerClassName="flex-1"
+              error={formik.touched.floors ? formik.errors.floors : undefined}
+            />
+          </div>
+        )}
+
+        {/* Access Details */}
+        <Textarea
+          label="Access Details (Optional)"
+          value={formik.values.accessDetails}
+          onChange={(e) =>
+            formik.setFieldValue("accessDetails", e.target.value)
+          }
+          onBlur={formik.handleBlur}
+          placeholder="e.g. Gate code, key location, entry instructions..."
+          error={
+            formik.touched.accessDetails
+              ? formik.errors.accessDetails
+              : undefined
+          }
+        />
+
+        {/* City + State */}
+        <div className="flex items-start gap-6">
+          <TextInput
+            id="city"
+            label="City"
+            value={formik.values.city}
+            setValue={(v) => formik.setFieldValue("city", v)}
+            onBlur={formik.handleBlur}
+            placeholder="e.g. Austin"
+            containerClassName="flex-1"
+            error={formik.touched.city ? formik.errors.city : undefined}
+          />
+          <TextInput
+            id="state"
+            label="State"
+            value={formik.values.state}
+            setValue={(v) => formik.setFieldValue("state", v)}
+            onBlur={formik.handleBlur}
+            placeholder="e.g. TX"
+            containerClassName="flex-1"
+            error={formik.touched.state ? formik.errors.state : undefined}
+          />
         </div>
       </div>
-      <Button variant="outline-transparent" size="sm">
-        Browse Files
-      </Button>
-    </div>
-
-    {/* Property Type + Purpose */}
-    <div className="flex items-start gap-6">
-      <div className="w-1/2">
-        <Select
-          label="Property Type"
-          value={data.propertyType}
-          onValueChange={(v) => onChange({ propertyType: v })}
-          placeholder="Select type"
-          options={[
-            { label: "Bungalow", value: "bungalow" },
-            { label: "Mall", value: "mall" },
-            { label: "Office", value: "office" },
-            { label: "Apartment", value: "apartment" }
-          ]}
-        />
-      </div>
-      <div className="w-1/2">
-        <Select
-          label="Property Purpose"
-          value={data.propertyPurpose}
-          onValueChange={(v) => onChange({ propertyPurpose: v })}
-          placeholder="Select purpose"
-          options={[
-            { label: "Residential", value: "residential" },
-            { label: "Commercial", value: "commercial" }
-          ]}
-        />
-      </div>
-    </div>
-
-    {/* Property Address */}
-    <TextInput
-      label="Property Address"
-      value={data.address}
-      setValue={(v) => onChange({ address: v })}
-      placeholder="123 Main Street"
-    />
-
-    {/* Property Name + ID Prefix */}
-    <div className="flex items-start gap-6">
-      <div className="flex-1 flex flex-col gap-1">
-        <TextInput
-          label="Property Name"
-          value={data.propertyName}
-          setValue={(v) => onChange({ propertyName: v })}
-          placeholder="Enter property name"
-        />
-        <label className="flex items-center gap-1 cursor-pointer w-fit">
-          <input
-            type="checkbox"
-            checked={data.sameAsAddress}
-            onChange={(e) => onChange({ sameAsAddress: e.target.checked })}
-            className="accent-brand-primary-red-600-d size-4"
-          />
-          <span className="text-brand-Text-950-d text-sm font-medium leading-5">
-            Same as property address
-          </span>
-        </label>
-      </div>
-      <div className="flex-1 flex flex-col gap-1">
-        <TextInput
-          label="Property ID prefix"
-          value={data.idPrefix}
-          setValue={(v) => onChange({ idPrefix: v })}
-          placeholder="e.g. OAK"
-        />
-        <p className="text-brand-primary-blue-600 text-xs font-normal leading-5 tracking-wide">
-          Shown at the start of every Emergency ID. Example: OAK-000482
-        </p>
-      </div>
-    </div>
-
-    {/* Units + Floors */}
-    {!isBungalow(data.propertyType) && (
-      <div className="flex items-start gap-6">
-        <TextInput
-          label="Number of Units"
-          value={data.units}
-          setValue={(v) => onChange({ units: v })}
-          placeholder="e.g. 60"
-          type="number"
-          containerClassName="flex-1"
-        />
-        <TextInput
-          label="Number of Floors (Optional)"
-          value={data.floors}
-          setValue={(v) => onChange({ floors: v })}
-          placeholder="e.g. 10"
-          type="number"
-          containerClassName="flex-1"
-        />
-      </div>
-    )}
-
-    {/* Access Details */}
-    <Textarea
-      label="Access Details (Optional)"
-      value={data.accessDetails}
-      onChange={(e) => onChange({ accessDetails: e.target.value })}
-      placeholder="e.g. Gate code, key location, entry instructions..."
-    />
-
-    {/* Gate Code + City + State */}
-    <div className="flex items-start gap-6">
-      <TextInput
-        label="City"
-        value={data.city}
-        setValue={(v) => onChange({ city: v })}
-        placeholder="e.g. Austin"
-        containerClassName="flex-1"
-      />
-      <TextInput
-        label="State"
-        value={data.state}
-        setValue={(v) => onChange({ state: v })}
-        placeholder="e.g. TX"
-        containerClassName="flex-1"
-      />
-    </div>
-  </div>
+    );
+  }
 );
 
+PropertyInfoStep.displayName = "PropertyInfoStep";
 export default PropertyInfoStep;

@@ -7,10 +7,37 @@ import ImportPropertyCSVModal from "../components/ImportPropertyCSVModal";
 import NoPropertiesEmptyState from "../components/NoPropertiesEmptyState";
 import PropertiesTable from "../components/PropertiesTable";
 
+const TableSkeleton = () => (
+  <div className="w-full bg-brand-base-white rounded-[20px] shadow-[0px_0px_0px_1px_rgba(220,223,228,1.00)] overflow-hidden">
+    <div className="px-6 py-4 border-b border-Colors-Card-stroke2">
+      <div className="h-9 w-96 bg-gray-100 rounded-lg animate-pulse" />
+    </div>
+    <div className="divide-y divide-gray-100">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="px-6 py-4 flex items-center gap-4">
+          <div className="flex flex-col gap-1.5 flex-1">
+            <div className="h-3.5 w-40 bg-gray-100 rounded animate-pulse" />
+            <div className="h-3 w-56 bg-gray-100 rounded animate-pulse" />
+          </div>
+          <div className="h-7 w-24 bg-gray-100 rounded-full animate-pulse" />
+          <div className="h-3.5 w-8 bg-gray-100 rounded animate-pulse" />
+          <div className="h-3.5 w-8 bg-gray-100 rounded animate-pulse" />
+          <div className="h-6 w-16 bg-gray-100 rounded-xl animate-pulse" />
+          <div className="h-8 w-8 bg-gray-100 rounded-lg animate-pulse" />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
 const PropertyListingsView = () => {
   const router = useRouter();
   const [csvModalOpen, setCsvModalOpen] = useState(false);
-  const properties = [1]; // replace with real data
+  const [count, setCount] = useState<number | null>(null);
+  const [isFiltered, setIsFiltered] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const showEmptyState = count === 0 && !isFiltered && !isLoading;
 
   return (
     <div className="px-6 pt-10 pb-6 flex flex-col gap-5 w-full">
@@ -41,13 +68,25 @@ const PropertyListingsView = () => {
         </div>
       </div>
 
-      {properties.length === 0 ? (
+      {/* Initial load — table hasn't mounted yet */}
+      {count === null && <TableSkeleton />}
+
+      {/* No data, no filters */}
+      {showEmptyState && (
         <NoPropertiesEmptyState
           onAddProperty={() => router.push("/property/add-property")}
         />
-      ) : (
-        <PropertiesTable />
       )}
+
+      {/* Table — keep mounted once we have a count so filter state is preserved */}
+      <div className={count === null || showEmptyState ? "hidden" : ""}>
+        <PropertiesTable
+          onCountChange={setCount}
+          onFilteredChange={setIsFiltered}
+          onLoadingChange={setIsLoading}
+        />
+      </div>
+
       <ImportPropertyCSVModal
         open={csvModalOpen}
         onOpenChange={setCsvModalOpen}

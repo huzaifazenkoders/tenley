@@ -27,3 +27,12 @@ export const uploadLogo = async (
   const path = `logos/${userId}/logo.${ext}`;
   return uploadFile(file, path);
 };
+
+export const uploadPropertyImage = async (
+  file: File,
+  userId: string
+): Promise<{ url: string | null; error: string | null }> => {
+  const ext = file.name.split(".").pop();
+  const path = `property-images/${userId}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+  return uploadFile(file, path);
+};

@@ -68,7 +68,7 @@ const AddPropertyManualModal = ({ open, onOpenChange }: Props) => {
 
       {/* Banner image */}
       <Image
-        src="/assets/mock/mock1.jpeg"
+        src="/assets/property/create-first-property.png"
         alt="Property banner"
         width={682}
         height={193}

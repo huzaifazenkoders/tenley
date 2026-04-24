@@ -17,8 +17,10 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import EditUnitModal from "./EditUnitModal";
 import DeleteUnitModal from "./DeleteUnitModal";
+import { toggleUnitStatus } from "../services";
+import { TenantType, UnitStatus } from "../types/enums";
 
-type TenantRole = "Head of Household" | "Family Member";
+type TenantRole = TenantType;
 
 type Tenant = {
   id: string;
@@ -31,7 +33,8 @@ type Tenant = {
 type Unit = {
   id: string;
   name: string;
-  status: "Active" | "Inactive";
+  number: string;
+  status: UnitStatus;
   tenants: Tenant[];
 };
 
@@ -39,104 +42,29 @@ const UNITS: Unit[] = [
   {
     id: "1",
     name: "101-A",
-    status: "Active",
+    number: "101",
+    status: UnitStatus.Active,
     tenants: [
-      {
-        id: "t1",
-        name: "John Smith",
-        email: "john@example.com",
-        phone: "(555) 123-4567",
-        role: "Head of Household"
-      },
-      {
-        id: "t2",
-        name: "Max William",
-        email: "max@example.com",
-        phone: "(555) 123-4567",
-        role: "Family Member"
-      },
-      {
-        id: "t3",
-        name: "Max William",
-        email: "max@example.com",
-        phone: "(555) 123-4567",
-        role: "Family Member"
-      }
+      { id: "t1", name: "John Smith", email: "john@example.com", phone: "(555) 123-4567", role: TenantType.HeadOfHousehold },
+      { id: "t2", name: "Max William", email: "max@example.com", phone: "(555) 123-4567", role: TenantType.FamilyMember },
     ]
   },
-  { id: "2", name: "102-A", status: "Inactive", tenants: [] },
+  { id: "2", name: "102-A", number: "102", status: UnitStatus.Inactive, tenants: [] },
   {
     id: "3",
     name: "103-A",
-    status: "Active",
+    number: "103",
+    status: UnitStatus.Active,
     tenants: [
-      {
-        id: "t4",
-        name: "John Smith",
-        email: "john@example.com",
-        phone: "(555) 123-4567",
-        role: "Head of Household"
-      },
-      {
-        id: "t5",
-        name: "Max William",
-        email: "max@example.com",
-        phone: "(555) 123-4567",
-        role: "Family Member"
-      },
-      {
-        id: "t6",
-        name: "Max William",
-        email: "max@example.com",
-        phone: "(555) 123-4567",
-        role: "Family Member"
-      }
+      { id: "t4", name: "John Smith", email: "john@example.com", phone: "(555) 123-4567", role: TenantType.HeadOfHousehold },
+      { id: "t5", name: "Max William", email: "max@example.com", phone: "(555) 123-4567", role: TenantType.FamilyMember },
     ]
   },
-  {
-    id: "4",
-    name: "104-A",
-    status: "Active",
-    tenants: [
-      {
-        id: "t7",
-        name: "John Smith",
-        email: "john@example.com",
-        phone: "(555) 123-4567",
-        role: "Head of Household"
-      },
-      {
-        id: "t8",
-        name: "Max William",
-        email: "max@example.com",
-        phone: "(555) 123-4567",
-        role: "Family Member"
-      },
-      {
-        id: "t9",
-        name: "Max William",
-        email: "max@example.com",
-        phone: "(555) 123-4567",
-        role: "Family Member"
-      }
-    ]
-  }
 ];
 
-const roleBadge: Record<
-  TenantRole,
-  { bg: string; text: string; label: string }
-> = {
-  "Head of Household": {
-    bg: "bg-indigo-500/10",
-    text: "text-indigo-500",
-    label: "Head of Household"
-  },
-  "Family Member": {
-    bg: "bg-red-500/10",
-    text: "text-red-500",
-    label: "Family Member"
-  }
+const roleBadge: Record<TenantType, { bg: string; text: string; label: string }> = {
+  [TenantType.HeadOfHousehold]: { bg: "bg-indigo-500/10", text: "text-indigo-500", label: "Head of Household" },
+  [TenantType.FamilyMember]: { bg: "bg-red-500/10", text: "text-red-500", label: "Family Member" },
 };
 
 const TenantCard = ({ tenant }: { tenant: Tenant }) => {
@@ -199,31 +127,38 @@ const TenantCard = ({ tenant }: { tenant: Tenant }) => {
   );
 };
 
-const StatusBadge = ({ status }: { status: "Active" | "Inactive" }) => (
+const StatusBadge = ({ status }: { status: UnitStatus }) => (
   <span
     className={cn(
       "px-2.5 py-[3px] rounded-xl text-sm font-normal leading-5",
-      status === "Active"
+      status === UnitStatus.Active
         ? "bg-green-600/10 text-green-600"
         : "bg-gray-500/10 text-neutral-500"
     )}
   >
-    {status}
+    {status === UnitStatus.Active ? "Active" : "Inactive"}
   </span>
 );
 
-const UnitCard = ({ unit }: { unit: Unit }) => {
+const UnitCard = ({ unit, onStatusToggled }: { unit: Unit; onStatusToggled?: (id: string) => void }) => {
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const handleToggleStatus = async () => {
+    const { error } = await toggleUnitStatus(unit.id);
+    if (!error) onStatusToggled?.(unit.id);
+  };
 
   return (
     <div className="w-full p-4 bg-brand-base-white rounded-xl shadow-[0px_1px_10px_0px_rgba(0,0,0,0.08)] outline outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col gap-4">
       <EditUnitModal
         open={editOpen}
         onOpenChange={setEditOpen}
+        unitId={unit.id}
         unitName={unit.name}
+        unitNumber={unit.number}
       />
       <DeleteUnitModal
         open={deleteOpen}
@@ -238,16 +173,9 @@ const UnitCard = ({ unit }: { unit: Unit }) => {
           </span>
           <Dropdown
             items={[
-              {
-                value: "edit",
-                label: "Edit Unit",
-                onClick: () => setEditOpen(true)
-              },
-              {
-                value: "delete",
-                label: "Delete Unit",
-                onClick: () => setDeleteOpen(true)
-              }
+              { value: "edit", label: "Edit Unit", onClick: () => setEditOpen(true) },
+              { value: "toggle", label: unit.status === UnitStatus.Active ? "Deactivate" : "Activate", onClick: handleToggleStatus },
+              { value: "delete", label: "Delete Unit", onClick: () => setDeleteOpen(true) },
             ]}
             contentClassName="w-36"
           >
@@ -335,8 +263,8 @@ const UnitsSection = ({ totalUnits }: { totalUnits: number }) => (
         <Select
           options={[
             { label: "All Status", value: "all" },
-            { label: "Active", value: "active" },
-            { label: "Inactive", value: "inactive" }
+            { label: "Active", value: UnitStatus.Active },
+            { label: "Inactive", value: UnitStatus.Inactive },
           ]}
           placeholder="Status"
           triggerClassName="whitespace-nowrap"
