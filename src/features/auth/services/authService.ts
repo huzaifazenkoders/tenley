@@ -7,7 +7,7 @@ import type {
   SignInPayload,
   SignupCompletePayload,
   SignUpPayload,
-  VerifyOtpPayload,
+  VerifyOtpPayload
 } from "./types";
 
 const supabase = createClient();
@@ -16,7 +16,7 @@ export const signUp = async (payload: SignUpPayload): Promise<AuthResponse> => {
   const { data, error } = await supabase.auth.signUp({
     email: payload.email,
     password: payload.password,
-    options: { data: { full_name: payload.full_name } },
+    options: { data: { full_name: payload.full_name } }
   });
   if (error) return { data: null, error: getErrorMessage(error) };
   return { data, error: null };
@@ -28,7 +28,7 @@ export const signupComplete = async (
   const { data, error } = await supabase.auth.verifyOtp({
     email: payload.email,
     token: payload.otp,
-    type: "signup",
+    type: "signup"
   });
   if (error) return { data: null, error: getErrorMessage(error) };
   return { data, error: null };
@@ -37,9 +37,10 @@ export const signupComplete = async (
 export const signIn = async (payload: SignInPayload): Promise<AuthResponse> => {
   const { data, error } = await supabase.auth.signInWithPassword({
     email: payload.email,
-    password: payload.password,
+    password: payload.password
   });
-  if (error) return { data: null, error: getErrorMessage(error), code: error.code };
+  if (error)
+    return { data: null, error: getErrorMessage(error), code: error.code };
   return { data, error: null };
 };
 
@@ -47,9 +48,9 @@ export const forgotPassword = async (
   payload: ForgotPasswordPayload
 ): Promise<AuthResponse> => {
   // Sends a 6-digit OTP to the user's email via magic link flow
-  const { data, error } = await supabase.auth.signInWithOtp({
-    email: payload.email,
-  });
+  const { data, error } = await supabase.auth.resetPasswordForEmail(
+    payload.email
+  );
   if (error) return { data: null, error: getErrorMessage(error) };
   return { data, error: null };
 };
@@ -61,7 +62,7 @@ export const verifyOtp = async (
   const { data, error } = await supabase.auth.verifyOtp({
     email: payload.email,
     token: payload.otp,
-    type: "email",
+    type: "email"
   });
   if (error) return { data: null, error: getErrorMessage(error) };
   return { data, error: null };
@@ -78,7 +79,7 @@ export const resetPassword = async (
 ): Promise<AuthResponse> => {
   // Session must already be established by verifyOtp before calling this
   const { data, error } = await supabase.auth.updateUser({
-    password: payload.new_password,
+    password: payload.new_password
   });
   if (error) return { data: null, error: getErrorMessage(error) };
   return { data, error: null };

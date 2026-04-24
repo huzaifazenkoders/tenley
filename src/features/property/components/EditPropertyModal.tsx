@@ -18,9 +18,16 @@ type Props = {
   onSuccess?: () => void;
 };
 
-const EditPropertyModal = ({ open, onOpenChange, property, onSuccess }: Props) => {
+const EditPropertyModal = ({
+  open,
+  onOpenChange,
+  property,
+  onSuccess
+}: Props) => {
   const [propertyType, setPropertyType] = useState<PropertyType | "">("");
-  const [propertyPurpose, setPropertyPurpose] = useState<PropertyPurpose | "">("");
+  const [propertyPurpose, setPropertyPurpose] = useState<PropertyPurpose | "">(
+    ""
+  );
   const [address, setAddress] = useState("");
   const [name, setName] = useState("");
   const [idPrefix, setIdPrefix] = useState("");
@@ -48,7 +55,7 @@ const EditPropertyModal = ({ open, onOpenChange, property, onSuccess }: Props) =
       city: city || undefined,
       state: state || undefined,
       number_of_unit: parseInt(units) || undefined,
-      number_of_floors: parseInt(floors) || undefined,
+      number_of_floors: parseInt(floors) || undefined
     });
     setIsSubmitting(false);
     if (!error) {
@@ -111,7 +118,7 @@ const EditPropertyModal = ({ open, onOpenChange, property, onSuccess }: Props) =
                 { label: "Bungalow", value: PropertyType.Bungalow },
                 { label: "Mall", value: PropertyType.Mall },
                 { label: "Office", value: PropertyType.Office },
-                { label: "Apartment", value: PropertyType.Apartment },
+                { label: "Apartment", value: PropertyType.Apartment }
               ]}
             />
           </div>
@@ -123,7 +130,7 @@ const EditPropertyModal = ({ open, onOpenChange, property, onSuccess }: Props) =
               containerClassName="flex-1"
               options={[
                 { label: "Residential", value: PropertyPurpose.Residential },
-                { label: "Commercial", value: PropertyPurpose.Commercial },
+                { label: "Commercial", value: PropertyPurpose.Commercial }
               ]}
             />
           </div>
@@ -166,7 +173,7 @@ const EditPropertyModal = ({ open, onOpenChange, property, onSuccess }: Props) =
               setValue={setIdPrefix}
             />
             <p className="text-brand-primary-blue-600 text-xs font-normal leading-5 tracking-wide">
-              Shown at the start of every Emergency ID. Example: OAK-000482
+              Shown at the start of every Emergency ID. Example: OAK000482
             </p>
           </div>
         </div>
@@ -181,7 +188,7 @@ const EditPropertyModal = ({ open, onOpenChange, property, onSuccess }: Props) =
             containerClassName="flex-1"
           />
           <TextInput
-            label="Number of Floors (Optional)"
+            label="Number of Floors"
             value={floors}
             setValue={setFloors}
             type="number"
@@ -223,7 +230,11 @@ const EditPropertyModal = ({ open, onOpenChange, property, onSuccess }: Props) =
             Cancel
           </Button>
           <Button onClick={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : "Update Property Details"}
+            {isSubmitting ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              "Update Property Details"
+            )}
           </Button>
         </div>
       </div>

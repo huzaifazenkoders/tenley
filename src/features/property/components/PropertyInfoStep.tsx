@@ -42,7 +42,7 @@ const BASE_INITIAL_VALUES: PropertyFormData = {
   city: "",
   state: "",
   accessDetails: "",
-  propertyImages: [],
+  propertyImages: []
 };
 
 type Props = {
@@ -77,7 +77,7 @@ const validationSchema = Yup.object({
           const n = Number(v);
           return Number.isInteger(n) && n > 0;
         }),
-    otherwise: (s) => s.optional(),
+    otherwise: (s) => s.optional()
   }),
   floors: Yup.string().test(
     "is-positive-int-or-empty",
@@ -92,7 +92,7 @@ const validationSchema = Yup.object({
   state: Yup.string().trim().max(100, "State must be at most 100 characters"),
   accessDetails: Yup.string()
     .trim()
-    .max(500, "Access details must be at most 500 characters"),
+    .max(500, "Access details must be at most 500 characters")
 });
 
 const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
@@ -103,13 +103,13 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
       validationSchema,
       onSubmit: async (values) => {
         await onValidSubmit(values);
-      },
+      }
     });
 
     useImperativeHandle(ref, () => ({
       submitForm: () => {
         formik.handleSubmit();
-      },
+      }
     }));
 
     const handleAddressChange = (v: string) => {
@@ -150,7 +150,7 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
               value={formik.values.propertyType}
               onValueChange={(v) => {
                 formik.setFieldValue("propertyType", v);
-                formik.setFieldTouched("propertyType", true);
+                // formik.setFieldTouched("propertyType", true);
                 // clear units if switching to bungalow
                 if (v === PropertyType.Bungalow) {
                   formik.setFieldValue("units", "");
@@ -162,10 +162,10 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
                 { label: "Bungalow", value: PropertyType.Bungalow },
                 { label: "Mall", value: PropertyType.Mall },
                 { label: "Office", value: PropertyType.Office },
-                { label: "Apartment", value: PropertyType.Apartment },
+                { label: "Apartment", value: PropertyType.Apartment }
               ]}
               error={
-                formik.touched.propertyType
+                formik.touched.propertyType && formik.errors.propertyType
                   ? formik.errors.propertyType
                   : undefined
               }
@@ -177,15 +177,15 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
               value={formik.values.propertyPurpose}
               onValueChange={(v) => {
                 formik.setFieldValue("propertyPurpose", v);
-                formik.setFieldTouched("propertyPurpose", true);
+                // formik.setFieldTouched("propertyPurpose", true);
               }}
               placeholder="Select purpose"
               options={[
                 { label: "Residential", value: PropertyPurpose.Residential },
-                { label: "Commercial", value: PropertyPurpose.Commercial },
+                { label: "Commercial", value: PropertyPurpose.Commercial }
               ]}
               error={
-                formik.touched.propertyPurpose
+                formik.touched.propertyPurpose && formik.errors.propertyPurpose
                   ? formik.errors.propertyPurpose
                   : undefined
               }
@@ -201,7 +201,11 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
           setValue={handleAddressChange}
           onBlur={formik.handleBlur}
           placeholder="123 Main Street"
-          error={formik.touched.address ? formik.errors.address : undefined}
+          error={
+            formik.touched.address && formik.errors.address
+              ? formik.errors.address
+              : undefined
+          }
         />
 
         {/* Property Name + ID Prefix */}
@@ -216,7 +220,7 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
               placeholder="Enter property name"
               disabled={formik.values.sameAsAddress}
               error={
-                formik.touched.propertyName
+                formik.touched.propertyName && formik.errors.propertyName
                   ? formik.errors.propertyName
                   : undefined
               }
@@ -242,11 +246,13 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
               onBlur={formik.handleBlur}
               placeholder="e.g. OAK"
               error={
-                formik.touched.idPrefix ? formik.errors.idPrefix : undefined
+                formik.touched.idPrefix && formik.errors.idPrefix
+                  ? formik.errors.idPrefix
+                  : undefined
               }
             />
             <p className="text-brand-primary-blue-600 text-xs font-normal leading-5 tracking-wide">
-              Shown at the start of every Emergency ID. Example: OAK-000482
+              Shown at the start of every Emergency ID. Example: OAK000482
             </p>
           </div>
         </div>
@@ -263,18 +269,26 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
               placeholder="e.g. 60"
               type="number"
               containerClassName="flex-1"
-              error={formik.touched.units ? formik.errors.units : undefined}
+              error={
+                formik.touched.units && formik.errors.units
+                  ? formik.errors.units
+                  : undefined
+              }
             />
             <TextInput
               id="floors"
-              label="Number of Floors (Optional)"
+              label="Number of Floors"
               value={formik.values.floors}
               setValue={(v) => formik.setFieldValue("floors", v)}
               onBlur={formik.handleBlur}
               placeholder="e.g. 10"
               type="number"
               containerClassName="flex-1"
-              error={formik.touched.floors ? formik.errors.floors : undefined}
+              error={
+                formik.touched.floors && formik.errors.floors
+                  ? formik.errors.floors
+                  : undefined
+              }
             />
           </div>
         )}
@@ -289,7 +303,7 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
           onBlur={formik.handleBlur}
           placeholder="e.g. Gate code, key location, entry instructions..."
           error={
-            formik.touched.accessDetails
+            formik.touched.accessDetails && formik.errors.accessDetails
               ? formik.errors.accessDetails
               : undefined
           }
@@ -305,7 +319,11 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
             onBlur={formik.handleBlur}
             placeholder="e.g. Austin"
             containerClassName="flex-1"
-            error={formik.touched.city ? formik.errors.city : undefined}
+            error={
+              formik.touched.city && formik.errors.city
+                ? formik.errors.city
+                : undefined
+            }
           />
           <TextInput
             id="state"
@@ -315,7 +333,11 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
             onBlur={formik.handleBlur}
             placeholder="e.g. TX"
             containerClassName="flex-1"
-            error={formik.touched.state ? formik.errors.state : undefined}
+            error={
+              formik.touched.state && formik.errors.state
+                ? formik.errors.state
+                : undefined
+            }
           />
         </div>
       </div>
