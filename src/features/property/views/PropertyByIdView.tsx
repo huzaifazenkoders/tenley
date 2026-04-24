@@ -96,7 +96,7 @@ const PropertyByIdView = () => {
       </div>
 
       {/* Units section */}
-      <UnitsSection totalUnits={units.length} />
+      <UnitsSection units={units} onRefetch={fetchProperty} />
 
       <ImportPropertyCSVModal
         open={csvModalOpen}

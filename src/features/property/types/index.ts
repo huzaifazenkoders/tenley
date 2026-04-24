@@ -100,6 +100,11 @@ export interface PropertyByIdResponse {
   tenants: Tenant[];
 }
 
+export interface UnitByIdResponse {
+  unit: Unit;
+  tenants: Tenant[];
+}
+
 export interface BulkCreateTenantPayload {
   tenant_name: string;
   email: string;

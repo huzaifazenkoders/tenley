@@ -49,14 +49,12 @@ const InfoField = ({
 type TenantRowProps = {
   tenant: Tenant;
   index: number;
-  propertyId: string;
   onRefetch: () => void;
 };
 
 const TenantRow = ({
   tenant,
   index,
-  propertyId,
   onRefetch
 }: TenantRowProps) => {
   const badge = roleBadge[tenant.tenant_type];
@@ -148,11 +146,12 @@ const TenantRow = ({
 
 type Props = {
   tenants: Tenant[];
-  propertyId: string;
+  propertyId?: string;
+  unitId?: string;
   onRefetch: () => void;
 };
 
-const TenantInfoCard = ({ tenants, propertyId, onRefetch }: Props) => {
+const TenantInfoCard = ({ tenants, propertyId, unitId, onRefetch }: Props) => {
   const [addOpen, setAddOpen] = useState(false);
   const hasTenants = tenants.length > 0;
 
@@ -186,7 +185,6 @@ const TenantInfoCard = ({ tenants, propertyId, onRefetch }: Props) => {
                 key={t.id}
                 tenant={t}
                 index={i}
-                propertyId={propertyId}
                 onRefetch={onRefetch}
               />
             ))}
@@ -217,6 +215,7 @@ const TenantInfoCard = ({ tenants, propertyId, onRefetch }: Props) => {
         onOpenChange={setAddOpen}
         mode="create"
         propertyId={propertyId}
+        unitId={unitId}
         tenants={tenants}
         onSuccess={onRefetch}
       />

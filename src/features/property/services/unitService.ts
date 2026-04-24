@@ -1,7 +1,7 @@
 import { createClient } from "@/features/supabase/client";
 import { getErrorMessage } from "@/features/supabase/errors";
 import type { AuthResponse } from "@/features/auth/services/types";
-import type { BulkUnitPayload, Unit, UpdateUnitPayload } from "../types";
+import type { BulkUnitPayload, Unit, UnitByIdResponse, UpdateUnitPayload } from "../types";
 import { toast } from "sonner";
 
 const supabase = createClient();
@@ -34,6 +34,17 @@ export const toggleUnitStatus = async (
   unitId: string
 ): Promise<AuthResponse<Unit>> => {
   const { data, error } = await supabase.rpc("toggle_unit_status", {
+    p_unit_id: unitId,
+  });
+
+  if (error) { toast.error(getErrorMessage(error)); return { data: null, error: getErrorMessage(error) }; }
+  return { data, error: null };
+};
+
+export const getUnitById = async (
+  unitId: string
+): Promise<AuthResponse<UnitByIdResponse>> => {
+  const { data, error } = await supabase.rpc("get_unit_by_id", {
     p_unit_id: unitId,
   });
 

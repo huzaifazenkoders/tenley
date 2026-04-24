@@ -18,57 +18,27 @@ import { useState } from "react";
 import EditUnitModal from "./EditUnitModal";
 import DeleteUnitModal from "./DeleteUnitModal";
 import { toggleUnitStatus } from "../services";
+import type { Tenant, UnitWithTenants } from "../types";
 import { TenantType, UnitStatus } from "../types/enums";
 
-type TenantRole = TenantType;
-
-type Tenant = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  role: TenantRole;
-};
-
-type Unit = {
-  id: string;
-  name: string;
-  number: string;
-  status: UnitStatus;
-  tenants: Tenant[];
-};
-
-const UNITS: Unit[] = [
-  {
-    id: "1",
-    name: "101-A",
-    number: "101",
-    status: UnitStatus.Active,
-    tenants: [
-      { id: "t1", name: "John Smith", email: "john@example.com", phone: "(555) 123-4567", role: TenantType.HeadOfHousehold },
-      { id: "t2", name: "Max William", email: "max@example.com", phone: "(555) 123-4567", role: TenantType.FamilyMember },
-    ]
+const roleBadge: Record<
+  TenantType,
+  { bg: string; text: string; label: string }
+> = {
+  [TenantType.HeadOfHousehold]: {
+    bg: "bg-indigo-500/10",
+    text: "text-indigo-500",
+    label: "Head of Household"
   },
-  { id: "2", name: "102-A", number: "102", status: UnitStatus.Inactive, tenants: [] },
-  {
-    id: "3",
-    name: "103-A",
-    number: "103",
-    status: UnitStatus.Active,
-    tenants: [
-      { id: "t4", name: "John Smith", email: "john@example.com", phone: "(555) 123-4567", role: TenantType.HeadOfHousehold },
-      { id: "t5", name: "Max William", email: "max@example.com", phone: "(555) 123-4567", role: TenantType.FamilyMember },
-    ]
-  },
-];
-
-const roleBadge: Record<TenantType, { bg: string; text: string; label: string }> = {
-  [TenantType.HeadOfHousehold]: { bg: "bg-indigo-500/10", text: "text-indigo-500", label: "Head of Household" },
-  [TenantType.FamilyMember]: { bg: "bg-red-500/10", text: "text-red-500", label: "Family Member" },
+  [TenantType.FamilyMember]: {
+    bg: "bg-red-500/10",
+    text: "text-red-500",
+    label: "Family Member"
+  }
 };
 
 const TenantCard = ({ tenant }: { tenant: Tenant }) => {
-  const badge = roleBadge[tenant.role];
+  const badge = roleBadge[tenant.tenant_type];
   return (
     <div className="p-3 bg-brand-base-white rounded-xl outline outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col gap-4">
       <div className="flex items-center justify-between">
@@ -81,7 +51,7 @@ const TenantCard = ({ tenant }: { tenant: Tenant }) => {
               Tenant Name
             </span>
             <span className="text-brand-Text-800 text-xs font-medium leading-4">
-              {tenant.name}
+              {tenant.tenant_name}
             </span>
           </div>
         </div>
@@ -140,15 +110,21 @@ const StatusBadge = ({ status }: { status: UnitStatus }) => (
   </span>
 );
 
-const UnitCard = ({ unit, onStatusToggled }: { unit: Unit; onStatusToggled?: (id: string) => void }) => {
+const UnitCard = ({
+  unit,
+  onSuccess
+}: {
+  unit: UnitWithTenants;
+  onSuccess?: () => void;
+}) => {
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   const handleToggleStatus = async () => {
-    const { error } = await toggleUnitStatus(unit.id);
-    if (!error) onStatusToggled?.(unit.id);
+    const { error } = await toggleUnitStatus(unit.unit_id);
+    if (!error) onSuccess?.();
   };
 
   return (
@@ -156,26 +132,40 @@ const UnitCard = ({ unit, onStatusToggled }: { unit: Unit; onStatusToggled?: (id
       <EditUnitModal
         open={editOpen}
         onOpenChange={setEditOpen}
-        unitId={unit.id}
-        unitName={unit.name}
-        unitNumber={unit.number}
+        unitId={unit.unit_id}
+        unitName={unit.unit_name}
+        unitNumber={unit.unit_number}
+        onSuccess={onSuccess}
       />
       <DeleteUnitModal
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
-        unitName={unit.name}
+        unitName={unit.unit_name}
       />
       {/* Unit header */}
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-4">
           <span className="text-brand-Text-950-d text-xl font-semibold leading-6 shrink-0">
-            {unit.name}
+            {unit.unit_name}
           </span>
           <Dropdown
             items={[
-              { value: "edit", label: "Edit Unit", onClick: () => setEditOpen(true) },
-              { value: "toggle", label: unit.status === UnitStatus.Active ? "Deactivate" : "Activate", onClick: handleToggleStatus },
-              { value: "delete", label: "Delete Unit", onClick: () => setDeleteOpen(true) },
+              {
+                value: "edit",
+                label: "Edit Unit",
+                onClick: () => setEditOpen(true)
+              },
+              {
+                value: "toggle",
+                label:
+                  unit.status === UnitStatus.Active ? "Deactivate" : "Activate",
+                onClick: handleToggleStatus
+              }
+              // {
+              //   value: "delete",
+              //   label: "Delete Unit",
+              //   onClick: () => setDeleteOpen(true)
+              // }
             ]}
             contentClassName="w-36"
           >
@@ -193,7 +183,7 @@ const UnitCard = ({ unit, onStatusToggled }: { unit: Unit; onStatusToggled?: (id
           size="xs"
           variant="outline"
           className="text-brand-primary-red-500 outline-brand-primary-red-200 hover:bg-brand-primary-red-50"
-          onClick={() => router.push(`/property/${params.id}/${unit.id}`)}
+          onClick={() => router.push(`/property/${params.id}/${unit.unit_id}`)}
         >
           View Details
         </Button>
@@ -220,68 +210,101 @@ const UnitCard = ({ unit, onStatusToggled }: { unit: Unit; onStatusToggled?: (id
   );
 };
 
-const UnitsSection = ({ totalUnits }: { totalUnits: number }) => (
-  <div className="w-full p-6 bg-brand-base-white rounded-[20px] outline outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col gap-6">
-    {/* Section header */}
-    <div className="flex items-center gap-3">
-      <div className="p-2 bg-brand-primary-red-50 rounded-lg">
-        <Building2 className="size-5 text-brand-primary-red-600-d" />
-      </div>
-      <span className="text-brand-Text-950-d text-xl font-semibold leading-6">
-        All Units ({totalUnits})
-      </span>
-    </div>
+type Props = {
+  units: UnitWithTenants[];
+  onRefetch: () => void;
+};
 
-    {/* Toolbar */}
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <TextInput
-          startIcon={
-            <span className="size-5 text-brand-Text-400">
-              <svg viewBox="0 0 20 20" fill="none" className="size-5">
-                <circle
-                  cx="9"
-                  cy="9"
-                  r="5.5"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                />
-                <path
-                  d="M14 14l2.5 2.5"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-              </svg>
+const UnitsSection = ({ units, onRefetch }: Props) => {
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const filtered = units.filter((u) => {
+    const matchesSearch =
+      !search ||
+      u.unit_name.toLowerCase().includes(search.toLowerCase()) ||
+      u.unit_number.toLowerCase().includes(search.toLowerCase());
+    const matchesStatus = statusFilter === "all" || u.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  return (
+    <div className="w-full p-6 bg-brand-base-white rounded-[20px] outline outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col gap-6">
+      {/* Section header */}
+      <div className="flex items-center gap-3">
+        <div className="p-2 bg-brand-primary-red-50 rounded-lg">
+          <Building2 className="size-5 text-brand-primary-red-600-d" />
+        </div>
+        <span className="text-brand-Text-950-d text-xl font-semibold leading-6">
+          All Units ({units.length})
+        </span>
+      </div>
+
+      {/* Toolbar */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <TextInput
+            startIcon={
+              <span className="size-5 text-brand-Text-400">
+                <svg viewBox="0 0 20 20" fill="none" className="size-5">
+                  <circle
+                    cx="9"
+                    cy="9"
+                    r="5.5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                  <path
+                    d="M14 14l2.5 2.5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
+            }
+            placeholder="Search..."
+            value={search}
+            setValue={setSearch}
+            containerClassName="w-[458px]"
+          />
+        </div>
+        <div className="flex items-center gap-4">
+          <Select
+            options={[
+              { label: "All Status", value: "all" },
+              { label: "Active", value: UnitStatus.Active },
+              { label: "Inactive", value: UnitStatus.Inactive }
+            ]}
+            value={statusFilter}
+            onValueChange={setStatusFilter}
+            placeholder="Status"
+            triggerClassName="whitespace-nowrap"
+          />
+          {/* <Button size="sm">
+            <Plus className="size-4" /> Add Unit
+          </Button> */}
+        </div>
+      </div>
+
+      {/* Unit cards */}
+      <div className="flex flex-col gap-4">
+        {filtered.map((unit) => (
+          <UnitCard key={unit.unit_id} unit={unit} onSuccess={onRefetch} />
+        ))}
+        {filtered.length === 0 && (
+          <div className="flex flex-col items-center gap-3 py-10">
+            <div className="p-4 bg-brand-Text-50 rounded-full">
+              <Building2 className="size-8 text-brand-Text-400" />
+            </div>
+            <span className="text-brand-Text-950-d text-base font-medium leading-5">
+              No units found
             </span>
-          }
-          placeholder="Search..."
-          containerClassName="w-[458px]"
-        />
-      </div>
-      <div className="flex items-center gap-4">
-        <Select
-          options={[
-            { label: "All Status", value: "all" },
-            { label: "Active", value: UnitStatus.Active },
-            { label: "Inactive", value: UnitStatus.Inactive },
-          ]}
-          placeholder="Status"
-          triggerClassName="whitespace-nowrap"
-        />
-        <Button size="sm">
-          <Plus className="size-4" /> Add Unit
-        </Button>
+          </div>
+        )}
       </div>
     </div>
-
-    {/* Unit cards */}
-    <div className="flex flex-col gap-4">
-      {UNITS.map((unit) => (
-        <UnitCard key={unit.id} unit={unit} />
-      ))}
-    </div>
-  </div>
-);
+  );
+};
 
 export default UnitsSection;
