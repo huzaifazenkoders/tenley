@@ -1,7 +1,12 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { TypographyStyles } from "@/styles/common-typography";
 import { ChevronRight } from "lucide-react";
-import React from "react";
+import { useState } from "react";
+import { selectSubscriptionPlan } from "../services/onboardingService";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 const CheckIcon = () => (
   <svg
@@ -39,6 +44,7 @@ const FeatureItem = ({ label }: { label: string }) => (
 
 const plans = [
   {
+    id: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
     name: "Starter Plan",
     price: "$49",
     popular: false,
@@ -46,10 +52,11 @@ const plans = [
       "Up to 20 units",
       "2 staff accounts",
       "Basic emergency response",
-      "Email notifications"
-    ]
+      "Email notifications",
+    ],
   },
   {
+    id: "9b2e1c3d-4f5a-6b7c-8d9e-0f1a2b3c4d5e",
     name: "Professional Plan",
     price: "$149",
     popular: true,
@@ -57,10 +64,11 @@ const plans = [
       "Up to 100 units",
       "10 staff accounts",
       "Full emergency response",
-      "AI call handling (500 mins)"
-    ]
+      "AI call handling (500 mins)",
+    ],
   },
   {
+    id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     name: "Enterprise Plan",
     price: "$399",
     popular: false,
@@ -68,12 +76,27 @@ const plans = [
       "Unlimited units",
       "50 staff accounts",
       "AI professional features",
-      "AI call handling (unlimited mins)"
-    ]
-  }
+      "AI call handling (unlimited mins)",
+    ],
+  },
 ];
 
 const OnboardingStep2 = ({ setStep }: { setStep: (step: number) => void }) => {
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleContinue = async () => {
+    if (!selectedPlanId) {
+      toast.error("Please select a plan");
+      return;
+    }
+    setIsSubmitting(true);
+    const { error } = await selectSubscriptionPlan({ p_plan_id: selectedPlanId });
+    setIsSubmitting(false);
+    if (error) { toast.error(error); return; }
+    setStep(3);
+  };
+
   return (
     <div className="flex-col-10 w-full">
       <div className="flex-col-2">
@@ -85,12 +108,16 @@ const OnboardingStep2 = ({ setStep }: { setStep: (step: number) => void }) => {
       <div className="flex-col-4">
         {plans.map((plan) => (
           <div
-            key={plan.name}
-            className={`w-full p-4 relative bg-white rounded-2xl shadow-[0px_1px_10px_0px_rgba(0,0,0,0.08)] flex flex-col gap-2.5 overflow-hidden ${
-              plan.popular
+            key={plan.id}
+            onClick={() => setSelectedPlanId(plan.id)}
+            className={cn(
+              "w-full p-4 relative bg-white rounded-2xl shadow-[0px_1px_10px_0px_rgba(0,0,0,0.08)] flex flex-col gap-2.5 overflow-hidden cursor-pointer",
+              selectedPlanId === plan.id
                 ? "outline outline-2 outline-offset-[-2px] outline-primary"
-                : "outline outline-1 outline-offset-[-1px] outline-border-primary"
-            }`}
+                : plan.popular
+                  ? "outline outline-2 outline-offset-[-2px] outline-primary/40"
+                  : "outline outline-1 outline-offset-[-1px] outline-border-primary"
+            )}
           >
             {plan.popular && (
               <div className="w-28 px-2 py-[5px] right-0 top-0 absolute bg-primary rounded-bl-lg inline-flex justify-center items-center">
@@ -140,7 +167,7 @@ const OnboardingStep2 = ({ setStep }: { setStep: (step: number) => void }) => {
           {[
             { label: "Additional Property", price: "$1.60", unit: "/unit" },
             { label: "Additional Staff", price: "$14.99", unit: "/staff" },
-            { label: "New Role", price: "$9.99", unit: "/role" }
+            { label: "New Role", price: "$9.99", unit: "/role" },
           ].map((addon) => (
             <div
               key={addon.label}
@@ -162,11 +189,11 @@ const OnboardingStep2 = ({ setStep }: { setStep: (step: number) => void }) => {
         </div>
       </div>
       <div className="flex-col-1">
-        <Button size={"full"} onClick={() => setStep(3)}>
-          Continue <ChevronRight />
+        <Button size="full" onClick={handleContinue} disabled={isSubmitting}>
+          {isSubmitting ? "Saving..." : <> Continue <ChevronRight /></>}
         </Button>
         <div className="flex center">
-          <Button size={"fit"} onClick={() => setStep(1)} variant={"link"}>
+          <Button size="fit" onClick={() => setStep(1)} variant="link">
             Go Back
           </Button>
         </div>

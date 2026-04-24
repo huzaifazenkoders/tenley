@@ -8,23 +8,31 @@ import AuthFormWrapper from "../components/AuthFormWrapper";
 
 const ForgotPasswordView = () => {
   const [view, setView] = useState<ForgotPasswordForm>("forgot-password");
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+
   switch (view) {
     case "forgot-password":
       return (
         <AuthFormWrapper>
-          <ForgotPassword setView={setView} />
+          <ForgotPassword setView={setView} setEmail={setEmail} />
         </AuthFormWrapper>
       );
     case "otp-verification":
       return (
         <AuthFormWrapper>
-          <OtpVerificationForm type="forgot-password" setView={setView} />
+          <OtpVerificationForm
+            type="forgot-password"
+            email={email}
+            setView={setView}
+            onOtpVerified={setOtp}
+          />
         </AuthFormWrapper>
       );
     case "set-password":
       return (
         <AuthFormWrapper>
-          <SetPasswordForm setView={setView} />
+          <SetPasswordForm setView={setView} email={email} otp={otp} />
         </AuthFormWrapper>
       );
   }

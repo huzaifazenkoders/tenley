@@ -8,9 +8,12 @@ import { Fragment, useState } from "react";
 import { navSections } from "../constants/SidebarItems";
 import Link from "next/link";
 import UpgradePlanModal from "./UpgradePlanModal";
+import { useUserStore } from "@/store/userStore";
 
 const SidebarExpanded = ({ currentPathname }: { currentPathname: string }) => {
   const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const user = useUserStore((s) => s.user);
+  const fullName = (user?.user_metadata?.full_name as string) ?? user?.email ?? "—";
   return (
     <Fragment>
       <div className="h-14 flex items-center overflow-hidden">
@@ -117,7 +120,7 @@ const SidebarExpanded = ({ currentPathname }: { currentPathname: string }) => {
         <>
           <div className="flex-1 flex flex-col overflow-hidden">
             <span className="text-brand-Text-950-d text-base font-semibold leading-5 whitespace-nowrap">
-              James Smith
+              {fullName}
             </span>
             <span className="text-brand-Text-400 text-xs font-medium leading-4">
               Company Admin

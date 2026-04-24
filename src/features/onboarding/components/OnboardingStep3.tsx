@@ -3,10 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { TypographyStyles } from "@/styles/common-typography";
 import { ChevronRight } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Checkbox from "@/components/ui/checkbox";
+import { profileComplete } from "../services/onboardingService";
+import { toast } from "sonner";
 
 const policies = [
   {
@@ -26,6 +28,15 @@ const policies = [
 const OnboardingStep3 = ({ setStep }: { setStep: (step: number) => void }) => {
   const router = useRouter();
   const [agreed, setAgreed] = useState({ terms: false, privacy: false });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleAccept = async () => {
+    setIsSubmitting(true);
+    const { error } = await profileComplete();
+    setIsSubmitting(false);
+    if (error) { toast.error(error); return; }
+    router.replace("/");
+  };
 
   return (
     <div className="flex flex-col gap-10 w-full">
@@ -80,10 +91,10 @@ const OnboardingStep3 = ({ setStep }: { setStep: (step: number) => void }) => {
       <div className="flex flex-col items-center gap-3">
         <Button
           size="full"
-          disabled={!agreed.terms || !agreed.privacy}
-          onClick={() => router.replace("/")}
+          disabled={!agreed.terms || !agreed.privacy || isSubmitting}
+          onClick={handleAccept}
         >
-          Accept &amp; Continue <ChevronRight />
+          {isSubmitting ? "Completing..." : <> Accept &amp; Continue <ChevronRight /></>}
         </Button>
         <button
           onClick={() => setStep(2)}
