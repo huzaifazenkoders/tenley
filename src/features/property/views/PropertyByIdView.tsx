@@ -1,17 +1,16 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Building2, ChevronLeft, FileUp, MapPin } from "lucide-react";
+import { Building, Building2, ChevronLeft, MapPin } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import ImportPropertyCSVModal from "../components/ImportPropertyCSVModal";
+import { useEffect, useState } from "react";
 import AssignedStaffCard from "../components/AssignedStaffCard";
+import ImportPropertyCSVModal from "../components/ImportPropertyCSVModal";
 import PropertyInfoCard from "../components/PropertyInfoCard";
 import UnitsSection from "../components/UnitsSection";
-import ResidentialPropertyView from "./ResidentialPropertyView";
 import { getPropertyById } from "../services";
 import type { PropertyByIdResponse } from "../types";
 import { PropertyPurpose } from "../types/enums";
+import ResidentialPropertyView from "./ResidentialPropertyView";
 
 const PropertyByIdView = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,21 +19,29 @@ const PropertyByIdView = () => {
     null
   );
 
-  useEffect(() => {
+  const fetchProperty = async () => {
     if (!id) return;
-    const fetch = async () => {
-      const { data } = await getPropertyById(id);
-      if (data) setPropertyData(data);
-    };
-    fetch();
+    const { data } = await getPropertyById(id);
+    if (data) setPropertyData(data);
+  };
+
+  useEffect(() => {
+    fetchProperty();
   }, [id]);
 
   if (!propertyData) return null;
 
-  const { property, units } = propertyData;
+  const { property, units = [] } = propertyData;
 
   if (property.property_purpose === PropertyPurpose.Residential) {
-    return <ResidentialPropertyView property={property} />;
+    const tenants = propertyData.tenants || units.flatMap((u) => u.tenants);
+    return (
+      <ResidentialPropertyView
+        property={property}
+        tenants={tenants}
+        onRefetch={fetchProperty}
+      />
+    );
   }
 
   return (
@@ -66,9 +73,14 @@ const PropertyByIdView = () => {
               </span>
             </div>
             <div className="w-px h-5 bg-brand-Text-200" />
-            <span className="px-2 py-1 bg-Neutral-Grey-0 rounded-full outline outline-1 -outline-offset-1 outline-Neutral-Grey-10 flex items-center gap-1 text-brand-Text-700 text-sm font-medium leading-5">
+            <span className="px-2 py-1 capitalize bg-Neutral-Grey-0 rounded-full outline outline-1 -outline-offset-1 outline-Neutral-Grey-10 flex items-center gap-1 text-brand-Text-700 text-sm font-medium leading-5">
               <Building2 className="size-4" />
               {property.property_type}
+            </span>
+            <div className="w-px h-5 bg-brand-Text-200" />
+            <span className="px-2 py-1 capitalize bg-Neutral-Grey-0 rounded-full outline outline-1 -outline-offset-1 outline-Neutral-Grey-10 flex items-center gap-1 text-brand-Text-700 text-sm font-medium leading-5">
+              <Building className="size-4" />
+              {property.property_purpose}
             </span>
           </div>
         </div>
@@ -79,18 +91,7 @@ const PropertyByIdView = () => {
 
       {/* Info + Staff row */}
       <div className="flex items-start gap-6">
-        <PropertyInfoCard
-          name={property.property_name}
-          address={property.property_address}
-          type={property.property_type}
-          images={property.property_images}
-          propertyAddress={property.property_address}
-          propertyName={property.property_name}
-          units={property.number_of_unit ?? 0}
-          floors={property.number_of_floors ?? 0}
-          city={property.city ?? ""}
-          state={property.state ?? ""}
-        />
+        <PropertyInfoCard property={property} onSuccess={fetchProperty} />
         <AssignedStaffCard staff={[]} />
       </div>
 

@@ -6,25 +6,20 @@ import { Mail, MoreVertical, Phone, User, UserPlus, Users } from "lucide-react";
 import { useState } from "react";
 import AddTenantModal from "./AddTenantModal";
 import EndTenancyModal from "./EndTenancyModal";
+import type { Tenant } from "../types";
+import { TenantType } from "../types/enums";
 
-type TenantRole = "Head of Household" | "Family Member";
-
-type Tenant = {
-  id: string;
-  label: string;
-  name: string;
-  email: string;
-  phone: string;
-  role: TenantRole;
+const roleBadge: Record<TenantType, { bg: string; text: string }> = {
+  [TenantType.HeadOfHousehold]: {
+    bg: "bg-indigo-500/10",
+    text: "text-indigo-500"
+  },
+  [TenantType.FamilyMember]: { bg: "bg-red-500/10", text: "text-red-500" }
 };
 
-type Props = {
-  tenants?: Tenant[];
-};
-
-const roleBadge: Record<TenantRole, { bg: string; text: string }> = {
-  "Head of Household": { bg: "bg-indigo-500/10", text: "text-indigo-500" },
-  "Family Member": { bg: "bg-red-500/10", text: "text-red-500" }
+const roleLabel: Record<TenantType, string> = {
+  [TenantType.HeadOfHousehold]: "Head of Household",
+  [TenantType.FamilyMember]: "Family Member"
 };
 
 const InfoField = ({
@@ -51,17 +46,30 @@ const InfoField = ({
   </div>
 );
 
-const TenantRow = ({ tenant }: { tenant: Tenant }) => {
-  const badge = roleBadge[tenant.role];
+type TenantRowProps = {
+  tenant: Tenant;
+  index: number;
+  propertyId: string;
+  onRefetch: () => void;
+};
+
+const TenantRow = ({
+  tenant,
+  index,
+  propertyId,
+  onRefetch
+}: TenantRowProps) => {
+  const badge = roleBadge[tenant.tenant_type];
   const [editOpen, setEditOpen] = useState(false);
   const [endOpen, setEndOpen] = useState(false);
+
   return (
     <>
       <div className="p-4 bg-brand-base-white rounded-xl outline outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col gap-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-brand-Text-950-d text-base font-semibold leading-5">
-              {tenant.label}
+              Tenant {String(index + 1).padStart(2, "0")}
             </span>
             <span
               className={cn(
@@ -70,41 +78,39 @@ const TenantRow = ({ tenant }: { tenant: Tenant }) => {
                 badge.text
               )}
             >
-              {tenant.role}
+              {roleLabel[tenant.tenant_type]}
             </span>
           </div>
-          <div className="flex items-center gap-3">
-            <Dropdown
-              items={[
-                {
-                  value: "edit",
-                  label: "Edit Tenant",
-                  onClick: () => setEditOpen(true)
-                },
-                {
-                  value: "remove",
-                  label: (
-                    <span className="text-brand-primary-red-600-d">
-                      End Tenant
-                    </span>
-                  ),
-                  onClick: () => setEndOpen(true)
-                }
-              ]}
-              contentClassName="w-40"
-            >
-              <button className="size-6 flex items-center justify-center text-brand-Text-800 hover:text-brand-Text-950-d">
-                <MoreVertical className="size-4" />
-              </button>
-            </Dropdown>
-          </div>
+          <Dropdown
+            items={[
+              {
+                value: "edit",
+                label: "Edit Tenant",
+                onClick: () => setEditOpen(true)
+              },
+              {
+                value: "end",
+                label: (
+                  <span className="text-brand-primary-red-600-d">
+                    End Tenancy
+                  </span>
+                ),
+                onClick: () => setEndOpen(true)
+              }
+            ]}
+            contentClassName="w-40"
+          >
+            <button className="size-6 flex items-center justify-center text-brand-Text-800 hover:text-brand-Text-950-d">
+              <MoreVertical className="size-4" />
+            </button>
+          </Dropdown>
         </div>
 
         <div className="flex flex-col gap-4">
           <InfoField
             icon={<User className="size-4 text-brand-Text-800" />}
             label="Tenant Name"
-            value={tenant.name}
+            value={tenant.tenant_name}
           />
           <div className="flex items-center justify-between">
             <InfoField
@@ -122,58 +128,37 @@ const TenantRow = ({ tenant }: { tenant: Tenant }) => {
           </div>
         </div>
       </div>
+
       <AddTenantModal
         open={editOpen}
         onOpenChange={setEditOpen}
-        tenants={[]}
-        prefill={{
-          name: tenant.name,
-          email: tenant.email,
-          phone: tenant.phone,
-          role: tenant.role
-        }}
-        title="Edit Tenant"
+        mode="edit"
+        tenant={tenant}
+        onSuccess={onRefetch}
       />
-      <EndTenancyModal open={endOpen} onOpenChange={setEndOpen} />
+      <EndTenancyModal
+        open={endOpen}
+        onOpenChange={setEndOpen}
+        tenantId={tenant.id}
+        onSuccess={onRefetch}
+      />
     </>
   );
 };
 
-const MOCK_TENANTS: Tenant[] = [
-  {
-    id: "t1",
-    label: "Tenant 01",
-    name: "John Smith",
-    email: "john@example.com",
-    phone: "(555) 123-4567",
-    role: "Head of Household"
-  },
-  {
-    id: "t2",
-    label: "Tenant 02",
-    name: "Max William",
-    email: "max@example.com",
-    phone: "(555) 123-4567",
-    role: "Family Member"
-  },
-  {
-    id: "t3",
-    label: "Tenant 03",
-    name: "Alex Warren",
-    email: "alex@example.com",
-    phone: "(555) 123-4567",
-    role: "Family Member"
-  }
-];
+type Props = {
+  tenants: Tenant[];
+  propertyId: string;
+  onRefetch: () => void;
+};
 
-const TenantInfoCard = ({ tenants = MOCK_TENANTS }: Props) => {
+const TenantInfoCard = ({ tenants, propertyId, onRefetch }: Props) => {
+  const [addOpen, setAddOpen] = useState(false);
   const hasTenants = tenants.length > 0;
-  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <>
       <div className="p-6 bg-brand-base-white rounded-[20px] outline outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col gap-10 overflow-hidden">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-brand-primary-red-50 rounded-lg">
@@ -184,38 +169,26 @@ const TenantInfoCard = ({ tenants = MOCK_TENANTS }: Props) => {
             </span>
           </div>
           {hasTenants && (
-            <div className="">
-              <Dropdown
-                items={[
-                  {
-                    value: "add",
-                    label: "Add New Member",
-                    onClick: () => setModalOpen(true)
-                  },
-                  {
-                    value: "end",
-                    label: (
-                      <span className="text-brand-primary-red-600-d">
-                        End Tenancy
-                      </span>
-                    ),
-                    onClick: () => {}
-                  }
-                ]}
-                contentClassName="w-44"
-              >
-                <button className="size-6 flex items-center justify-center text-brand-Text-800 hover:text-brand-Text-950-d">
-                  <MoreVertical className="size-4" />
-                </button>
-              </Dropdown>
-            </div>
+            <Button
+              size={"icon"}
+              variant={"outline-transparent"}
+              onClick={() => setAddOpen(true)}
+            >
+              <UserPlus className="size-4" />
+            </Button>
           )}
         </div>
 
         {hasTenants ? (
           <div className="flex flex-col gap-4">
-            {tenants.map((t) => (
-              <TenantRow key={t.id} tenant={t} />
+            {tenants.map((t, i) => (
+              <TenantRow
+                key={t.id}
+                tenant={t}
+                index={i}
+                propertyId={propertyId}
+                onRefetch={onRefetch}
+              />
             ))}
           </div>
         ) : (
@@ -232,16 +205,20 @@ const TenantInfoCard = ({ tenants = MOCK_TENANTS }: Props) => {
                 occupancy across your properties.
               </p>
             </div>
-            <Button size="sm" onClick={() => setModalOpen(true)}>
+            <Button size="sm" onClick={() => setAddOpen(true)}>
               <UserPlus className="size-4" /> Add Tenant
             </Button>
           </div>
         )}
       </div>
+
       <AddTenantModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
+        open={addOpen}
+        onOpenChange={setAddOpen}
+        mode="create"
+        propertyId={propertyId}
         tenants={tenants}
+        onSuccess={onRefetch}
       />
     </>
   );

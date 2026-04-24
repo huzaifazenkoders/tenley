@@ -23,6 +23,17 @@ export const upsertProperty = async (
   return { data, error: null };
 };
 
+export const updateProperty = async (
+  payload: UpsertPropertyPayload & { id: string }
+): Promise<AuthResponse<Property>> => {
+  const { data, error } = await supabase.rpc("update_property", {
+    p_payload: payload,
+  });
+
+  if (error) { toast.error(getErrorMessage(error)); return { data: null, error: getErrorMessage(error) }; }
+  return { data, error: null };
+};
+
 export const getPropertiesList = async ({
   limit = 10,
   offset = 0,

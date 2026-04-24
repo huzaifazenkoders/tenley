@@ -6,7 +6,7 @@ import { useState } from "react";
 import type { Property } from "../types";
 import EditPropertyModal from "./EditPropertyModal";
 
-type Props = { property: Property };
+type Props = { property: Property; onSuccess?: () => void };
 
 const InfoRow = ({ label, value }: { label: string; value: string }) => (
   <div className="flex flex-col gap-0.5 w-full md:w-1/2">
@@ -19,7 +19,7 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
-const PropertyInfoCard = ({ property }: Props) => {
+const PropertyInfoCard = ({ property, onSuccess }: Props) => {
   const [editOpen, setEditOpen] = useState(false);
 
   return (
@@ -28,6 +28,7 @@ const PropertyInfoCard = ({ property }: Props) => {
         open={editOpen}
         onOpenChange={setEditOpen}
         property={property}
+        onSuccess={onSuccess}
       />
       {/* Header */}
       <div className="flex items-center justify-between">

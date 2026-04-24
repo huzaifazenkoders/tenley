@@ -7,15 +7,18 @@ import TextInput from "@/components/ui/text-input";
 import { useState, useEffect } from "react";
 import type { Property } from "../types";
 import { PropertyPurpose, PropertyType } from "../types/enums";
+import { updateProperty } from "../services";
 import PropertyImagesUploader from "./PropertyImagesUploader";
+import { Loader2 } from "lucide-react";
 
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   property?: Property;
+  onSuccess?: () => void;
 };
 
-const EditPropertyModal = ({ open, onOpenChange, property }: Props) => {
+const EditPropertyModal = ({ open, onOpenChange, property, onSuccess }: Props) => {
   const [propertyType, setPropertyType] = useState<PropertyType | "">("");
   const [propertyPurpose, setPropertyPurpose] = useState<PropertyPurpose | "">("");
   const [address, setAddress] = useState("");
@@ -27,6 +30,32 @@ const EditPropertyModal = ({ open, onOpenChange, property }: Props) => {
   const [state, setState] = useState("");
   const [accessDetails, setAccessDetails] = useState("");
   const [propertyImages, setPropertyImages] = useState<string[]>([]);
+  const [sameAsAddress, setSameAsAddress] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!property) return;
+    setIsSubmitting(true);
+    const { error } = await updateProperty({
+      id: property.id,
+      property_name: name,
+      property_address: address,
+      property_type: propertyType as PropertyType,
+      property_purpose: propertyPurpose as PropertyPurpose,
+      property_images: propertyImages.length ? propertyImages : undefined,
+      property_id_prefix: idPrefix || undefined,
+      access_details: accessDetails || undefined,
+      city: city || undefined,
+      state: state || undefined,
+      number_of_unit: parseInt(units) || undefined,
+      number_of_floors: parseInt(floors) || undefined,
+    });
+    setIsSubmitting(false);
+    if (!error) {
+      onOpenChange(false);
+      onSuccess?.();
+    }
+  };
 
   useEffect(() => {
     if (open && property) {
@@ -41,6 +70,7 @@ const EditPropertyModal = ({ open, onOpenChange, property }: Props) => {
       setState(property.state ?? "");
       setAccessDetails(property.access_details ?? "");
       setPropertyImages(property.property_images ?? []);
+      setSameAsAddress(property.property_name === property.property_address);
     }
   }, [open, property]);
 
@@ -103,7 +133,10 @@ const EditPropertyModal = ({ open, onOpenChange, property }: Props) => {
         <TextInput
           label="Property Address"
           value={address}
-          setValue={setAddress}
+          setValue={(v) => {
+            setAddress(v);
+            if (sameAsAddress) setName(v);
+          }}
           containerClassName="w-full"
         />
 
@@ -114,8 +147,11 @@ const EditPropertyModal = ({ open, onOpenChange, property }: Props) => {
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
-                checked={name === address}
-                onChange={(e) => { if (e.target.checked) setName(address); }}
+                checked={sameAsAddress}
+                onChange={(e) => {
+                  setSameAsAddress(e.target.checked);
+                  if (e.target.checked) setName(address);
+                }}
                 className="accent-brand-primary-red-600-d size-4"
               />
               <span className="text-brand-Text-950-d text-sm font-medium leading-5">
@@ -186,8 +222,8 @@ const EditPropertyModal = ({ open, onOpenChange, property }: Props) => {
           >
             Cancel
           </Button>
-          <Button onClick={() => onOpenChange(false)}>
-            Update Property Details
+          <Button onClick={handleSubmit} disabled={isSubmitting}>
+            {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : "Update Property Details"}
           </Button>
         </div>
       </div>

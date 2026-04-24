@@ -1,6 +1,13 @@
-import { PropertyPurpose, PropertyStatus, PropertyType, TenantType, UnitStatus } from "./enums";
+import {
+  PropertyPurpose,
+  PropertyStatus,
+  PropertyType,
+  TenantType,
+  UnitStatus
+} from "./enums";
 
 export interface UpsertPropertyPayload {
+  id?: string;
   property_name: string;
   property_address: string;
   property_type: PropertyType;
@@ -90,13 +97,28 @@ export interface UnitWithTenants {
 export interface PropertyByIdResponse {
   property: Property;
   units: UnitWithTenants[];
+  tenants: Tenant[];
+}
+
+export interface BulkCreateTenantPayload {
+  tenant_name: string;
+  email: string;
+  phone: string;
+  tenant_type: TenantType;
+}
+
+export interface UpdateTenantPayload {
+  tenant_name?: string;
+  phone?: string;
+  tenant_type?: TenantType;
 }
 
 export interface Tenant {
   id: string;
-  unit_id: string;
+  unit_id: string | null;
+  property_id: string | null;
   tenant_type: TenantType;
-  full_name: string;
+  tenant_name: string;
   email: string;
   phone: string;
   created_at: string;
