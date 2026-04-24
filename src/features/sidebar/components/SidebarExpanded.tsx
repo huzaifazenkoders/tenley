@@ -2,18 +2,31 @@
 import AuthLogo from "@/../public/assets/auth/auth-logo.svg";
 import AvatarImage from "@/../public/assets/mock/person1.png";
 import { cn } from "@/lib/utils";
-import { MoreVertical } from "lucide-react";
+import { LogOut, MoreVertical } from "lucide-react";
 import Image from "next/image";
-import { Fragment, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { navSections } from "../constants/SidebarItems";
 import Link from "next/link";
 import UpgradePlanModal from "./UpgradePlanModal";
 import { useUserStore } from "@/store/userStore";
+import { signOut } from "@/features/auth/services/authService";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const SidebarExpanded = ({ currentPathname }: { currentPathname: string }) => {
   const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const user = useUserStore((s) => s.user);
+  const setUser = useUserStore((s) => s.setUser);
   const fullName = (user?.user_metadata?.full_name as string) ?? user?.email ?? "—";
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const { error } = await signOut();
+    if (error) { toast.error(error); return; }
+    setUser(null);
+    router.push("/auth/sign-in");
+  };
   return (
     <Fragment>
       <div className="h-14 flex items-center overflow-hidden">
@@ -126,7 +139,28 @@ const SidebarExpanded = ({ currentPathname }: { currentPathname: string }) => {
               Company Admin
             </span>
           </div>
-          <MoreVertical className="size-5 text-brand-Text-600 shrink-0" />
+          <div className="relative">
+            <button
+              onClick={() => setMenuOpen((v) => !v)}
+              className="p-0.5 rounded-full hover:bg-brand-Text-100 transition-colors"
+            >
+              <MoreVertical className="size-5 text-brand-Text-600" />
+            </button>
+            {menuOpen && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
+                <div className="absolute bottom-8 right-0 z-20 w-36 bg-white rounded-lg shadow-[0px_4px_16px_0px_rgba(0,0,0,0.12)] outline outline-1 -outline-offset-1 outline-brand-Text-100 overflow-hidden">
+                  <button
+                    onClick={handleLogout}
+                    className="w-full px-4 py-2.5 flex items-center gap-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                  >
+                    <LogOut className="size-4" />
+                    Logout
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </>
       </div>
       <UpgradePlanModal open={upgradeOpen} onOpenChange={setUpgradeOpen} />
