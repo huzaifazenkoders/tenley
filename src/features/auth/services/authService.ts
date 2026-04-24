@@ -67,6 +67,12 @@ export const verifyOtp = async (
   return { data, error: null };
 };
 
+export const signOut = async (): Promise<AuthResponse> => {
+  const { error } = await supabase.auth.signOut();
+  if (error) return { data: null, error: getErrorMessage(error) };
+  return { data: null, error: null };
+};
+
 export const resetPassword = async (
   payload: ResetPasswordPayload
 ): Promise<AuthResponse> => {
