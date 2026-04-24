@@ -2,6 +2,7 @@ import { createClient } from "@/features/supabase/client";
 import { getErrorMessage } from "@/features/supabase/errors";
 import type { AuthResponse } from "@/features/auth/services/types";
 import type { BulkCreateTenantPayload, Tenant, UpdateTenantPayload } from "../types";
+import { toast } from "sonner";
 
 const supabase = createClient();
 
@@ -20,7 +21,11 @@ export const bulkCreateTenants = async ({
     p_unit_id: unitId ?? null,
   });
 
-  if (error) return { data: null, error: getErrorMessage(error) };
+  if (error) {
+    const message = getErrorMessage(error);
+    toast.error(message);
+    return { data: null, error: message };
+  }
   return { data, error: null };
 };
 
@@ -33,7 +38,11 @@ export const updateTenant = async (
     p_payload: payload,
   });
 
-  if (error) return { data: null, error: getErrorMessage(error) };
+  if (error) {
+    const message = getErrorMessage(error);
+    toast.error(message);
+    return { data: null, error: message };
+  }
   return { data, error: null };
 };
 
@@ -46,6 +55,10 @@ export const endTenant = async (
     p_reason: reason,
   });
 
-  if (error) return { data: null, error: getErrorMessage(error) };
+  if (error) {
+    const message = getErrorMessage(error);
+    toast.error(message);
+    return { data: null, error: message };
+  }
   return { data, error: null };
 };

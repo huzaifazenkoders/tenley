@@ -1,6 +1,7 @@
 import { createClient } from "@/features/supabase/client";
 import { getErrorMessage } from "@/features/supabase/errors";
 import type { AuthResponse } from "@/features/auth/services/types";
+import { toast } from "sonner";
 
 export interface UpsertCompanyProfilePayload {
   company_name: string;
@@ -32,7 +33,11 @@ export const upsertCompanyProfile = async (
       logo: payload.logo ?? null
     }
   });
-  if (error) return { data: null, error: getErrorMessage(error) };
+  if (error) {
+    const message = getErrorMessage(error);
+    toast.error(message);
+    return { data: null, error: message };
+  }
   return { data, error: null };
 };
 
@@ -42,12 +47,20 @@ export const selectSubscriptionPlan = async (
   const { data, error } = await supabase.rpc("select_subscription_plan", {
     p_plan_id: payload.p_plan_id
   });
-  if (error) return { data: null, error: getErrorMessage(error) };
+  if (error) {
+    const message = getErrorMessage(error);
+    toast.error(message);
+    return { data: null, error: message };
+  }
   return { data, error: null };
 };
 
 export const profileComplete = async (): Promise<AuthResponse> => {
   const { data, error } = await supabase.rpc("profile_complete");
-  if (error) return { data: null, error: getErrorMessage(error) };
+  if (error) {
+    const message = getErrorMessage(error);
+    toast.error(message);
+    return { data: null, error: message };
+  }
   return { data, error: null };
 };
