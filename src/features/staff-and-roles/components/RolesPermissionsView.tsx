@@ -1,55 +1,94 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { queryKeys } from "@/query-keys";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FileText, Pencil } from "lucide-react";
 import { Switch } from "radix-ui";
-import { useState } from "react";
-
-type Role = { id: string; name: string; description: string };
-
-const roles: Role[] = [
-  { id: "property-manager", name: "Property Manager", description: "Full property management for assigned properties" },
-  { id: "maintenance-technician", name: "Maintenance Technician", description: "Can view and update emergencies for assigned properties" },
-  { id: "maintenance-supervisor", name: "Maintenance Supervisor", description: "Oversee maintenance operations across multiple properties" },
-  { id: "regional-supervisor", name: "Regional Supervisor", description: "Multi-property oversight and coordination" },
-  { id: "company-admin", name: "Company Admin", description: "Full platform access including billing and settings" },
-];
-
-type Permission = { id: string; label: string; enabled: boolean };
-
-const defaultPermissions: Permission[] = [
-  { id: "dashboard", label: "Dashboard", enabled: false },
-  { id: "property-management", label: "Property Management", enabled: false },
-  { id: "staff-roles", label: "Staff & Roles", enabled: true },
-  { id: "tenants", label: "Tenants", enabled: true },
-  { id: "emergencies", label: "Emergencies", enabled: true },
-  { id: "notifications", label: "Notifications", enabled: true },
-  { id: "analytics", label: "Analytics & Reports", enabled: true },
-  { id: "settings", label: "Settings", enabled: true },
-];
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { PERMISSION_LABELS } from "../services/permission.constants";
+import { getPermissions } from "../services/permission.service";
+import {
+  getRoleDetails,
+  getRoles,
+  updateRole,
+  type RolePermissionDetail,
+} from "../services/role.service";
 
 const RolesPermissionsView = () => {
-  const [selectedRole, setSelectedRole] = useState("property-manager");
-  const [permissions, setPermissions] = useState<Permission[]>(defaultPermissions);
+  const queryClient = useQueryClient();
+  const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState<Permission[]>(defaultPermissions);
+  const [draft, setDraft] = useState<RolePermissionDetail[]>([]);
+
+  const { data: rolesData } = useQuery({
+    queryKey: queryKeys.roles.all,
+    queryFn: getRoles,
+  });
+
+  const { data: permissionsData } = useQuery({
+    queryKey: queryKeys.permissions.all,
+    queryFn: getPermissions,
+  });
+
+  const { data: roleDetailsData } = useQuery({
+    queryKey: queryKeys.roles.details(selectedRoleId ?? ""),
+    queryFn: () => getRoleDetails(selectedRoleId!),
+    enabled: !!selectedRoleId,
+  });
+
+  const roles = rolesData?.data ?? [];
+  const allPermissions = permissionsData?.data ?? [];
+  const roleDetails = roleDetailsData?.data;
+
+  // Auto-select first role
+  useEffect(() => {
+    if (roles.length > 0 && !selectedRoleId) {
+      setSelectedRoleId(roles[0].id);
+    }
+  }, [roles, selectedRoleId]);
+
+  // Build merged permissions list: all permissions with enabled state from role
+  const mergedPermissions: RolePermissionDetail[] = allPermissions.map((p) => {
+    const rolePermission = roleDetails?.permissions.find((rp) => rp.key === p.key);
+    return {
+      key: p.key,
+      module: p.module,
+      description: p.description,
+      enabled: rolePermission?.enabled ?? false,
+    };
+  });
+
+  const activePerms = editing ? draft : mergedPermissions;
+
+  const { mutate: saveRole, isPending } = useMutation({
+    mutationFn: () =>
+      updateRole(selectedRoleId!, {
+        permissions: draft.map((p) => ({ key: p.key, enabled: p.enabled })),
+      }),
+    onSuccess: ({ error }) => {
+      if (error) { toast.error(error); return; }
+      toast.success("Role updated successfully");
+      queryClient.invalidateQueries({ queryKey: queryKeys.roles.details(selectedRoleId!) });
+      setEditing(false);
+    },
+  });
 
   const handleEditClick = () => {
-    setDraft([...permissions]);
+    setDraft([...mergedPermissions]);
     setEditing(true);
   };
 
-  const handleCancel = () => setEditing(false);
+  const toggleDraft = (key: string) =>
+    setDraft((prev) =>
+      prev.map((p) => (p.key === key ? { ...p, enabled: !p.enabled } : p))
+    );
 
-  const handleSave = () => {
-    setPermissions(draft);
-    setEditing(false);
-  };
-
-  const toggleDraft = (id: string) =>
-    setDraft((prev) => prev.map((p) => (p.id === id ? { ...p, enabled: !p.enabled } : p)));
-
-  const activePerms = editing ? draft : permissions;
+  const selectedRole = roles.find((r) => r.id === selectedRoleId);
+  const userCount = selectedRole
+    ? (rolesData?.data?.find((r) => r.id === selectedRoleId)?.permissions.length ?? 0)
+    : 0;
 
   return (
     <div className="flex flex-col gap-5 w-full">
@@ -71,11 +110,11 @@ const RolesPermissionsView = () => {
         {/* Role list */}
         <div className="w-96 bg-brand-base-white rounded-xl shadow-[0px_1px_10px_0px_rgba(0,0,0,0.08)] outline outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col p-2">
           {roles.map((role) => {
-            const isActive = selectedRole === role.id;
+            const isActive = selectedRoleId === role.id;
             return (
               <button
                 key={role.id}
-                onClick={() => setSelectedRole(role.id)}
+                onClick={() => { setSelectedRoleId(role.id); setEditing(false); }}
                 className={cn(
                   "w-full p-4 rounded-xl flex flex-col gap-1 text-left transition-colors",
                   isActive ? "bg-brand-primary-red-50" : "hover:bg-brand-Text-50"
@@ -94,12 +133,11 @@ const RolesPermissionsView = () => {
 
         {/* Permissions panel */}
         <div className="flex-1 p-4 bg-brand-base-white rounded-xl shadow-[0px_1px_10px_0px_rgba(0,0,0,0.08)] outline outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col items-end gap-4">
-          {/* Header */}
           <div className="w-full flex justify-between items-center">
             <span className="text-brand-Text-950-d text-base font-semibold leading-5">Permissions</span>
             <div className="flex items-center gap-6">
               <span className="px-2.5 py-1 bg-brand-primary-blue-50 rounded-lg outline outline-1 -outline-offset-1 outline-brand-primary-blue-200 text-brand-primary-blue-600 text-xs font-medium leading-4">
-                8 Users
+                {userCount} Users
               </span>
               {!editing && (
                 <button className="p-1.5 bg-brand-Text-50 rounded-full" onClick={handleEditClick}>
@@ -109,17 +147,18 @@ const RolesPermissionsView = () => {
             </div>
           </div>
 
-          {/* Permission rows */}
           <div className="w-full flex flex-col">
             {activePerms.map((perm, i) => (
               <div
-                key={perm.id}
+                key={perm.key}
                 className={cn("p-3 flex justify-between items-center", i < activePerms.length - 1 && "border-b border-brand-Text-100")}
               >
-                <span className="text-brand-Text-800 text-sm font-medium leading-5">{perm.label}</span>
+                <span className="text-brand-Text-800 text-sm font-medium leading-5">
+                  {PERMISSION_LABELS[perm.key] ?? perm.key}
+                </span>
                 <Switch.Root
                   checked={perm.enabled}
-                  onCheckedChange={() => editing && toggleDraft(perm.id)}
+                  onCheckedChange={() => editing && toggleDraft(perm.key)}
                   disabled={!editing}
                   className={cn(
                     "w-9 h-5 rounded-xl p-0.5 flex items-center transition-colors duration-200 focus:outline-none",
@@ -133,14 +172,13 @@ const RolesPermissionsView = () => {
             ))}
           </div>
 
-          {/* Edit mode action buttons */}
           {editing && (
             <div className="flex items-center gap-4">
-              <Button variant="outline-transparent" size="sm" onClick={handleCancel}>
+              <Button variant="outline-transparent" size="sm" onClick={() => setEditing(false)}>
                 Cancel
               </Button>
-              <Button size="sm" onClick={handleSave}>
-                Save Changes
+              <Button size="sm" onClick={() => saveRole()} disabled={isPending}>
+                {isPending ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           )}
