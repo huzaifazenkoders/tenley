@@ -111,7 +111,7 @@ const PropertiesTable = ({ onCountChange, onFilteredChange, onLoadingChange }: P
         return;
       }
       setRows(data.data);
-      setTotal(data.total ?? 0);
+      setTotal(data.pagination.total ?? 0);
       onCountChange?.(data.data.length);
       setIsLoading(false);
       onLoadingChange?.(false);

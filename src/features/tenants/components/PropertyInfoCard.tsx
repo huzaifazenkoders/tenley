@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Building2, Pencil } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import EditPropertyModal from "@/features/property/components/EditPropertyModal";
 
 const InfoField = ({ label, value }: { label: string; value: string }) => (
   <div className="flex flex-col gap-0.5">
@@ -43,19 +42,6 @@ const PropertyInfoCard = ({
 
   return (
     <div className="p-6 bg-brand-base-white rounded-[20px] outline outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col gap-10 overflow-hidden">
-      <EditPropertyModal
-        open={editOpen}
-        onOpenChange={setEditOpen}
-        propertyData={{
-          address,
-          name,
-          city,
-          state,
-          units: units.toString(),
-          floors: floors.toString(),
-          type
-        }}
-      />
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-brand-primary-red-50 rounded-lg">

@@ -83,6 +83,7 @@ export interface PropertiesListResponse {
   pagination: {
     limit: number;
     offset: number;
+    total: number;
   };
 }
 
