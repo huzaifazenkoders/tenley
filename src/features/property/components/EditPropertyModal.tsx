@@ -62,14 +62,21 @@ const validationSchema = Yup.object({
   state: Yup.string().trim().max(100, "State must be at most 100 characters"),
   accessDetails: Yup.string()
     .trim()
-    .max(500, "Access details must be at most 500 characters"),
+    .max(500, "Access details must be at most 500 characters")
 });
 
-const EditPropertyModal = ({ open, onOpenChange, property, onSuccess }: Props) => {
+const EditPropertyModal = ({
+  open,
+  onOpenChange,
+  property,
+  onSuccess
+}: Props) => {
   const formik = useFormik({
     initialValues: {
       propertyType: (property?.property_type ?? "") as PropertyType | "",
-      propertyPurpose: (property?.property_purpose ?? "") as PropertyPurpose | "",
+      propertyPurpose: (property?.property_purpose ?? "") as
+        | PropertyPurpose
+        | "",
       address: property?.property_address ?? "",
       name: property?.property_name ?? "",
       sameAsAddress: property?.property_name === property?.property_address,
@@ -79,32 +86,36 @@ const EditPropertyModal = ({ open, onOpenChange, property, onSuccess }: Props) =
       city: property?.city ?? "",
       state: property?.state ?? "",
       accessDetails: property?.access_details ?? "",
-      propertyImages: (property?.property_images ?? []) as string[],
+      propertyImages: (property?.property_images ?? []) as string[]
     },
     enableReinitialize: true,
     validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
       if (!property) return;
       const { error } = await updateProperty({
-        id: property.id,
-        property_name: values.name.trim(),
-        property_address: values.address.trim(),
-        property_type: values.propertyType as PropertyType,
-        property_purpose: values.propertyPurpose as PropertyPurpose,
-        property_images: values.propertyImages.length ? values.propertyImages : undefined,
-        property_id_prefix: values.idPrefix.trim() || undefined,
-        access_details: values.accessDetails.trim() || undefined,
-        city: values.city.trim() || undefined,
-        state: values.state.trim() || undefined,
-        number_of_unit: parseInt(values.units) || undefined,
-        number_of_floors: parseInt(values.floors) || undefined,
+        p_property_id: property.id,
+        p_payload: {
+          property_name: values.name.trim(),
+          property_address: values.address.trim(),
+          property_type: values.propertyType as PropertyType,
+          property_purpose: values.propertyPurpose as PropertyPurpose,
+          property_images: values.propertyImages.length
+            ? values.propertyImages
+            : undefined,
+          property_id_prefix: values.idPrefix.trim() || undefined,
+          access_details: values.accessDetails.trim() || undefined,
+          city: values.city.trim() || undefined,
+          state: values.state.trim() || undefined,
+          number_of_unit: parseInt(values.units) || undefined,
+          number_of_floors: parseInt(values.floors) || undefined
+        }
       });
       setSubmitting(false);
       if (!error) {
         onOpenChange(false);
         onSuccess?.();
       }
-    },
+    }
   });
 
   const handleOpenChange = (o: boolean) => {
@@ -118,7 +129,11 @@ const EditPropertyModal = ({ open, onOpenChange, property, onSuccess }: Props) =
   };
 
   return (
-    <Modal open={open} onOpenChange={handleOpenChange} className="w-[836px] p-6">
+    <Modal
+      open={open}
+      onOpenChange={handleOpenChange}
+      className="w-[836px] p-6"
+    >
       <form onSubmit={formik.handleSubmit}>
         <div className="flex flex-col gap-6">
           {/* Header */}
@@ -147,28 +162,40 @@ const EditPropertyModal = ({ open, onOpenChange, property, onSuccess }: Props) =
               <Select
                 label="Property Type"
                 value={formik.values.propertyType}
-                onValueChange={(v) => formik.setFieldValue("propertyType", v as PropertyType)}
+                onValueChange={(v) =>
+                  formik.setFieldValue("propertyType", v as PropertyType)
+                }
                 containerClassName="flex-1"
                 options={[
                   { label: "Bungalow", value: PropertyType.Bungalow },
                   { label: "Mall", value: PropertyType.Mall },
                   { label: "Office", value: PropertyType.Office },
-                  { label: "Apartment", value: PropertyType.Apartment },
+                  { label: "Apartment", value: PropertyType.Apartment }
                 ]}
-                error={formik.touched.propertyType ? formik.errors.propertyType : undefined}
+                error={
+                  formik.touched.propertyType
+                    ? formik.errors.propertyType
+                    : undefined
+                }
               />
             </div>
             <div className="w-1/2">
               <Select
                 label="Property Purpose"
                 value={formik.values.propertyPurpose}
-                onValueChange={(v) => formik.setFieldValue("propertyPurpose", v as PropertyPurpose)}
+                onValueChange={(v) =>
+                  formik.setFieldValue("propertyPurpose", v as PropertyPurpose)
+                }
                 containerClassName="flex-1"
                 options={[
                   { label: "Residential", value: PropertyPurpose.Residential },
-                  { label: "Commercial", value: PropertyPurpose.Commercial },
+                  { label: "Commercial", value: PropertyPurpose.Commercial }
                 ]}
-                error={formik.touched.propertyPurpose ? formik.errors.propertyPurpose : undefined}
+                error={
+                  formik.touched.propertyPurpose
+                    ? formik.errors.propertyPurpose
+                    : undefined
+                }
               />
             </div>
           </div>
@@ -200,7 +227,8 @@ const EditPropertyModal = ({ open, onOpenChange, property, onSuccess }: Props) =
                   checked={formik.values.sameAsAddress}
                   onChange={(e) => {
                     formik.setFieldValue("sameAsAddress", e.target.checked);
-                    if (e.target.checked) formik.setFieldValue("name", formik.values.address);
+                    if (e.target.checked)
+                      formik.setFieldValue("name", formik.values.address);
                   }}
                   className="accent-brand-primary-red-600-d size-4"
                 />
@@ -216,7 +244,9 @@ const EditPropertyModal = ({ open, onOpenChange, property, onSuccess }: Props) =
                 value={formik.values.idPrefix}
                 setValue={(v) => formik.setFieldValue("idPrefix", v)}
                 onBlur={formik.handleBlur}
-                error={formik.touched.idPrefix ? formik.errors.idPrefix : undefined}
+                error={
+                  formik.touched.idPrefix ? formik.errors.idPrefix : undefined
+                }
               />
               <p className="text-brand-primary-blue-600 text-xs font-normal leading-5 tracking-wide">
                 Shown at the start of every Emergency ID. Example: OAK000482
@@ -254,7 +284,11 @@ const EditPropertyModal = ({ open, onOpenChange, property, onSuccess }: Props) =
             setValue={(v) => formik.setFieldValue("accessDetails", v)}
             onBlur={formik.handleBlur}
             containerClassName="w-full"
-            error={formik.touched.accessDetails ? formik.errors.accessDetails : undefined}
+            error={
+              formik.touched.accessDetails
+                ? formik.errors.accessDetails
+                : undefined
+            }
           />
           <div className="flex items-start gap-6">
             <TextInput
@@ -280,7 +314,11 @@ const EditPropertyModal = ({ open, onOpenChange, property, onSuccess }: Props) =
           <div className="w-full h-px bg-brand-Text-100" />
 
           <div className="flex justify-end items-center gap-6">
-            <Button type="button" variant="outline-transparent" onClick={() => handleOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline-transparent"
+              onClick={() => handleOpenChange(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={formik.isSubmitting}>
