@@ -1,14 +1,108 @@
 "use client";
 import TextInput from "@/components/ui/text-input";
-import { Pencil } from "lucide-react";
+import { Loader2, Pencil } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import {
+  upsertCompanyProfile,
+  type UpsertCompanyProfilePayload
+} from "@/features/onboarding/services/onboardingService";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/query-keys";
+import type { CompanyInfo, MeResponse } from "../services/settingsService";
 
-const CompanyInfoTab = () => {
+const validationSchema = Yup.object({
+  company_name: Yup.string()
+    .trim()
+    .min(2, "Company name must be at least 2 characters")
+    .max(100, "Company name must be at most 100 characters")
+    .required("Company name is required"),
+  company_email: Yup.string()
+    .trim()
+    .isValidEmail("Invalid email address")
+    .required("Company email is required"),
+  website_url: Yup.string()
+    .trim()
+    .url("Must be a valid URL")
+    .max(255, "URL must be at most 255 characters"),
+  registration_number: Yup.string()
+    .trim()
+    .min(3, "Registration number must be at least 3 characters")
+    .max(50, "Registration number must be at most 50 characters")
+    .required("Registration number is required"),
+  phone_number: Yup.string()
+    .trim()
+    .isValidPhoneNumber("Enter a valid phone number")
+    .required("Phone number is required"),
+  address: Yup.string()
+    .trim()
+    .min(5, "Address must be at least 5 characters")
+    .max(255, "Address must be at most 255 characters")
+    .required("Address is required")
+});
+
+const getCompany = (me: MeResponse | null): CompanyInfo | null =>
+  me?.company ?? me?.company_profile ?? me?.company_information ?? null;
+
+const CompanyInfoTab = ({
+  me,
+  isLoading
+}: {
+  me: MeResponse | null;
+  isLoading?: boolean;
+}) => {
+  const queryClient = useQueryClient();
   const [editing, setEditing] = useState(false);
+  const company = getCompany(me);
+
+  const formik = useFormik({
+    initialValues: {
+      company_name: company?.company_name ?? "",
+      company_email: company?.company_email ?? "",
+      website_url: company?.website_url ?? "",
+      registration_number: company?.registration_number ?? "",
+      phone_number: company?.phone_number ?? "",
+      address: company?.address ?? "",
+      logo: company?.logo ?? ""
+    },
+    enableReinitialize: true,
+    validationSchema,
+    onSubmit: async (values, { setSubmitting }) => {
+      const payload: UpsertCompanyProfilePayload = {
+        company_name: values.company_name.trim(),
+        company_email: values.company_email.trim().toLowerCase(),
+        website_url: values.website_url.trim() || undefined,
+        registration_number: values.registration_number.trim(),
+        phone_number: values.phone_number.trim(),
+        address: values.address.trim(),
+        logo: values.logo || undefined
+      };
+
+      const { error } = await upsertCompanyProfile(payload);
+      setSubmitting(false);
+      if (error) {
+        toast.error(error);
+        return;
+      }
+      toast.success("Company information updated successfully");
+      queryClient.invalidateQueries({ queryKey: queryKeys.auth.me });
+      setEditing(false);
+    }
+  });
+
+  const handleCancel = () => {
+    formik.resetForm();
+    setEditing(false);
+  };
 
   return (
-    <div className="w-full p-4 bg-white rounded-xl shadow-[0px_2px_8px_0px_rgba(32,33,36,0.04)] outline outline-1 outline-offset-[-1px] outline-brand-Text-100 flex flex-col gap-6">
+    <form
+      onSubmit={formik.handleSubmit}
+      className="w-full p-4 bg-white rounded-xl shadow-[0px_2px_8px_0px_rgba(32,33,36,0.04)] outline outline-1 outline-offset-[-1px] outline-brand-Text-100 flex flex-col gap-6"
+    >
       <div className="flex justify-between items-center">
         <div className="flex flex-col gap-1">
           <span className="text-brand-Text-950-d text-base font-medium leading-5">
@@ -21,15 +115,24 @@ const CompanyInfoTab = () => {
         {editing ? (
           <div className="flex justify-end gap-3">
             <Button
+              type="button"
               variant="outline-transparent"
-              onClick={() => setEditing(false)}
+              onClick={handleCancel}
+              disabled={formik.isSubmitting}
             >
               Cancel
             </Button>
-            <Button onClick={() => setEditing(false)}>Save Changes</Button>
+            <Button type="submit" disabled={formik.isSubmitting}>
+              {formik.isSubmitting ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                "Save Changes"
+              )}
+            </Button>
           </div>
         ) : (
           <Button
+            type="button"
             size={"icon"}
             variant="outline-transparent"
             onClick={() => setEditing((p) => !p)}
@@ -42,43 +145,84 @@ const CompanyInfoTab = () => {
       <div className="flex flex-col gap-6">
         <TextInput
           label="Company Name"
-          defaultValue="Acme Property Group"
-          disabled={!editing}
+          id="company_name"
+          value={formik.values.company_name}
+          setValue={(v) => formik.setFieldValue("company_name", v)}
+          onBlur={formik.handleBlur}
+          disabled={!editing || isLoading}
+          error={
+            formik.touched.company_name ? formik.errors.company_name : undefined
+          }
         />
         <div className="flex gap-6">
           <TextInput
             label="Company Email"
-            defaultValue="support@acmeproperty.com"
-            disabled={!editing}
-            className="flex-1"
+            id="company_email"
+            value={formik.values.company_email}
+            setValue={(v) => formik.setFieldValue("company_email", v)}
+            onBlur={formik.handleBlur}
+            disabled={!editing || isLoading}
+            containerClassName="flex-1"
+            error={
+              formik.touched.company_email
+                ? formik.errors.company_email
+                : undefined
+            }
           />
           <TextInput
             label="Website URL (Optional)"
-            defaultValue="http://www.acmeproperty.com"
-            disabled={!editing}
+            id="website_url"
+            value={formik.values.website_url}
+            setValue={(v) => formik.setFieldValue("website_url", v)}
+            onBlur={formik.handleBlur}
+            disabled={!editing || isLoading}
+            containerClassName="flex-1"
+            error={
+              formik.touched.website_url ? formik.errors.website_url : undefined
+            }
           />
         </div>
         <div className="flex gap-6">
           <TextInput
             label="Registration No."
-            defaultValue="1245"
-            disabled={!editing}
-            className="flex-1"
+            id="registration_number"
+            value={formik.values.registration_number}
+            setValue={(v) => formik.setFieldValue("registration_number", v)}
+            onBlur={formik.handleBlur}
+            disabled={!editing || isLoading}
+            containerClassName="flex-1"
+            error={
+              formik.touched.registration_number
+                ? formik.errors.registration_number
+                : undefined
+            }
           />
           <TextInput
             label="Phone Number"
-            defaultValue="(252) 555-0126"
-            disabled={!editing}
-            className="flex-1"
+            id="phone_number"
+            value={formik.values.phone_number}
+            setValue={(v) => formik.setFieldValue("phone_number", v)}
+            onBlur={formik.handleBlur}
+            disabled={!editing || isLoading}
+            containerClassName="flex-1"
+            error={
+              formik.touched.phone_number
+                ? formik.errors.phone_number
+                : undefined
+            }
           />
         </div>
         <TextInput
           label="Address"
-          defaultValue="4517 Washington Ave. Manchester, Kentucky 39495"
-          disabled={!editing}
+          id="address"
+          value={formik.values.address}
+          setValue={(v) => formik.setFieldValue("address", v)}
+          onBlur={formik.handleBlur}
+          disabled={!editing || isLoading}
+          error={formik.touched.address ? formik.errors.address : undefined}
         />
       </div>
-    </div>
+    </form>
   );
 };
 

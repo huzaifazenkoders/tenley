@@ -1,8 +1,49 @@
 import { createClient } from "@/features/supabase/client";
 import { getErrorMessage } from "@/features/supabase/errors";
+import type { AuthResponse } from "@/features/auth/services/types";
 import { toast } from "sonner";
 
 const supabase = createClient();
+
+export interface ProfileInfo {
+  id?: string;
+  email?: string;
+  full_name?: string;
+  phone?: string;
+  profile_image_url?: string;
+}
+
+export interface CompanyInfo {
+  company_name?: string;
+  company_email?: string;
+  website_url?: string | null;
+  registration_number?: string;
+  phone_number?: string;
+  address?: string;
+  logo?: string | null;
+}
+
+export interface MeResponse {
+  profile?: ProfileInfo | null;
+  company?: CompanyInfo | null;
+  company_profile?: CompanyInfo | null;
+  profile_information?: ProfileInfo | null;
+  company_information?: CompanyInfo | null;
+  email?: string;
+  full_name?: string;
+  phone?: string;
+  profile_image_url?: string;
+}
+
+export const getMe = async (): Promise<AuthResponse<MeResponse>> => {
+  const { data, error } = await supabase.rpc("me");
+  if (error) {
+    const message = getErrorMessage(error);
+    toast.error(message);
+    return { data: null, error: message };
+  }
+  return { data: data as MeResponse, error: null };
+};
 
 export const getCurrentUser = async () => {
   const { data, error } = await supabase.auth.getUser();
@@ -11,17 +52,24 @@ export const getCurrentUser = async () => {
 };
 
 export const updateProfile = async (payload: {
-  full_name?: string;
-  phone?: string;
-  avatar_url?: string;
-}) => {
-  const { data, error } = await supabase.auth.updateUser({ data: payload });
+  full_name: string;
+  phone: string;
+  profile_image_url: string;
+}): Promise<AuthResponse> => {
+  const { data, error } = await supabase.rpc("update_profile", {
+    p_payload: {
+      full_name: payload.full_name,
+      phone: payload.phone,
+      profile_image_url: payload.profile_image_url
+    }
+  });
   if (error) {
-    toast.error(getErrorMessage(error));
-    return { data: null, error: getErrorMessage(error) };
+    const message = getErrorMessage(error);
+    toast.error(message);
+    return { data: null, error: message };
   }
   toast.success("Profile updated successfully");
-  return { data: data.user, error: null };
+  return { data, error: null };
 };
 
 export const changePassword = async (
