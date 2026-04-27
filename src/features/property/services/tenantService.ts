@@ -38,7 +38,7 @@ export const updateTenant = async (
   payload: UpdateTenantPayload
 ): Promise<AuthResponse<Tenant>> => {
   const { data, error } = await supabase.rpc("update_tenant", {
-    p_tenancy_id: tenantId,
+    p_tenant_id: tenantId,
     p_payload: payload
   });
 
