@@ -270,7 +270,7 @@ const AddTenantModal = (props: Props) => {
 
           <div className="flex flex-wrap gap-6">
             {existingTenants.map((t, i) => (
-              <TenantCard key={t.id} t={t} index={i} />
+              <TenantCard key={t.tenant_id} t={t} index={i} />
             ))}
             {pendingTenants.map((t, i) => (
               <TenantCard

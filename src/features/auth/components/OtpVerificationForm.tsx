@@ -12,6 +12,7 @@ import * as Yup from "yup";
 import { signupComplete, verifyOtp } from "../services";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/features/supabase/client";
 
 interface PropsA {
   type: "forgot-password";
@@ -22,6 +23,7 @@ interface PropsA {
 interface PropsB {
   type: "sign-up";
   email: string;
+  fullName: string;
   setView: ReactDispatch<SignUpForm>;
 }
 interface PropsC {
@@ -50,8 +52,15 @@ const OtpVerificationForm = (props: PropsA | PropsB | PropsC) => {
 
       if (type === "sign-up") {
         const { error } = await signupComplete({ email, otp: trimmedOtp });
+        if (error) { setSubmitting(false); toast.error(error); return; }
+        await createClient().rpc("update_profile", {
+          p_payload: {
+            full_name: (props as PropsB).fullName,
+            phone: "",
+            profile_image_url: ""
+          }
+        });
         setSubmitting(false);
-        if (error) { toast.error(error); return; }
         router.replace("/onboarding");
       } else if (type === "verify-email") {
         const { error } = await signupComplete({ email, otp: trimmedOtp });

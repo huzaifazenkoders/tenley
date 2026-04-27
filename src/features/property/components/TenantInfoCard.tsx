@@ -52,11 +52,7 @@ type TenantRowProps = {
   onRefetch: () => void;
 };
 
-const TenantRow = ({
-  tenant,
-  index,
-  onRefetch
-}: TenantRowProps) => {
+const TenantRow = ({ tenant, index, onRefetch }: TenantRowProps) => {
   const badge = roleBadge[tenant.tenant_type];
   const [editOpen, setEditOpen] = useState(false);
   const [endOpen, setEndOpen] = useState(false);
@@ -120,7 +116,7 @@ const TenantRow = ({
               <InfoField
                 icon={<Phone className="size-4 text-brand-Text-800" />}
                 label="Phone Number"
-                value={tenant.phone}
+                value={`+${tenant.phone}`}
               />
             </div>
           </div>
@@ -137,7 +133,7 @@ const TenantRow = ({
       <EndTenancyModal
         open={endOpen}
         onOpenChange={setEndOpen}
-        tenantId={tenant.id}
+        tenantId={tenant.tenant_id}
         onSuccess={onRefetch}
       />
     </>
@@ -182,7 +178,7 @@ const TenantInfoCard = ({ tenants, propertyId, unitId, onRefetch }: Props) => {
           <div className="flex flex-col gap-4">
             {tenants.map((t, i) => (
               <TenantRow
-                key={t.id}
+                key={t.tenant_id}
                 tenant={t}
                 index={i}
                 onRefetch={onRefetch}

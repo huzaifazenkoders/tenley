@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 interface Props {
   setView: ReactDispatch<SignUpForm>;
   setEmail: ReactDispatch<string>;
+  setFullName: ReactDispatch<string>;
 }
 
 const validationSchema = Yup.object({
@@ -43,7 +44,7 @@ const validationSchema = Yup.object({
     .required("Please confirm your password"),
 });
 
-const SignupForm = ({ setView, setEmail }: Props) => {
+const SignupForm = ({ setView, setEmail, setFullName }: Props) => {
   const router = useRouter();
 
   const formik = useFormik({
@@ -61,6 +62,7 @@ const SignupForm = ({ setView, setEmail }: Props) => {
         return;
       }
       setEmail(values.email.trim().toLowerCase());
+      setFullName(values.full_name.trim());
       setView("otp-verification");
     },
   });

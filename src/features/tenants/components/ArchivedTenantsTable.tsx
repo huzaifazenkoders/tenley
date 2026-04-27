@@ -110,7 +110,11 @@ const ArchivedTenantsTable = () => {
 
   return (
     <>
-      <ArchivedTenantSheet open={sheetOpen} onOpenChange={setSheetOpen} />
+      <ArchivedTenantSheet
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+        tenantId={selectedTenant?.tenant_id ?? null}
+      />
       <div className="w-full bg-brand-base-white rounded-[20px] shadow-[0px_0px_0px_1px_rgba(220,223,228,1.00)] flex flex-col overflow-hidden">
         {/* Toolbar */}
         <div className="px-6 py-4 border-b border-Colors-Card-stroke2 flex items-center gap-4">

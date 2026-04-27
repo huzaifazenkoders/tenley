@@ -54,9 +54,11 @@ export const endTenant = async (
   tenantId: string,
   reason: string
 ): Promise<AuthResponse<null>> => {
+  // Supabase client reference for end_tenant RPC
+
   const { data, error } = await supabase.rpc("end_tenant", {
-    p_tenant_id: tenantId,
-    p_reason: reason
+    p_tenant_id: tenantId, // uuid
+    p_reason: reason // string
   });
 
   if (error) {

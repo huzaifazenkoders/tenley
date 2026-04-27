@@ -2,7 +2,11 @@ import { createClient } from "@/features/supabase/client";
 import { getErrorMessage } from "@/features/supabase/errors";
 import type { AuthResponse } from "@/features/auth/services/types";
 import { toast } from "sonner";
-import type { GetTenantListParams, TenantListResponse } from "../types";
+import type {
+  ArchivedTenantDetails,
+  GetTenantListParams,
+  TenantListResponse
+} from "../types";
 
 const supabase = createClient();
 
@@ -29,5 +33,45 @@ export const getTenantList = async (
     toast.error(message);
     return { data: null, error: message };
   }
+  return { data, error: null };
+};
+
+export const getArchivedTenantDetails = async (
+  tenantId: string
+): Promise<AuthResponse<ArchivedTenantDetails>> => {
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+
+  const { data, error } = await supabase.rpc("get_archived_tenant_details", {
+    p_user_id: user?.id ?? null,
+    p_tenant_id: tenantId
+  });
+
+  if (error) {
+    const message = getErrorMessage(error);
+    toast.error(message);
+    return { data: null, error: message };
+  }
+  return { data, error: null };
+};
+
+export const reassignTenant = async (
+  tenantId: string,
+  propertyId: string,
+  unitId?: string | null
+): Promise<AuthResponse<null>> => {
+  const { data, error } = await supabase.rpc("reassign_tenant", {
+    p_tenant_id: tenantId,
+    p_property_id: propertyId,
+    p_unit_id: unitId ?? null
+  });
+
+  if (error) {
+    const message = getErrorMessage(error);
+    toast.error(message);
+    return { data: null, error: message };
+  }
+  toast.success("Tenant reassigned successfully");
   return { data, error: null };
 };

@@ -121,7 +121,6 @@ export interface UpdateTenantPayload {
 }
 
 export interface Tenant {
-  id: string;
   unit_id: string | null;
   property_id: string | null;
   tenant_type: TenantType;

@@ -258,7 +258,6 @@ const TenantsTable = () => {
                     </span>
                     {row.unit_number && (
                       <span className="text-brand-Text-700 text-xs font-normal leading-4">
-                        {row.unit_name ? `${row.unit_name} · ` : ""}
                         {row.unit_number}
                       </span>
                     )}
