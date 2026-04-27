@@ -66,6 +66,20 @@ export const getPropertiesList = async ({
   return { data, error: null };
 };
 
+export const bulkUpsertProperties = async (
+  payload: UpsertPropertyPayload[]
+): Promise<AuthResponse<Property[]>> => {
+  const { data, error } = await supabase.rpc("bulk_upsert_properties", {
+    p_payload: payload,
+  });
+
+  if (error) {
+    toast.error(getErrorMessage(error));
+    return { data: null, error: getErrorMessage(error) };
+  }
+  return { data, error: null };
+};
+
 export const getPropertyById = async (
   propertyId: string
 ): Promise<AuthResponse<PropertyByIdResponse>> => {

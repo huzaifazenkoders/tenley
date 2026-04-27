@@ -1,0 +1,5 @@
+property_name,property_address,property_type,property_purpose,property_images,property_id_prefix,access_details,city,state,number_of_unit,number_of_floors
+Sunrise Residency,123 Main Street,apartment,residential,https://example.com/img1.jpg|https://example.com/img2.jpg,SR,Gate pass required,Karachi,Sindh,20,5
+Business Tower,Shahrah-e-Faisal Block 6,office,commercial,,BT,Reception Desk,Karachi,Sindh,50,10
+Green Valley Bungalow,Plot 44 DHA Phase 5,bungalow,residential,,GV,,Lahore,Punjab,1,2
+Mega Mall Gulshan,Gulshan-e-Iqbal Main Boulevard,mall,commercial,https://example.com/mall.jpg,MM,Security check at entrance,Karachi,Sindh,120,3

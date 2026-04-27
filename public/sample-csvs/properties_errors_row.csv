@@ -1,0 +1,7 @@
+property_name,property_address,property_type,property_purpose,property_images,property_id_prefix,access_details,city,state,number_of_unit,number_of_floors
+Sunrise Residency,123 Main Street,apartment,residential,,SR,,Karachi,Sindh,20,5
+,456 Garden Road,bungalow,residential,,,No access needed,Lahore,Punjab,1,2
+Business Tower,Shahrah-e-Faisal,building,commercial,,,Reception Desk,Karachi,Sindh,50,10
+Green Mall,Gulshan-e-Iqbal,mall,mixed,,,Security check,Karachi,Sindh,100,3
+Corner Office,Plot 99 Clifton,office,commercial,,,Open lobby,Karachi,Sindh,-5,ten
+Old Haveli,Model Town Lahore,bungalow,residential,,THIISPREFIXISTOOLONG,,Lahore,Punjab,4,2
