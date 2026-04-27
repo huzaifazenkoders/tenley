@@ -8,10 +8,12 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from "@/components/ui/table";
 import TextInput from "@/components/ui/text-input";
 import { handleRippleAnimation } from "@/lib/ui/handleRippleAnimation";
+import { queryKeys } from "@/query-keys";
+import { useQuery } from "@tanstack/react-query";
 import {
   Building2,
   ChevronDown,
@@ -19,147 +21,328 @@ import {
   ChevronRight,
   Eye,
   Home,
-  Search
+  Search,
+  Archive,
 } from "lucide-react";
-import React, { useState } from "react";
+import moment from "moment";
+import React, { useDeferredValue, useState } from "react";
 import ArchivedTenantSheet from "./ArchivedTenantSheet";
+import { getTenantList } from "../services/tenantService";
+import type { TenantListItem } from "../types";
 
-type PropertyType = "Commercial" | "Residential";
-
-const archivedTenants = [
-  { id: 1, name: "John Smith", email: "john@example.com", property: "Sunset Gardens", unit: "101-A", moveIn: "20-01-2021", moveOut: "20-07-2021", type: "Commercial" as PropertyType, comment: "Lease ended" },
-  { id: 2, name: "Alex Warren", email: "alex@example.com", property: "Harbor View Apartments", unit: "", moveIn: "11-04-2022", moveOut: "11-10-2022", type: "Residential" as PropertyType, comment: "-" },
-  { id: 3, name: "Emily Johnson", email: "emily@example.com", property: "Lakeside Retreat", unit: "", moveIn: "15-06-2022", moveOut: "15-12-2022", type: "Residential" as PropertyType, comment: "Contract renewal pending" },
-  { id: 4, name: "Michael Brown", email: "michael@example.com", property: "Mountain Peak Lodge", unit: "102-C", moveIn: "30-08-2022", moveOut: "30-02-2023", type: "Commercial" as PropertyType, comment: "Seeking new employment" },
-  { id: 5, name: "Sarah Davis", email: "sarah@example.com", property: "Seaside Villas", unit: "", moveIn: "22-11-2022", moveOut: "22-07-2023", type: "Residential" as PropertyType, comment: "Awaiting response from landlord" },
-  { id: 6, name: "David Wilson", email: "david@example.com", property: "Urban Oasis", unit: "102-A", moveIn: "05-01-2023", moveOut: "05-08-2023", type: "Commercial" as PropertyType, comment: "Temporary housing arrangement" },
-  { id: 7, name: "Laura Garcia", email: "laura@example.com", property: "Riverside Bungalows", unit: "201-A", moveIn: "18-03-2023", moveOut: "18-09-2023", type: "Commercial" as PropertyType, comment: "Looking for roommates" },
-  { id: 8, name: "James Martinez", email: "james@example.com", property: "Forest Grove Cabins", unit: "", moveIn: "09-07-2023", moveOut: "09-03-2025", type: "Commercial" as PropertyType, comment: "Expired rental agreement" },
-  { id: 9, name: "Linda Rodriguez", email: "linda@example.com", property: "Desert Springs Residences", unit: "", moveIn: "12-09-2023", moveOut: "12-03-2024", type: "Residential" as PropertyType, comment: "Moving in with family" },
-  { id: 10, name: "Robert Lee", email: "robert@example.com", property: "Tropical Paradise Suites", unit: "204-A", moveIn: "25-12-2023", moveOut: "25-06-2024", type: "Commercial" as PropertyType, comment: "Exploring housing market options" },
+const PAGE_SIZE_OPTIONS = [
+  { label: "10", value: "10" },
+  { label: "25", value: "25" },
+  { label: "50", value: "50" },
 ];
 
-const PropertyTypeBadge = ({ type }: { type: PropertyType }) => {
-  const Icon = type === "Commercial" ? Building2 : Home;
+const PROPERTY_TYPE_OPTIONS = [
+  { label: "Commercial", value: "commercial" },
+  { label: "Residential", value: "residential" },
+];
+
+const PropertyTypeBadge = ({ type }: { type: string }) => {
+  const isCommercial = type.toLowerCase() === "commercial";
+  const Icon = isCommercial ? Building2 : Home;
+  const label = isCommercial ? "Commercial" : "Residential";
   return (
     <span className="px-2 py-1 bg-Neutral-Grey-0 rounded-full outline outline-1 -outline-offset-1 outline-Neutral-Grey-10 inline-flex items-center gap-1">
       <Icon className="size-4 text-brand-Text-700" />
-      <span className="text-brand-Text-700 text-sm font-medium">{type}</span>
+      <span className="text-brand-Text-700 text-sm font-medium">{label}</span>
     </span>
   );
 };
 
+const TableSkeleton = ({ rows = 8 }: { rows?: number }) => (
+  <>
+    {Array.from({ length: rows }).map((_, i) => (
+      <TableRow key={i}>
+        {Array.from({ length: 7 }).map((_, j) => (
+          <TableCell key={j}>
+            <div className="h-4 bg-brand-Text-100 rounded animate-pulse w-3/4" />
+          </TableCell>
+        ))}
+      </TableRow>
+    ))}
+  </>
+);
+
 const ArchivedTenantsTable = () => {
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [selectedTenant, setSelectedTenant] = useState<TenantListItem | null>(
+    null
+  );
+  const [search, setSearch] = useState("");
+  const [propertyType, setPropertyType] = useState<string>("");
+  const [dateFrom, setDateFrom] = useState<Date | null>(null);
+  const [dateTo, setDateTo] = useState<Date | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const deferredSearch = useDeferredValue(search);
+
+  const queryParams = {
+    search: deferredSearch || null,
+    propertyType: propertyType || null,
+    dateFrom: dateFrom ? moment(dateFrom).format("YYYY-MM-DD") : null,
+    dateTo: dateTo ? moment(dateTo).format("YYYY-MM-DD") : null,
+    page,
+    pageSize,
+  };
+
+  const { data: response, isLoading } = useQuery({
+    queryKey: queryKeys.tenants.list("archived", queryParams),
+    queryFn: () => getTenantList({ status: "archived", ...queryParams }),
+  });
+
+  const tenants: TenantListItem[] = response?.data?.data ?? [];
+  const pagination = response?.data?.pagination;
+
+  const totalPages = pagination?.total_pages ?? 1;
+  const totalCount = pagination?.total_count ?? 0;
+  const rangeStart = (page - 1) * pageSize + 1;
+  const rangeEnd = Math.min(page * pageSize, totalCount);
+
+  const openSheet = (tenant: TenantListItem) => {
+    setSelectedTenant(tenant);
+    setSheetOpen(true);
+  };
 
   return (
     <>
       <ArchivedTenantSheet open={sheetOpen} onOpenChange={setSheetOpen} />
-    <div className="w-full bg-brand-base-white rounded-[20px] shadow-[0px_0px_0px_1px_rgba(220,223,228,1.00)] flex flex-col overflow-hidden">
-      {/* Toolbar */}
-      <div className="px-6 py-4 border-b border-Colors-Card-stroke2 flex items-center gap-4">
-        <TextInput
-          startIcon={<Search className="size-5 text-brand-Text-400" />}
-          placeholder="Search..."
-          containerClassName="w-96"
-        />
-        <div className="flex items-center gap-4 ml-auto">
-          <DateSelector
-            trigger={
-              <Button
-                variant="outline-transparent"
-                className="text-text-secondary font-normal justify-between px-3"
-                onPointerDown={(e) => {
-                  handleRippleAnimation(
-                    e as unknown as React.MouseEvent<HTMLButtonElement>,
-                    "bg-black/50"
-                  );
+      <div className="w-full bg-brand-base-white rounded-[20px] shadow-[0px_0px_0px_1px_rgba(220,223,228,1.00)] flex flex-col overflow-hidden">
+        {/* Toolbar */}
+        <div className="px-6 py-4 border-b border-Colors-Card-stroke2 flex items-center gap-4">
+          <TextInput
+            startIcon={<Search className="size-5 text-brand-Text-400" />}
+            placeholder="Search..."
+            containerClassName="w-96"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+          />
+          <div className="flex items-center gap-4 ml-auto">
+            {/* From Date */}
+            <DateSelector
+              value={dateFrom ?? undefined}
+              setValue={(d) => {
+                setDateFrom(d);
+                setPage(1);
+              }}
+              trigger={
+                <Button
+                  variant="outline-transparent"
+                  className="text-text-secondary font-normal justify-between px-3"
+                  onPointerDown={(e) => {
+                    handleRippleAnimation(
+                      e as unknown as React.MouseEvent<HTMLButtonElement>,
+                      "bg-black/50"
+                    );
+                  }}
+                >
+                  {dateFrom
+                    ? moment(dateFrom).format("DD MMM YY")
+                    : "From Date"}
+                  <ChevronDown className="size-4" />
+                </Button>
+              }
+            />
+
+            {/* To Date */}
+            <DateSelector
+              value={dateTo ?? undefined}
+              minDate={dateFrom ?? undefined}
+              setValue={(d) => {
+                setDateTo(d);
+                setPage(1);
+              }}
+              trigger={
+                <Button
+                  variant="outline-transparent"
+                  className="text-text-secondary font-normal justify-between px-3"
+                  onPointerDown={(e) => {
+                    handleRippleAnimation(
+                      e as unknown as React.MouseEvent<HTMLButtonElement>,
+                      "bg-black/50"
+                    );
+                  }}
+                >
+                  {dateTo ? moment(dateTo).format("DD MMM YY") : "To Date"}
+                  <ChevronDown className="size-4" />
+                </Button>
+              }
+            />
+
+            {(dateFrom || dateTo) && (
+              <button
+                className="text-brand-Text-400 text-xs underline hover:text-brand-Text-700 transition-colors"
+                onClick={() => {
+                  setDateFrom(null);
+                  setDateTo(null);
+                  setPage(1);
                 }}
               >
-                Date Range
-                <ChevronDown className="size-4" />
-              </Button>
-            }
-          />
-          <Select
-            options={[
-              { label: "Commercial", value: "commercial" },
-              { label: "Residential", value: "residential" },
-            ]}
-            placeholder="All Property Type"
-            triggerClassName="whitespace-nowrap"
-          />
-        </div>
-      </div>
+                Clear dates
+              </button>
+            )}
 
-      {/* Table */}
-      <Table>
-        <TableHeader>
-          <TableRow className="bg-gray-light-50">
-            <TableHead>Tenant Name</TableHead>
-            <TableHead>Property</TableHead>
-            <TableHead>Property Type</TableHead>
-            <TableHead>Move-In Date</TableHead>
-            <TableHead>Move-Out Date</TableHead>
-            <TableHead>Comments</TableHead>
-            <TableHead className="w-20">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {archivedTenants.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-brand-Text-950-d text-sm font-medium leading-5">{row.name}</span>
-                  <span className="text-brand-Text-700 text-xs font-normal leading-4">{row.email}</span>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-brand-Text-950-d text-sm font-medium leading-5">{row.property}</span>
-                  {row.unit && <span className="text-brand-Text-700 text-xs font-normal leading-4">{row.unit}</span>}
-                </div>
-              </TableCell>
-              <TableCell>
-                <PropertyTypeBadge type={row.type} />
-              </TableCell>
-              <TableCell>
-                <span className="text-brand-Text-950-d text-sm font-medium leading-5">{row.moveIn}</span>
-              </TableCell>
-              <TableCell>
-                <span className="text-brand-Text-950-d text-sm font-medium leading-5">{row.moveOut}</span>
-              </TableCell>
-              <TableCell>
-                <span className="text-brand-Text-950-d text-sm font-medium leading-5 line-clamp-1">{row.comment}</span>
-              </TableCell>
-              <TableCell>
-                <Button size="icon" variant="ghost" onClick={() => setSheetOpen(true)}>
-                  <Eye className="size-5 text-brand-Text-700" />
-                </Button>
-              </TableCell>
+            <Select
+              options={PROPERTY_TYPE_OPTIONS}
+              placeholder="All Property Type"
+              triggerClassName="whitespace-nowrap"
+              value={propertyType}
+              onValueChange={(v) => {
+                setPropertyType(v);
+                setPage(1);
+              }}
+            />
+
+            {propertyType && (
+              <button
+                className="text-brand-Text-400 text-xs underline hover:text-brand-Text-700 transition-colors"
+                onClick={() => {
+                  setPropertyType("");
+                  setPage(1);
+                }}
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Table */}
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-light-50">
+              <TableHead>Tenant Name</TableHead>
+              <TableHead>Property</TableHead>
+              <TableHead>Property Type</TableHead>
+              <TableHead>Move-In Date</TableHead>
+              <TableHead>Move-Out Date</TableHead>
+              <TableHead>Comments</TableHead>
+              <TableHead className="w-20">Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <TableSkeleton />
+            ) : tenants.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7}>
+                  <div className="flex flex-col items-center justify-center gap-2 py-14 text-center">
+                    <Archive className="size-8 text-brand-Text-300" />
+                    <span className="text-brand-Text-600 text-sm font-medium">
+                      No archived tenants found
+                    </span>
+                    <span className="text-brand-Text-400 text-xs">
+                      {search || propertyType || dateFrom || dateTo
+                        ? "Try adjusting your filters"
+                        : "Archived tenants will appear here"}
+                    </span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : (
+              tenants.map((row) => (
+                <TableRow key={row.tenant_id}>
+                  <TableCell>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-brand-Text-950-d text-sm font-medium leading-5">
+                        {row.tenant_name}
+                      </span>
+                      <span className="text-brand-Text-700 text-xs font-normal leading-4">
+                        {row.tenant_email}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-brand-Text-950-d text-sm font-medium leading-5">
+                        {row.property_name}
+                      </span>
+                      {row.unit_number && (
+                        <span className="text-brand-Text-700 text-xs font-normal leading-4">
+                          {row.unit_name ? `${row.unit_name} · ` : ""}
+                          {row.unit_number}
+                        </span>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <PropertyTypeBadge type={row.property_type} />
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-brand-Text-950-d text-sm font-medium leading-5">
+                      {moment(row.move_in_date).format("DD MMM YYYY")}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-brand-Text-950-d text-sm font-medium leading-5">
+                      {row.tenancy_ended_at
+                        ? moment(row.tenancy_ended_at).format("DD MMM YYYY")
+                        : "—"}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-brand-Text-950-d text-sm font-medium leading-5 line-clamp-1">
+                      {row.end_tenancy_reason ?? "—"}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => openSheet(row)}
+                    >
+                      <Eye className="size-5 text-brand-Text-700" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
 
-      {/* Pagination */}
-      <div className="py-2 px-4 flex justify-end items-center gap-6">
-        <div className="flex items-center gap-2 text-xs text-gray-500">
-          <span>Rows per page:</span>
-          <span className="text-gray-800">10</span>
-          <ChevronDown className="size-4 text-gray-500" />
-        </div>
-        <span className="text-xs text-gray-800">1-10 of 10</span>
-        <div className="flex items-center">
-          <button className="p-2 rounded-lg hover:bg-brand-Text-50 transition-colors">
-            <ChevronLeft className="size-4 text-gray-500" />
-          </button>
-          <button className="p-2 rounded-lg hover:bg-brand-Text-50 transition-colors">
-            <ChevronRight className="size-4 text-gray-500" />
-          </button>
+        {/* Pagination */}
+        <div className="py-2 px-4 flex justify-end items-center gap-6">
+          <div className="flex items-center gap-2 text-xs text-gray-500">
+            <span>Rows per page:</span>
+            <Select
+              options={PAGE_SIZE_OPTIONS}
+              value={String(pageSize)}
+              onValueChange={(v) => {
+                setPageSize(Number(v));
+                setPage(1);
+              }}
+              triggerClassName="h-7 px-2 text-xs border-0 shadow-none"
+            />
+          </div>
+          <span className="text-xs text-gray-800">
+            {totalCount === 0 ? "0" : `${rangeStart}–${rangeEnd}`} of{" "}
+            {totalCount}
+          </span>
+          <div className="flex items-center">
+            <button
+              className="p-2 rounded-lg hover:bg-brand-Text-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1}
+            >
+              <ChevronLeft className="size-4 text-gray-500" />
+            </button>
+            <button
+              className="p-2 rounded-lg hover:bg-brand-Text-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+            >
+              <ChevronRight className="size-4 text-gray-500" />
+            </button>
+          </div>
         </div>
       </div>
-    </div>
     </>
   );
 };

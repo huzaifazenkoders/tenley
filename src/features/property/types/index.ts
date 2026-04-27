@@ -129,4 +129,5 @@ export interface Tenant {
   email: string;
   phone: string;
   created_at: string;
+  tenant_id: string;
 }

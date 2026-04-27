@@ -6,7 +6,7 @@ import OnboardingStep3 from "../components/OnboardingStep3";
 import OnboardingStepper from "../components/OnboardingStepper";
 
 const OnboardingView = () => {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(2);
   return (
     <div className="grid grid-cols-3 gap-5 w-full">
       <div className="col-span-1 flex flex-col justify-center items-end">

@@ -31,31 +31,19 @@ const mapPropertyToFormData = (p: Property): PropertyFormData => ({
   propertyImages: p.property_images ?? []
 });
 
-const buildUnits = (totalUnits: number, floors: number): UnitEntry[] => {
-  const safeTotalUnits = Math.max(0, totalUnits);
-  const safeFloors = Math.max(1, floors);
+const buildUnits = (unitsPerFloor: number, floors: number): UnitEntry[] => {
   const result: UnitEntry[] = [];
-  let remainingUnits = safeTotalUnits;
-
-  for (let floor = 1; floor <= safeFloors && remainingUnits > 0; floor++) {
-    const floorsLeft = safeFloors - floor + 1;
-    const unitsOnThisFloor = Math.ceil(remainingUnits / floorsLeft);
-
-    for (let unit = 1; unit <= unitsOnThisFloor; unit++) {
+  for (let floor = 1; floor <= floors; floor++) {
+    for (let unit = 1; unit <= unitsPerFloor; unit++) {
       const num = `${floor}${String(unit).padStart(2, "0")}`;
       result.push({ unit_name: num, unit_number: num });
     }
-
-    remainingUnits -= unitsOnThisFloor;
   }
-
   return result;
 };
 
-const generateUnits = (p: Property): UnitEntry[] => {
-  const floors = p.number_of_floors ?? 1;
-  return buildUnits(p.number_of_unit ?? 0, floors);
-};
+const generateUnits = (p: Property): UnitEntry[] =>
+  buildUnits(p.number_of_unit ?? 0, p.number_of_floors ?? 1);
 
 const AddManualPropertyView = () => {
   const router = useRouter();
@@ -67,6 +55,8 @@ const AddManualPropertyView = () => {
     {}
   );
   const [units, setUnits] = useState<UnitEntry[]>([]);
+  const [floorsCount, setFloorsCount] = useState(1);
+  const [unitsPerFloor, setUnitsPerFloor] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const propertyInfoRef = useRef<PropertyInfoStepHandle>(null);
 
@@ -83,7 +73,13 @@ const AddManualPropertyView = () => {
     getPropertyById(urlPropertyId).then(({ data }) => {
       if (!data) return;
       setPrefillValues(mapPropertyToFormData(data.property));
-      if (urlStep >= 2) setUnits(generateUnits(data.property));
+      if (urlStep >= 2) {
+        const upf = data.property.number_of_unit ?? 0;
+        const fl = data.property.number_of_floors ?? 1;
+        setUnitsPerFloor(upf);
+        setFloorsCount(fl);
+        setUnits(generateUnits(data.property));
+      }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -121,6 +117,8 @@ const AddManualPropertyView = () => {
     setPropertyId(pid);
 
     const floors = parseInt(values.floors) || 1;
+    setFloorsCount(floors);
+    setUnitsPerFloor(unitCount);
     const generatedUnits = buildUnits(unitCount, floors);
     setUnits(generatedUnits);
     setIsSubmitting(false);
@@ -227,7 +225,8 @@ const AddManualPropertyView = () => {
           )}
           {step === 2 && (
             <UnitInfoStep
-              unitCount={units.length}
+              floors={floorsCount}
+              unitsPerFloor={unitsPerFloor}
               units={units}
               onUnitChange={handleUnitChange}
             />

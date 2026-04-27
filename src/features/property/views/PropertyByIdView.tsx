@@ -98,7 +98,7 @@ const PropertyByIdView = () => {
       {/* Units section */}
       <UnitsSection
         propertyId={property.id}
-        totalUnitsRequired={property.number_of_unit ?? 0}
+        unitsPerFloor={property.number_of_unit ?? 0}
         floors={property.number_of_floors ?? 1}
         units={units}
         onRefetch={fetchProperty}

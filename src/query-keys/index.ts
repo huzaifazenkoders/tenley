@@ -10,4 +10,8 @@ export const queryKeys = {
   permissions: {
     all: ["permissions"] as const,
   },
+  tenants: {
+    list: (status: string, params: object) =>
+      ["tenants", "list", status, params] as const,
+  },
 } as const;

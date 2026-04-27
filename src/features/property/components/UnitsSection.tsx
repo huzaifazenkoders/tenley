@@ -214,35 +214,25 @@ const UnitCard = ({
 
 type Props = {
   propertyId: string;
-  totalUnitsRequired: number;
+  unitsPerFloor: number;
   floors: number;
   units: UnitWithTenants[];
   onRefetch: () => void;
 };
 
-const buildExpectedUnitNumbers = (totalUnits: number, floors: number) => {
-  const safeTotalUnits = Math.max(0, totalUnits);
-  const safeFloors = Math.max(1, floors);
+const buildExpectedUnitNumbers = (unitsPerFloor: number, floors: number) => {
   const result: string[] = [];
-  let remainingUnits = safeTotalUnits;
-
-  for (let floor = 1; floor <= safeFloors && remainingUnits > 0; floor++) {
-    const floorsLeft = safeFloors - floor + 1;
-    const unitsOnThisFloor = Math.ceil(remainingUnits / floorsLeft);
-
-    for (let unit = 1; unit <= unitsOnThisFloor; unit++) {
+  for (let floor = 1; floor <= floors; floor++) {
+    for (let unit = 1; unit <= unitsPerFloor; unit++) {
       result.push(`${floor}${String(unit).padStart(2, "0")}`);
     }
-
-    remainingUnits -= unitsOnThisFloor;
   }
-
   return result;
 };
 
 const UnitsSection = ({
   propertyId,
-  totalUnitsRequired,
+  unitsPerFloor,
   floors,
   units,
   onRefetch
@@ -251,10 +241,7 @@ const UnitsSection = ({
   const [statusFilter, setStatusFilter] = useState("all");
   const [isAddingUnit, setIsAddingUnit] = useState(false);
 
-  const expectedUnitNumbers = buildExpectedUnitNumbers(
-    totalUnitsRequired,
-    floors
-  );
+  const expectedUnitNumbers = buildExpectedUnitNumbers(unitsPerFloor, floors);
   const existingUnitNumbers = new Set(units.map((unit) => unit.unit_number));
   const nextMissingUnitNumber = expectedUnitNumbers.find(
     (unitNumber) => !existingUnitNumbers.has(unitNumber)

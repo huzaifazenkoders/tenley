@@ -18,12 +18,16 @@ const SidebarExpanded = ({ currentPathname }: { currentPathname: string }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const user = useUserStore((s) => s.user);
   const setUser = useUserStore((s) => s.setUser);
-  const fullName = (user?.user_metadata?.full_name as string) ?? user?.email ?? "—";
+  const fullName =
+    (user?.user_metadata?.full_name as string) ?? user?.email ?? "—";
   const router = useRouter();
 
   const handleLogout = async () => {
     const { error } = await signOut();
-    if (error) { toast.error(error); return; }
+    if (error) {
+      toast.error(error);
+      return;
+    }
     setUser(null);
     router.push("/auth/sign-in");
   };
@@ -94,7 +98,7 @@ const SidebarExpanded = ({ currentPathname }: { currentPathname: string }) => {
         ))}
       </div>
       {/* Upgrade card */}
-      <div className="px-2 py-3 bg-linear-234 from-brand-primary-red-200 via-brand-base-white via-[63%] to-brand-primary-red-200 rounded-lg outline outline-1 outline-offset-[-1px] outline-brand-primary-red-200 flex flex-col gap-3 transition-all duration-300">
+      {/* <div className="px-2 py-3 bg-linear-234 from-brand-primary-red-200 via-brand-base-white via-[63%] to-brand-primary-red-200 rounded-lg outline outline-1 outline-offset-[-1px] outline-brand-primary-red-200 flex flex-col gap-3 transition-all duration-300">
         <div className="flex flex-col gap-1">
           <div className="text-base font-semibold leading-5">
             <span className="text-brand-base-black">Tenley</span>
@@ -113,7 +117,7 @@ const SidebarExpanded = ({ currentPathname }: { currentPathname: string }) => {
         >
           Upgrade Plan
         </button>
-      </div>
+      </div> */}
       {/* User */}
       <div
         className={cn(
@@ -148,7 +152,10 @@ const SidebarExpanded = ({ currentPathname }: { currentPathname: string }) => {
             </button>
             {menuOpen && (
               <>
-                <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
+                <div
+                  className="fixed inset-0 z-10"
+                  onClick={() => setMenuOpen(false)}
+                />
                 <div className="absolute bottom-8 right-0 z-20 w-36 bg-white rounded-lg shadow-[0px_4px_16px_0px_rgba(0,0,0,0.12)] outline outline-1 -outline-offset-1 outline-brand-Text-100 overflow-hidden">
                   <button
                     onClick={handleLogout}

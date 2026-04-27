@@ -50,7 +50,12 @@ type Props = {
   defaultValues?: Partial<PropertyFormData>;
 };
 
-const isBungalow = (type: PropertyType | "") => type === PropertyType.Bungalow;
+const positiveInt = (s: Yup.StringSchema) =>
+  s.test("is-positive-int", "Must be a positive whole number", (v) => {
+    if (!v) return false;
+    const n = Number(v);
+    return Number.isInteger(n) && n > 0;
+  });
 
 const validationSchema = Yup.object({
   propertyType: Yup.string().required("Property type is required"),
@@ -67,27 +72,8 @@ const validationSchema = Yup.object({
     .trim()
     .max(10, "ID prefix must be at most 10 characters")
     .matches(/^[A-Za-z0-9]*$/, "Only letters and numbers allowed"),
-  units: Yup.string().when("propertyType", {
-    is: (v: string) => Boolean(v) && v !== PropertyType.Bungalow,
-    then: (s) =>
-      s
-        .required("Number of units is required")
-        .test("is-positive-int", "Must be a positive whole number", (v) => {
-          if (!v) return false;
-          const n = Number(v);
-          return Number.isInteger(n) && n > 0;
-        }),
-    otherwise: (s) => s.optional()
-  }),
-  floors: Yup.string().test(
-    "is-positive-int-or-empty",
-    "Must be a positive whole number",
-    (v) => {
-      if (!v) return true;
-      const n = Number(v);
-      return Number.isInteger(n) && n > 0;
-    }
-  ),
+  units: positiveInt(Yup.string().required("Units per floor is required")),
+  floors: positiveInt(Yup.string().required("Number of floors is required")),
   city: Yup.string().trim().max(100, "City must be at most 100 characters"),
   state: Yup.string().trim().max(100, "State must be at most 100 characters"),
   accessDetails: Yup.string()
@@ -130,6 +116,12 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
       }
     };
 
+    const totalUnits =
+      formik.values.units && formik.values.floors
+        ? (parseInt(formik.values.units) || 0) *
+          (parseInt(formik.values.floors) || 0)
+        : null;
+
     return (
       <div className="p-6 bg-brand-base-white rounded-[20px] shadow-[0px_1px_10px_0px_rgba(0,0,0,0.08)] outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col gap-6">
         <h2 className="text-brand-Text-800 text-xl font-bold leading-6">
@@ -148,15 +140,7 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
             <Select
               label="Property Type"
               value={formik.values.propertyType}
-              onValueChange={(v) => {
-                formik.setFieldValue("propertyType", v);
-                // formik.setFieldTouched("propertyType", true);
-                // clear units if switching to bungalow
-                if (v === PropertyType.Bungalow) {
-                  formik.setFieldValue("units", "");
-                  formik.setFieldValue("floors", "");
-                }
-              }}
+              onValueChange={(v) => formik.setFieldValue("propertyType", v)}
               placeholder="Select type"
               options={[
                 { label: "Bungalow", value: PropertyType.Bungalow },
@@ -175,10 +159,7 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
             <Select
               label="Property Purpose"
               value={formik.values.propertyPurpose}
-              onValueChange={(v) => {
-                formik.setFieldValue("propertyPurpose", v);
-                // formik.setFieldTouched("propertyPurpose", true);
-              }}
+              onValueChange={(v) => formik.setFieldValue("propertyPurpose", v)}
               placeholder="Select purpose"
               options={[
                 { label: "Residential", value: PropertyPurpose.Residential },
@@ -257,16 +238,16 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
           </div>
         </div>
 
-        {/* Units + Floors — hidden for bungalow */}
-        {!isBungalow(formik.values.propertyType) && (
+        {/* Units per Floor + Number of Floors */}
+        <div className="flex flex-col gap-1">
           <div className="flex items-start gap-6">
             <TextInput
               id="units"
-              label="Number of Units"
+              label="Units per Floor"
               value={formik.values.units}
               setValue={(v) => formik.setFieldValue("units", v)}
               onBlur={formik.handleBlur}
-              placeholder="e.g. 60"
+              placeholder="e.g. 6"
               type="number"
               containerClassName="flex-1"
               error={
@@ -291,7 +272,17 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
               }
             />
           </div>
-        )}
+          {totalUnits !== null && totalUnits > 0 && (
+            <div className="h-10 flex items-center">
+              <span className="text-brand-Text-500 text-sm font-normal">
+                Total units:{" "}
+                <span className="text-brand-Text-950-d font-semibold">
+                  {totalUnits}
+                </span>
+              </span>
+            </div>
+          )}
+        </div>
 
         {/* Access Details */}
         <Textarea

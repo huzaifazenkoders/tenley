@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Download } from "lucide-react";
+import { Download } from "lucide-react";
+import { TypographyStyles } from "@/styles/common-typography";
 import InvoiceSheet from "./InvoiceSheet";
 
 const plans = [
@@ -77,80 +78,102 @@ const billingHistory = [
   }
 ];
 
-const FeatureItem = ({ label }: { label: string }) => (
-  <div className="flex items-center gap-2">
-    <CheckCircle2
-      className="size-5 text-brand-primary-red-500 shrink-0"
-      strokeWidth={1}
+const CheckIcon = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M9.99935 18.3332C14.5827 18.3332 18.3327 14.5832 18.3327 9.99984C18.3327 5.4165 14.5827 1.6665 9.99935 1.6665C5.41602 1.6665 1.66602 5.4165 1.66602 9.99984C1.66602 14.5832 5.41602 18.3332 9.99935 18.3332Z"
+      stroke="var(--brand-primary-red-500, #ED5346)"
+      strokeWidth="1.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
-    <span className="text-brand-Text-700 text-xs font-normal leading-4">
+    <path
+      d="M6.45898 9.99993L8.81732 12.3583L13.5423 7.6416"
+      stroke="var(--brand-primary-red-500, #ED5346)"
+      strokeWidth="1.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const FeatureItem = ({ label }: { label: string }) => (
+  <div className="flex-1 flex justify-start items-center gap-2">
+    <CheckIcon />
+    <div className="text-brand-Text-700 text-lg font-semibold leading-4">
       {label}
-    </span>
+    </div>
   </div>
 );
+
+const addons = [
+  {
+    label: "Additional property",
+    price: "$1.60",
+    unit: "/ unit",
+    description: "Applied for each unit above your plan's included limit."
+  },
+  {
+    label: "Additional staff account",
+    price: "$14.99",
+    unit: "/ staff",
+    description: "Applied for each extra staff member added to your workspace."
+  },
+  {
+    label: "New role",
+    price: "$9.99",
+    unit: "/ role",
+    description: "Applied when you create an additional custom role."
+  }
+];
 
 const BillingTab = () => {
   const [invoiceOpen, setInvoiceOpen] = useState(false);
   return (
     <div className="flex flex-col gap-6">
-      {/* Plan Cards */}
-      <div className="flex gap-4">
-        {plans.map((plan) => (
-          <div
-            key={plan.name}
-            className={`flex-1 p-4 relative bg-brand-base-white rounded-xl shadow-[0px_1px_10px_0px_rgba(0,0,0,0.08)] flex flex-col gap-2.5 overflow-hidden outline outline-1 outline-offset-[-1px] ${
-              plan.current
-                ? "outline-brand-primary-red-600-d"
-                : "outline-brand-Text-100"
-            }`}
-          >
-            {plan.popular && (
-              <div className="absolute right-0 top-0 px-2 py-[5px] bg-brand-primary-red-600-d rounded-bl-lg">
-                <span className="text-white text-sm font-semibold leading-5">
-                  Most Popular
-                </span>
-              </div>
-            )}
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <span className="text-brand-Text-950-d text-base font-semibold leading-5">
-                  {plan.name}
-                </span>
+      <div className="w-full rounded-2xl flex flex-col gap-3">
+        <div className="flex flex-col gap-0.5">
+          <div className="text-brand-Text-950-d text-base font-medium leading-5">
+            Unit costs
+          </div>
+          <div className={TypographyStyles.subTitle}>
+            These rates are shown for reference so the user can review the extra
+            charges before moving forward.
+          </div>
+        </div>
+        <div className="flex gap-3">
+          {addons.map((addon) => (
+            <div
+              key={addon.label}
+              className="w-full rounded-xl border border-border-primary bg-white p-4 flex flex-col gap-3"
+            >
+              <FeatureItem label={addon.label} />
+              <div className="pl-7 flex flex-col gap-1">
                 <div>
-                  <span className="text-brand-primary-red-600-d text-2xl font-bold leading-8">
-                    {plan.price}
+                  <span className="text-primary text-base font-semibold leading-5">
+                    {addon.price}
                   </span>
                   <span className="text-brand-Text-500 text-sm font-normal leading-5">
-                    /mo
+                    {addon.unit}
                   </span>
                 </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                {plan.features.map((f) => (
-                  <FeatureItem key={f} label={f} />
-                ))}
+                <p className="text-text-secondary text-xs font-normal leading-4">
+                  {addon.description}
+                </p>
               </div>
             </div>
-            {plan.current ? (
-              <Button
-                size="full"
-                variant={"outline-transparent"}
-                disabled
-                className="text-sm"
-              >
-                Current Plan
-              </Button>
-            ) : (
-              <Button size="full" className="text-sm">
-                {plan.action}
-              </Button>
-            )}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* Billing History */}
-      <div className="w-full p-4 bg-white rounded-2xl shadow-[0px_2px_8px_0px_rgba(32,33,36,0.04)] outline outline-1 outline-offset-[-1px] outline-brand-Text-100 flex flex-col gap-6">
+      <div className="w-full flex flex-col gap-6">
         <div className="flex flex-col gap-1">
           <span className="text-brand-Text-950-d text-base font-medium leading-5">
             Billing History
@@ -180,7 +203,7 @@ const BillingTab = () => {
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="bg-white">
               {billingHistory.map((row, i) => (
                 <tr
                   key={row.id}
