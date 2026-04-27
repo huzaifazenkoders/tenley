@@ -1,6 +1,5 @@
 "use client";
 import AuthLogo from "@/../public/assets/auth/auth-logo.svg";
-import AvatarImage from "@/../public/assets/mock/person1.png";
 import { cn } from "@/lib/utils";
 import { LogOut, MoreVertical } from "lucide-react";
 import Image from "next/image";
@@ -17,9 +16,11 @@ const SidebarExpanded = ({ currentPathname }: { currentPathname: string }) => {
   const [upgradeOpen, setUpgradeOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const user = useUserStore((s) => s.user);
+  const isLoading = useUserStore((s) => s.isLoading);
   const setUser = useUserStore((s) => s.setUser);
   const fullName =
     (user?.user_metadata?.full_name as string) ?? user?.email ?? "—";
+  const avatarUrl = user?.user_metadata?.avatar_url as string | undefined;
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -124,51 +125,67 @@ const SidebarExpanded = ({ currentPathname }: { currentPathname: string }) => {
           "relative px-2 py-3 bg-brand-Text-50 rounded-lg flex items-center gap-2 transition-all duration-300"
         )}
       >
-        <div className="relative shrink-0">
-          <Image
-            src={AvatarImage}
-            alt="Avatar"
-            width={40}
-            height={40}
-            className="rounded-full"
-          />
-          <span className="absolute bottom-0 right-0 size-2.5 bg-Primary-Green-50 rounded-full border-2 border-brand-Text-50" />
-        </div>
-        <>
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <span className="text-brand-Text-950-d text-base font-semibold leading-5 whitespace-nowrap">
-              {fullName}
-            </span>
-            <span className="text-brand-Text-400 text-xs font-medium leading-4">
-              Company Admin
-            </span>
-          </div>
-          <div className="relative">
-            <button
-              onClick={() => setMenuOpen((v) => !v)}
-              className="p-0.5 rounded-full hover:bg-brand-Text-100 transition-colors"
-            >
-              <MoreVertical className="size-5 text-brand-Text-600" />
-            </button>
-            {menuOpen && (
-              <>
-                <div
-                  className="fixed inset-0 z-10"
-                  onClick={() => setMenuOpen(false)}
+        {isLoading ? (
+          <>
+            <div className="size-10 rounded-full bg-brand-Text-200 animate-pulse shrink-0" />
+            <div className="flex-1 flex flex-col gap-1.5">
+              <div className="h-4 w-24 bg-brand-Text-200 rounded animate-pulse" />
+              <div className="h-3 w-16 bg-brand-Text-200 rounded animate-pulse" />
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="relative shrink-0">
+              {avatarUrl ? (
+                <Image
+                  src={avatarUrl}
+                  alt="Avatar"
+                  width={40}
+                  height={40}
+                  className="rounded-full object-cover size-10"
                 />
-                <div className="absolute bottom-8 right-0 z-20 w-36 bg-white rounded-lg shadow-[0px_4px_16px_0px_rgba(0,0,0,0.12)] outline outline-1 -outline-offset-1 outline-brand-Text-100 overflow-hidden">
-                  <button
-                    onClick={handleLogout}
-                    className="w-full px-4 py-2.5 flex items-center gap-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                  >
-                    <LogOut className="size-4" />
-                    Logout
-                  </button>
+              ) : (
+                <div className="size-10 rounded-full bg-brand-Text-100 flex items-center justify-center text-brand-Text-500 text-base font-semibold">
+                  {fullName[0]?.toUpperCase() ?? "?"}
                 </div>
-              </>
-            )}
-          </div>
-        </>
+              )}
+              <span className="absolute bottom-0 right-0 size-2.5 bg-Primary-Green-50 rounded-full border-2 border-brand-Text-50" />
+            </div>
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <span className="text-brand-Text-950-d text-base font-semibold leading-5 whitespace-nowrap">
+                {fullName}
+              </span>
+              <span className="text-brand-Text-400 text-xs font-medium leading-4">
+                Company Admin
+              </span>
+            </div>
+            <div className="relative">
+              <button
+                onClick={() => setMenuOpen((v) => !v)}
+                className="p-0.5 rounded-full hover:bg-brand-Text-100 transition-colors"
+              >
+                <MoreVertical className="size-5 text-brand-Text-600" />
+              </button>
+              {menuOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setMenuOpen(false)}
+                  />
+                  <div className="absolute bottom-8 right-0 z-20 w-36 bg-white rounded-lg shadow-[0px_4px_16px_0px_rgba(0,0,0,0.12)] outline outline-1 -outline-offset-1 outline-brand-Text-100 overflow-hidden">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full px-4 py-2.5 flex items-center gap-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <LogOut className="size-4" />
+                      Logout
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </>
+        )}
       </div>
       <UpgradePlanModal open={upgradeOpen} onOpenChange={setUpgradeOpen} />
     </Fragment>

@@ -164,14 +164,14 @@ const EmergenciesCard = () => {
 
       {/* Records */}
       <div className="flex flex-col gap-4">
-        {RECORDS.filter((r) => r.status === activeStatus).map((r) => (
+        {/* {RECORDS.filter((r) => r.status === activeStatus).map((r) => (
           <EmergencyCard key={r.id} record={r} />
-        ))}
-        {RECORDS.filter((r) => r.status === activeStatus).length === 0 && (
-          <p className="text-brand-Text-500 text-sm text-center py-8">
-            No records found.
-          </p>
-        )}
+        ))} */}
+        {/* {RECORDS.filter((r) => r.status === activeStatus).length === 0 && ( */}
+        <p className="text-brand-Text-500 text-sm text-center py-8">
+          No records found.
+        </p>
+        {/* )} */}
       </div>
     </div>
   );

@@ -1,29 +1,28 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import PasswordInput from "@/components/ui/password-input";
+import PhoneInput from "@/components/ui/phone-input";
 import TextInput from "@/components/ui/text-input";
 import { useFormik } from "formik";
-import { useQueryClient } from "@tanstack/react-query";
 import { Loader2, Pencil } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
-import { queryKeys } from "@/query-keys";
 import {
   changePassword,
   getCurrentUser,
-  type MeResponse,
   updateProfile,
   uploadAvatar
 } from "../services/settingsService";
 import type { User } from "@supabase/supabase-js";
+import { useUserStore } from "@/store/userStore";
 
 const infoSchema = Yup.object({
   full_name: Yup.string()
     .trim()
     .min(2, "Name must be at least 2 characters")
     .required("Full name is required"),
-  phone: Yup.string().trim()
+  phone: Yup.string().trim().isValidPhoneNumber("Phone number is invalid")
 });
 
 const passwordSchema = Yup.object({
@@ -36,73 +35,98 @@ const passwordSchema = Yup.object({
     .required("Please confirm your new password")
 });
 
-interface InfoFormValues {
-  full_name: string;
-  phone: string;
-  profile_image_url: string;
-}
+const Skeleton = ({ className }: { className?: string }) => (
+  <div
+    className={`animate-pulse bg-brand-Text-100 rounded-lg ${className ?? ""}`}
+  />
+);
 
-interface PasswordFormValues {
-  current_password: string;
-  new_password: string;
-  confirm_password: string;
-}
+const GeneralInfoTabSkeleton = () => (
+  <div className="flex flex-col gap-6">
+    <div className="p-4 bg-white rounded-xl shadow-[0px_2px_8px_0px_rgba(32,33,36,0.04)] outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col gap-6">
+      <div className="flex justify-between items-center">
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-5 w-40" />
+          <Skeleton className="h-4 w-56" />
+        </div>
+        <Skeleton className="size-9 rounded-lg" />
+      </div>
+      <Skeleton className="size-24 rounded-full" />
+      <div className="flex gap-6">
+        <Skeleton className="flex-1 h-10" />
+        <Skeleton className="flex-1 h-10" />
+        <Skeleton className="flex-1 h-10" />
+      </div>
+    </div>
+    <div className="p-4 bg-white rounded-xl shadow-[0px_2px_8px_0px_rgba(32,33,36,0.04)] outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col gap-6">
+      <div className="flex justify-between items-center">
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-5 w-36" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <Skeleton className="size-9 rounded-lg" />
+      </div>
+      <Skeleton className="h-10" />
+      <Skeleton className="h-10" />
+      <Skeleton className="h-10" />
+    </div>
+  </div>
+);
 
-const getProfile = (me: MeResponse | null): MeResponse | NonNullable<MeResponse["profile"]> | null =>
-  me?.profile ?? me?.profile_information ?? me ?? null;
-
-const GeneralInfoTab = ({
-  me,
-  isLoading
-}: {
-  me: MeResponse | null;
-  isLoading?: boolean;
-}) => {
-  const queryClient = useQueryClient();
+const GeneralInfoTab = () => {
+  const setStoreUser = useUserStore((s) => s.setUser);
   const [user, setUser] = useState<User | null>(null);
+  const [loadingUser, setLoadingUser] = useState(true);
   const [editingInfo, setEditingInfo] = useState(false);
   const [editingPassword, setEditingPassword] = useState(false);
   const [avatarUploading, setAvatarUploading] = useState(false);
+  const [pendingAvatarUrl, setPendingAvatarUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const profile = getProfile(me);
 
   useEffect(() => {
     getCurrentUser().then(({ data }) => {
       if (data) setUser(data);
+      setLoadingUser(false);
     });
   }, []);
 
-  const avatarUrl =
-    profile?.profile_image_url ??
-    user?.user_metadata?.profile_image_url ??
-    user?.user_metadata?.avatar_url ??
-    "";
-  const email = profile?.email ?? me?.email ?? user?.email ?? "";
+  const savedAvatarUrl: string | undefined = user?.user_metadata?.avatar_url;
+  const displayAvatarUrl = pendingAvatarUrl ?? savedAvatarUrl;
 
-  const infoFormik = useFormik<InfoFormValues>({
+  const infoFormik = useFormik({
     initialValues: {
-      full_name:
-        profile?.full_name ?? user?.user_metadata?.full_name ?? "",
-      phone: profile?.phone ?? user?.user_metadata?.phone ?? "",
-      profile_image_url: avatarUrl
+      full_name: user?.user_metadata?.full_name ?? "",
+      phone: user?.user_metadata?.phone ?? ""
     },
     enableReinitialize: true,
     validationSchema: infoSchema,
     onSubmit: async (values, { setSubmitting }) => {
+      const newAvatarUrl = pendingAvatarUrl ?? savedAvatarUrl ?? "";
       const { error } = await updateProfile({
         full_name: values.full_name.trim(),
         phone: values.phone.trim(),
-        profile_image_url: values.profile_image_url
+        profile_image_url: newAvatarUrl
       });
       setSubmitting(false);
-      if (!error) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.auth.me });
+      if (!error && user) {
+        const patched = {
+          ...user,
+          user_metadata: {
+            ...user.user_metadata,
+            full_name: values.full_name.trim(),
+            phone: values.phone.trim(),
+            avatar_url: newAvatarUrl || undefined
+          }
+        } as User;
+        setUser(patched);
+        setStoreUser(patched);
+        setPendingAvatarUrl(null);
         setEditingInfo(false);
       }
     }
   });
 
-  const passwordFormik = useFormik<PasswordFormValues>({
+  const passwordFormik = useFormik({
     initialValues: {
       current_password: "",
       new_password: "",
@@ -129,15 +153,7 @@ const GeneralInfoTab = ({
     setAvatarUploading(true);
     const { url, error } = await uploadAvatar(file, user.id);
     if (!error && url) {
-      const { error: updateError } = await updateProfile({
-        full_name: infoFormik.values.full_name.trim(),
-        phone: infoFormik.values.phone.trim(),
-        profile_image_url: url
-      });
-      if (!updateError) {
-        infoFormik.setFieldValue("profile_image_url", url);
-        queryClient.invalidateQueries({ queryKey: queryKeys.auth.me });
-      }
+      setPendingAvatarUrl(url);
     }
     setAvatarUploading(false);
     e.target.value = "";
@@ -145,6 +161,7 @@ const GeneralInfoTab = ({
 
   const handleCancelInfo = () => {
     infoFormik.resetForm();
+    setPendingAvatarUrl(null);
     setEditingInfo(false);
   };
 
@@ -152,6 +169,8 @@ const GeneralInfoTab = ({
     passwordFormik.resetForm();
     setEditingPassword(false);
   };
+
+  if (loadingUser) return <GeneralInfoTabSkeleton />;
 
   return (
     <div className="flex flex-col gap-6">
@@ -177,7 +196,10 @@ const GeneralInfoTab = ({
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={infoFormik.isSubmitting}>
+                <Button
+                  type="submit"
+                  disabled={infoFormik.isSubmitting || avatarUploading}
+                >
                   {infoFormik.isSubmitting ? (
                     <Loader2 className="size-4 animate-spin" />
                   ) : (
@@ -199,9 +221,9 @@ const GeneralInfoTab = ({
 
           {/* Avatar */}
           <div className="relative size-24">
-            {avatarUrl ? (
+            {displayAvatarUrl ? (
               <Image
-                src={avatarUrl}
+                src={displayAvatarUrl}
                 alt="Avatar"
                 width={96}
                 height={96}
@@ -209,21 +231,25 @@ const GeneralInfoTab = ({
               />
             ) : (
               <div className="size-24 rounded-full bg-brand-Text-100 flex items-center justify-center text-brand-Text-500 text-2xl font-semibold">
-                {(infoFormik.values.full_name || user?.email || "?")[0].toUpperCase()}
+                {(infoFormik.values.full_name ||
+                  user?.email ||
+                  "?")[0].toUpperCase()}
               </div>
             )}
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={avatarUploading}
-              className="absolute bottom-0 right-0 p-1.5 bg-brand-primary-red-600-d rounded-full disabled:opacity-60"
-            >
-              {avatarUploading ? (
-                <Loader2 className="size-3 text-white animate-spin" />
-              ) : (
-                <Pencil className="size-3 text-white" />
-              )}
-            </button>
+            {editingInfo && (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={avatarUploading}
+                className="absolute bottom-0 right-0 p-1.5 bg-brand-primary-red-600-d rounded-full disabled:opacity-60"
+              >
+                {avatarUploading ? (
+                  <Loader2 className="size-3 text-white animate-spin" />
+                ) : (
+                  <Pencil className="size-3 text-white" />
+                )}
+              </button>
+            )}
             <input
               ref={fileInputRef}
               type="file"
@@ -240,33 +266,33 @@ const GeneralInfoTab = ({
               setValue={(v) => infoFormik.setFieldValue("full_name", v)}
               onBlur={infoFormik.handleBlur}
               name="full_name"
-              disabled={!editingInfo || isLoading}
+              disabled={!editingInfo}
               containerClassName="flex-1"
               placeholder="Enter your full name"
               error={
                 infoFormik.touched.full_name && infoFormik.errors.full_name
-                  ? infoFormik.errors.full_name
+                  ? (infoFormik.errors.full_name as string)
                   : undefined
               }
             />
-            <TextInput
+            <PhoneInput
               label="Contact Number"
               value={infoFormik.values.phone}
-              setValue={(v) => infoFormik.setFieldValue("phone", v)}
+              onChange={(v) => infoFormik.setFieldValue("phone", v)}
               onBlur={infoFormik.handleBlur}
-              name="phone"
-              disabled={!editingInfo || isLoading}
+              disabled={!editingInfo}
               containerClassName="flex-1"
               placeholder="Enter contact number"
+              defaultCountry="us"
               error={
                 infoFormik.touched.phone && infoFormik.errors.phone
-                  ? infoFormik.errors.phone
+                  ? (infoFormik.errors.phone as string)
                   : undefined
               }
             />
             <TextInput
               label="Email"
-              value={email}
+              value={user?.email ?? ""}
               disabled
               containerClassName="flex-1"
               placeholder="Email address"

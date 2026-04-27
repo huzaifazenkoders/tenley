@@ -54,13 +54,13 @@ export const getCurrentUser = async () => {
 export const updateProfile = async (payload: {
   full_name: string;
   phone: string;
-  profile_image_url: string;
+  profile_image_url?: string;
 }): Promise<AuthResponse> => {
   const { data, error } = await supabase.rpc("update_profile", {
     p_payload: {
       full_name: payload.full_name,
       phone: payload.phone,
-      profile_image_url: payload.profile_image_url
+      profile_image_url: payload.profile_image_url ?? ""
     }
   });
   if (error) {
