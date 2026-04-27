@@ -18,8 +18,7 @@ const validationSchema = Yup.object({
     .required("Company name is required"),
   company_email: Yup.string()
     .trim()
-    .email("Invalid email address")
-    .lowercase()
+    .isValidEmail("Invalid email address")
     .required("Company email is required"),
   website_url: Yup.string()
     .trim()
@@ -32,8 +31,7 @@ const validationSchema = Yup.object({
     .required("Registration number is required"),
   phone_number: Yup.string()
     .trim()
-    .min(7, "Phone number must be at least 7 digits")
-    .max(20, "Phone number must be at most 20 digits")
+    .isValidPhoneNumber("Enter a valid phone number")
     .required("Phone number is required"),
   address: Yup.string()
     .trim()

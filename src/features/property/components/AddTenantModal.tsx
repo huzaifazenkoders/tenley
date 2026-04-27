@@ -35,16 +35,16 @@ const InfoField = ({ icon, label, value }: { icon: React.ReactNode; label: strin
 );
 
 const validationSchema = Yup.object({
-  email: Yup.string().trim().email("Invalid email address").required("Email is required"),
+  email: Yup.string().trim().isValidEmail("Invalid email address").required("Email is required"),
   tenant_type: Yup.string().oneOf(Object.values(TenantType), "Tenant type is required").required("Tenant type is required"),
-  tenant_name: Yup.string().trim().min(2, "Name must be at least 2 characters").required("Tenant name is required"),
-  phone: Yup.string().trim().min(7, "Enter a valid phone number").required("Phone number is required"),
+  tenant_name: Yup.string().trim().min(2, "Name must be at least 2 characters").max(100, "Name must be at most 100 characters").required("Tenant name is required"),
+  phone: Yup.string().trim().isValidPhoneNumber("Enter a valid phone number").required("Phone number is required"),
 });
 
 const editValidationSchema = Yup.object({
   tenant_type: Yup.string().oneOf(Object.values(TenantType), "Tenant type is required").required("Tenant type is required"),
-  tenant_name: Yup.string().trim().min(2, "Name must be at least 2 characters").required("Tenant name is required"),
-  phone: Yup.string().trim().min(7, "Enter a valid phone number").required("Phone number is required"),
+  tenant_name: Yup.string().trim().min(2, "Name must be at least 2 characters").max(100, "Name must be at most 100 characters").required("Tenant name is required"),
+  phone: Yup.string().trim().isValidPhoneNumber("Enter a valid phone number").required("Phone number is required"),
 });
 
 type CreateProps = {
@@ -87,8 +87,8 @@ const AddTenantModal = (props: Props) => {
       if (isEdit) {
         setSubmitting(true);
         const { error } = await updateTenant(props.tenant.id, {
-          tenant_name: values.tenant_name,
-          phone: values.phone,
+          tenant_name: values.tenant_name.trim(),
+          phone: values.phone.trim(),
           tenant_type: values.tenant_type as TenantType,
         });
         setSubmitting(false);
@@ -102,9 +102,9 @@ const AddTenantModal = (props: Props) => {
       setPendingTenants((prev) => [
         ...prev,
         {
-          tenant_name: values.tenant_name,
-          email: values.email,
-          phone: values.phone,
+          tenant_name: values.tenant_name.trim(),
+          email: values.email.trim().toLowerCase(),
+          phone: values.phone.trim(),
           tenant_type: values.tenant_type as TenantType,
         },
       ]);

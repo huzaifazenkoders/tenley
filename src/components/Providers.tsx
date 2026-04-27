@@ -4,17 +4,19 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { Toaster } from "sonner";
 import UserProvider from "./UserProvider";
+import YupSchemaExtensions from "@/features/yup-schemas/schema-extensions";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
-        defaultOptions: { queries: { retry: 1, staleTime: 1000 * 60 } },
+        defaultOptions: { queries: { retry: 1, staleTime: 1000 * 60 } }
       })
   );
 
   return (
     <QueryClientProvider client={queryClient}>
+      <YupSchemaExtensions />
       <UserProvider>
         {children}
         <Toaster richColors position="top-right" />

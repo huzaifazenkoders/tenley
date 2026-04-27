@@ -283,14 +283,19 @@ const UnitsSection = ({
     onRefetch();
   };
 
-  const filtered = units.filter((u) => {
-    const matchesSearch =
-      !search ||
-      u.unit_name.toLowerCase().includes(search.toLowerCase()) ||
-      u.unit_number.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = statusFilter === "all" || u.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const filtered = units
+    .filter((u) => {
+      const matchesSearch =
+        !search ||
+        u.unit_name.toLowerCase().includes(search.toLowerCase()) ||
+        u.unit_number.toLowerCase().includes(search.toLowerCase());
+      const matchesStatus = statusFilter === "all" || u.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    })
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
 
   return (
     <div className="w-full p-6 bg-brand-base-white rounded-[20px] outline outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col gap-6">

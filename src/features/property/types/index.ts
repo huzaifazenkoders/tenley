@@ -92,6 +92,7 @@ export interface UnitWithTenants {
   unit_name: string;
   unit_number: string;
   status: UnitStatus;
+  created_at: string;
   tenants: Tenant[];
 }
 

@@ -21,8 +21,7 @@ interface Props {
 const validationSchema = Yup.object({
   email: Yup.string()
     .trim()
-    .email("Invalid email address")
-    .lowercase()
+    .isValidEmail("Invalid email address")
     .required("Email is required"),
 });
 

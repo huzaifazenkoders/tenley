@@ -108,7 +108,7 @@ const RolesPermissionsView = () => {
       {/* Role list + permissions panel */}
       <div className="flex items-start gap-5">
         {/* Role list */}
-        <div className="w-96 bg-brand-base-white rounded-xl shadow-[0px_1px_10px_0px_rgba(0,0,0,0.08)] outline outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col p-2">
+        <div className="w-72 shrink-0 bg-brand-base-white rounded-xl shadow-[0px_1px_10px_0px_rgba(0,0,0,0.08)] outline outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col p-2">
           {roles.map((role) => {
             const isActive = selectedRoleId === role.id;
             return (

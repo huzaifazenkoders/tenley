@@ -24,11 +24,11 @@ const validationSchema = Yup.object({
     .trim()
     .min(2, "Name must be at least 2 characters")
     .max(100, "Name must be at most 100 characters")
+    .notOnlySpacesRule("Name cannot be only spaces")
     .required("Full name is required"),
   email: Yup.string()
     .trim()
-    .email("Invalid email address")
-    .lowercase()
+    .isValidEmail("Invalid email address")
     .required("Email is required"),
   password: Yup.string()
     .trim()
