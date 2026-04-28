@@ -18,6 +18,8 @@ interface Props {
   setView: ReactDispatch<SignUpForm>;
   setEmail: ReactDispatch<string>;
   setFullName: ReactDispatch<string>;
+  initialEmail?: string;
+  initialFullName?: string;
 }
 
 const validationSchema = Yup.object({
@@ -44,11 +46,11 @@ const validationSchema = Yup.object({
     .required("Please confirm your password"),
 });
 
-const SignupForm = ({ setView, setEmail, setFullName }: Props) => {
+const SignupForm = ({ setView, setEmail, setFullName, initialEmail = "", initialFullName = "" }: Props) => {
   const router = useRouter();
 
   const formik = useFormik({
-    initialValues: { full_name: "", email: "", password: "", confirm_password: "" },
+    initialValues: { full_name: initialFullName, email: initialEmail, password: "", confirm_password: "" },
     validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
       const { error } = await signUp({

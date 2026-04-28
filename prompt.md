@@ -1,155 +1,57 @@
-in src/features/property/components/AssignStaffStep.tsx implement these:
-
-export interface SearchStaffItem {
-id: string;
-full_name: string;
-email: string;
-profile_image_url: string | null;
-}
-
-export interface SearchStaffResponse {
-data: SearchStaffItem[];
-}
-
-import { supabase } from '@/lib/supabase';
-import { SearchStaffResponse } from '@/types/search-staff';
-
-export async function searchStaffByEmail(
-keyword: string,
-limit: number = 10
-): Promise<SearchStaffResponse> {
-const { data, error } = await supabase.rpc('search_staff_by_email', {
-p_keyword: keyword,
-p_limit: limit,
-});
-
-if (error) {
-throw error;
-}
-
-return data as SearchStaffResponse;
-}
-
-Usage Example
-const result = await searchStaffByEmail('ali');
-
-console.log(result);
-
-Sample Response
-{
-"data": [
-{
-"id": "7c18f5d1-7d32-45b7-a6f4-111111111111",
-"full_name": "Ali Raza",
-"email": "ali@example.com",
-"profile_image_url": "https://cdn.domain.com/profile/ali.jpg"
-},
-{
-"id": "8d29f6a2-8e21-49f1-b7f5-222222222222",
-"full_name": "Ali Hassan",
-"email": "alihassan@example.com",
-"profile_image_url": null
-}
-]
-}
-
-export interface InviteManagerPayload {
-full_name: string;
-email: string;
-designation?: string | null;
-role_id?: string | null;
+export interface AcceptInvitationResponse {
+success: boolean;
 company_id: string;
-added_by: string;
-property_id?: string | null;
-}
-
-export interface InviteManagerResponse {
-success: boolean;
-messageId: string;
-inviteLink: string;
-}
-
-import { supabase } from '@/lib/supabase';
-import {
-InviteManagerPayload,
-InviteManagerResponse,
-} from '@/types/invite-manager';
-
-export async function inviteManager(
-payload: InviteManagerPayload
-): Promise<InviteManagerResponse> {
-const { data, error } = await supabase.functions.invoke(
-'invite_manager',
-{
-body: payload,
-}
-);
-
-if (error) {
-throw error;
-}
-
-return data as InviteManagerResponse;
-}
-
-export interface BulkAssignManagersResponse {
-success: boolean;
-requested_assignments: number;
-created_assignments: number;
-already_assigned: number;
-skipped: number;
+property_id: string | null;
 }
 Supabase Client Reference
 import { supabase } from '@/lib/supabase';
-import { BulkAssignManagersResponse } from '@/types/bulk-assign-managers';
+import { AcceptInvitationResponse } from '@/types/accept-invitation';
 
-interface BulkAssignManagersParams {
-company_id: string;
-manager_ids: string[];
-property_ids: string[];
-}
-
-export async function bulkAssignManagersToProperties(
-params: BulkAssignManagersParams
-): Promise<BulkAssignManagersResponse> {
-const { company_id, manager_ids, property_ids } = params;
-
-const { data, error } = await supabase.rpc(
-'bulk_assign_managers_to_properties',
-{
-p_company_id: company_id,
-p_manager_ids: manager_ids,
-p_property_ids: property_ids,
-}
-);
+export async function acceptInvitation(
+token: string,
+email: string
+): Promise<AcceptInvitationResponse> {
+const { data, error } = await supabase.rpc('accept_invitation', {
+p_token: token,
+p_email: email,
+});
 
 if (error) {
 throw error;
 }
 
-return data as BulkAssignManagersResponse;
+return data as AcceptInvitationResponse;
 }
 Usage Example
-const response = await bulkAssignManagersToProperties({
-company_id: '2f4eaa11-44bc-4e91-a0f1-123456789abc',
-manager_ids: [
-'7c18f5d1-7d32-45b7-a6f4-111111111111',
-'8d29f6a2-8e21-49f1-b7f5-222222222222',
-],
-property_ids: [
-'11aa22bb-33cc-44dd-55ee-666666666666',
-'77ff88gg-99hh-00ii-11jj-222222222222',
-],
-});
+const response = await acceptInvitation(
+'8d9f1c2b3a4e5f6g7h8i9j',
+'ali@example.com'
+);
 
 console.log(response);
-Sample Response
+Sample Success Response
 {
 "success": true,
-"requested_assignments": 4,
-"created_assignments": 3,
-"already_assigned": 1,
-"skipped": 1
+"company_id": "2f4eaa11-44bc-4e91-a0f1-123456789abc",
+"property_id": "11aa22bb-33cc-44dd-55ee-666666666666"
 }
+Possible Errors
+{ "message": "User not authenticated" }
+{ "message": "User profile not found" }
+{ "message": "Invalid invite token" }
+{ "message": "Invitation already accepted" }
+{ "message": "Invitation is no longer valid" }
+{ "message": "This invitation does not belong to this email" }
+{ "message": "Logged-in user email does not match invitation" }
+{ "message": "Already part of this company" }
 
-apart from AssignStaffStep you also need to integrate the apis while creating propery flow in staff member.
+So if the user is invited and there is not setup for him will be redirected to /auth/sign-up
+with following search params:
+token
+email
+name
+
+if already exist then will redirect to /represented-company?token
+
+in both cases accept invitation api would be called
+also please note that iff the user is logged in or not if not then go to /auth/sign-in with fallback url

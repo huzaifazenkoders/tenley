@@ -98,6 +98,28 @@ export const signOut = async (): Promise<AuthResponse> => {
   return { data: null, error: null };
 };
 
+export interface AcceptInvitationResponse {
+  success: boolean;
+  company_id: string;
+  property_id: string | null;
+}
+
+export const acceptInvitation = async (
+  token: string,
+  email: string
+): Promise<AuthResponse<AcceptInvitationResponse>> => {
+  const { data, error } = await supabase.rpc("accept_invitation", {
+    p_token: token,
+    p_email: email
+  });
+  if (error) {
+    const message = getErrorMessage(error);
+    toast.error(message);
+    return { data: null, error: message };
+  }
+  return { data, error: null };
+};
+
 export const resetPassword = async (
   payload: ResetPasswordPayload
 ): Promise<AuthResponse> => {

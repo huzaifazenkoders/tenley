@@ -9,7 +9,7 @@ import Image from "next/image";
 import { ForgotPasswordForm, SignUpForm } from "../types/componentsTypes";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { signupComplete, verifyOtp } from "../services";
+import { acceptInvitation, signupComplete, verifyOtp } from "../services";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/features/supabase/client";
@@ -25,6 +25,7 @@ interface PropsB {
   email: string;
   fullName: string;
   setView: ReactDispatch<SignUpForm>;
+  inviteToken?: string;
 }
 interface PropsC {
   type: "verify-email";
@@ -61,7 +62,13 @@ const OtpVerificationForm = (props: PropsA | PropsB | PropsC) => {
           }
         });
         setSubmitting(false);
-        router.replace("/onboarding");
+        const token = (props as PropsB).inviteToken;
+        if (token) {
+          await acceptInvitation(token, email);
+          router.replace(`/represented-company?token=${encodeURIComponent(token)}`);
+        } else {
+          router.replace("/onboarding");
+        }
       } else if (type === "verify-email") {
         const { error } = await signupComplete({ email, otp: trimmedOtp });
         setSubmitting(false);

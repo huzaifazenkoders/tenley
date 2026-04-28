@@ -5,7 +5,9 @@ export {
   forgotPassword,
   verifyOtp,
   resetPassword,
+  acceptInvitation,
 } from "./authService";
+export type { AcceptInvitationResponse } from "./authService";
 export type {
   SignUpPayload,
   SignInPayload,

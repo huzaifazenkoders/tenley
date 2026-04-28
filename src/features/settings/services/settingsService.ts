@@ -11,6 +11,14 @@ export interface ProfileInfo {
   full_name?: string;
   phone?: string;
   profile_image_url?: string;
+  user_role?: "company_admin" | "manager" | string;
+  is_onboarding_complete: boolean;
+  onboarding_steps:
+    | "sign_up_initiate"
+    | "sign_up_complete"
+    | "company_profile"
+    | "subscription"
+    | "terms_privacy";
 }
 
 export interface CompanyInfo {

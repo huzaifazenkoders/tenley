@@ -6,6 +6,7 @@ import { queryKeys } from "@/query-keys";
 import { useUserStore } from "@/store/userStore";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function UserProvider({
   children,
@@ -14,11 +15,13 @@ export default function UserProvider({
 }) {
   const { setUser, setMe, setMeLoading } = useUserStore();
   const user = useUserStore((s) => s.user);
+  const pathname = usePathname();
+  const isAuthRoute = pathname.startsWith("/auth");
 
   const { data: meResponse, isLoading: isMeLoading } = useQuery({
     queryKey: queryKeys.auth.me,
     queryFn: getMe,
-    enabled: Boolean(user),
+    enabled: Boolean(user) && !isAuthRoute,
   });
 
   useEffect(() => {

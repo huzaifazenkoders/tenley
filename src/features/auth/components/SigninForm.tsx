@@ -6,7 +6,7 @@ import { TypographyStyles } from "@/styles/common-typography";
 import TextInput from "@/components/ui/text-input";
 import PasswordInput from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { signIn } from "../services";
@@ -29,6 +29,8 @@ const validationSchema = Yup.object({
 
 const SigninForm = ({ onForgotPassword, onEmailNotConfirmed }: { onForgotPassword: () => void; onEmailNotConfirmed: (email: string) => void }) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
 
   const formik = useFormik({
     initialValues: { email: "", password: "" },
@@ -49,7 +51,7 @@ const SigninForm = ({ onForgotPassword, onEmailNotConfirmed }: { onForgotPasswor
         toast.error(error);
         return;
       }
-      router.replace("/");
+      router.replace(callbackUrl ? decodeURIComponent(callbackUrl) : "/");
     },
   });
 

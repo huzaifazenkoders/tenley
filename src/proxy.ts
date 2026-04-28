@@ -33,9 +33,15 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isAuthRoute = pathname.startsWith("/auth");
+  const isPublicRoute =
+    isAuthRoute ||
+    pathname.startsWith("/accept-invitation") ||
+    pathname.startsWith("/represented-company");
+  const isManagerRoute = pathname.startsWith("/manager");
+  const isOnboardingRoute = pathname.startsWith("/onboarding");
 
-  // Unauthenticated users can only access auth routes
-  if (!user && !isAuthRoute) {
+  // Unauthenticated users can only access public routes
+  if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/auth/sign-in";
     return NextResponse.redirect(url);
@@ -46,6 +52,32 @@ export async function proxy(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/";
     return NextResponse.redirect(url);
+  }
+
+  // Role-based routing for authenticated users on non-public routes
+  if (user && !isPublicRoute) {
+    const { data: meData } = await supabase.rpc("me");
+    const profile =
+      (meData as Record<string, unknown> | null)?.profile ??
+      (meData as Record<string, unknown> | null)?.profile_information ?? null;
+    const userRole = (profile as Record<string, unknown> | null)?.user_role as string | undefined;
+    const isOnboardingComplete = (profile as Record<string, unknown> | null)?.is_onboarding_complete as boolean | undefined;
+
+    if (userRole === "manager" && !isManagerRoute) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/manager";
+      return NextResponse.redirect(url);
+    }
+
+    if (
+      userRole === "company_admin" &&
+      !isOnboardingComplete &&
+      !isOnboardingRoute
+    ) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/onboarding";
+      return NextResponse.redirect(url);
+    }
   }
 
   return supabaseResponse;
