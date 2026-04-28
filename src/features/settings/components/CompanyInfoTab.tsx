@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/query-keys";
 import type { CompanyInfo, MeResponse } from "../services/settingsService";
+import PhoneInput from "@/components/ui/phone-input";
 
 const validationSchema = Yup.object({
   company_name: Yup.string()
@@ -26,7 +27,7 @@ const validationSchema = Yup.object({
     .required("Company email is required"),
   website_url: Yup.string()
     .trim()
-    .url("Must be a valid URL")
+    .isValidLink("Must be a valid URL")
     .max(255, "URL must be at most 255 characters"),
   registration_number: Yup.string()
     .trim()
@@ -47,6 +48,58 @@ const validationSchema = Yup.object({
 const getCompany = (me: MeResponse | null): CompanyInfo | null =>
   me?.company ?? me?.company_profile ?? me?.company_information ?? null;
 
+const Skeleton = ({ className }: { className?: string }) => (
+  <div className={`animate-pulse rounded-lg bg-brand-Text-100 ${className ?? ""}`} />
+);
+
+const CompanyInfoTabSkeleton = () => (
+  <div className="w-full p-4 bg-white rounded-xl shadow-[0px_2px_8px_0px_rgba(32,33,36,0.04)] outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col gap-6">
+    {/* Header */}
+    <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-1">
+        <Skeleton className="h-5 w-44" />
+        <Skeleton className="h-4 w-56" />
+      </div>
+      <Skeleton className="h-9 w-9 rounded-lg" />
+    </div>
+    {/* Fields */}
+    <div className="flex flex-col gap-6">
+      {/* Company Name */}
+      <div className="flex flex-col gap-1.5">
+        <Skeleton className="h-4 w-28" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+      {/* Email + Website */}
+      <div className="flex gap-6">
+        <div className="flex-1 flex flex-col gap-1.5">
+          <Skeleton className="h-4 w-28" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+        <div className="flex-1 flex flex-col gap-1.5">
+          <Skeleton className="h-4 w-28" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      </div>
+      {/* Registration + Phone */}
+      <div className="flex gap-6">
+        <div className="w-1/2 flex flex-col gap-1.5">
+          <Skeleton className="h-4 w-28" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+        <div className="w-1/2 flex flex-col gap-1.5">
+          <Skeleton className="h-4 w-28" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      </div>
+      {/* Address */}
+      <div className="flex flex-col gap-1.5">
+        <Skeleton className="h-4 w-28" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+    </div>
+  </div>
+);
+
 const CompanyInfoTab = ({
   me,
   isLoading
@@ -57,6 +110,8 @@ const CompanyInfoTab = ({
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState(false);
   const company = getCompany(me);
+
+  if (isLoading) return <CompanyInfoTabSkeleton />;
 
   const formik = useFormik({
     initialValues: {
@@ -183,34 +238,39 @@ const CompanyInfoTab = ({
           />
         </div>
         <div className="flex gap-6">
-          <TextInput
-            label="Registration No."
-            id="registration_number"
-            value={formik.values.registration_number}
-            setValue={(v) => formik.setFieldValue("registration_number", v)}
-            onBlur={formik.handleBlur}
-            disabled={!editing || isLoading}
-            containerClassName="flex-1"
-            error={
-              formik.touched.registration_number
-                ? formik.errors.registration_number
-                : undefined
-            }
-          />
-          <TextInput
-            label="Phone Number"
-            id="phone_number"
-            value={formik.values.phone_number}
-            setValue={(v) => formik.setFieldValue("phone_number", v)}
-            onBlur={formik.handleBlur}
-            disabled={!editing || isLoading}
-            containerClassName="flex-1"
-            error={
-              formik.touched.phone_number
-                ? formik.errors.phone_number
-                : undefined
-            }
-          />
+          <div className="w-1/2">
+            <TextInput
+              label="Registration No."
+              id="registration_number"
+              value={formik.values.registration_number}
+              setValue={(v) => formik.setFieldValue("registration_number", v)}
+              onBlur={formik.handleBlur}
+              disabled={!editing || isLoading}
+              containerClassName="flex-1"
+              error={
+                formik.touched.registration_number
+                  ? formik.errors.registration_number
+                  : undefined
+              }
+            />
+          </div>
+          <div className="w-1/2">
+            <PhoneInput
+              label="Phone Number"
+              disabled={!editing || isLoading}
+              id="phone_number"
+              value={formik.values.phone_number}
+              onChange={(val) => {
+                formik.setFieldValue("phone_number", val);
+                formik.setFieldTouched("phone_number", true, false);
+              }}
+              error={
+                formik.touched.phone_number
+                  ? formik.errors.phone_number
+                  : undefined
+              }
+            />
+          </div>
         </div>
         <TextInput
           label="Address"

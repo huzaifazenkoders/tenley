@@ -220,6 +220,7 @@ const PhoneInput = forwardRef<HTMLInputElement, Props>(
             }}
             placeholder={rest.placeholder}
             inputClass={cn(
+              inputStyles,
               rest.disabled && "!cursor-default",
               "!h-9 !w-full !bg-background",
               "!ps-0 !border-none rounded-md !text-base"
