@@ -18,7 +18,9 @@ const AssignedStaffCard = ({ managers, propertyId, onRefetch }: Props) => {
   const hasStaff = managers.length > 0;
   const [modalOpen, setModalOpen] = useState(false);
   const [unassignOpen, setUnassignOpen] = useState(false);
-  const [selectedManagerId, setSelectedManagerId] = useState<string | null>(null);
+  const [selectedManagerId, setSelectedManagerId] = useState<string | null>(
+    null
+  );
 
   return (
     <>
@@ -165,16 +167,18 @@ const AssignedStaffCard = ({ managers, propertyId, onRefetch }: Props) => {
         propertyId={propertyId}
         onSuccess={onRefetch}
       />
-      <UnassignStaffModal
-        open={unassignOpen}
-        onOpenChange={setUnassignOpen}
-        managerId={selectedManagerId}
-        propertyId={propertyId}
-        onSuccess={() => {
-          setSelectedManagerId(null);
-          onRefetch?.();
-        }}
-      />
+      {selectedManagerId && (
+        <UnassignStaffModal
+          open={unassignOpen}
+          onOpenChange={setUnassignOpen}
+          managerId={selectedManagerId}
+          propertyId={propertyId}
+          onSuccess={() => {
+            setSelectedManagerId(null);
+            onRefetch?.();
+          }}
+        />
+      )}
     </>
   );
 };
