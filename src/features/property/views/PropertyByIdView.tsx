@@ -12,23 +12,59 @@ import type { PropertyByIdResponse } from "../types";
 import { PropertyPurpose } from "../types/enums";
 import ResidentialPropertyView from "./ResidentialPropertyView";
 
+const Skeleton = ({ className }: { className?: string }) => (
+  <div className={`animate-pulse rounded-lg bg-brand-Text-100 ${className ?? ""}`} />
+);
+
+const PropertyByIdSkeleton = () => (
+  <div className="px-6 pt-10 pb-6 flex flex-col gap-6 w-full">
+    {/* Breadcrumb */}
+    <Skeleton className="h-5 w-36" />
+
+    {/* Page header */}
+    <div className="flex items-end justify-between">
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-8 w-64" />
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-5 w-48" />
+          <Skeleton className="h-6 w-24 rounded-full" />
+          <Skeleton className="h-6 w-24 rounded-full" />
+        </div>
+      </div>
+    </div>
+
+    {/* Info + Staff row */}
+    <div className="flex items-start gap-6">
+      <Skeleton className="flex-1 h-56 rounded-xl" />
+      <Skeleton className="w-72 h-56 rounded-xl" />
+    </div>
+
+    {/* Units section */}
+    <Skeleton className="w-full h-72 rounded-xl" />
+  </div>
+);
+
 const PropertyByIdView = () => {
   const { id } = useParams<{ id: string }>();
   const [csvModalOpen, setCsvModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [propertyData, setPropertyData] = useState<PropertyByIdResponse | null>(
     null
   );
 
   const fetchProperty = async () => {
     if (!id) return;
+    setLoading(true);
     const { data } = await getPropertyById(id);
     if (data) setPropertyData(data);
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchProperty();
   }, [id]);
 
+  if (loading) return <PropertyByIdSkeleton />;
   if (!propertyData) return null;
 
   const { property, units = [] } = propertyData;
@@ -92,7 +128,7 @@ const PropertyByIdView = () => {
       {/* Info + Staff row */}
       <div className="flex items-start gap-6">
         <PropertyInfoCard property={property} onSuccess={fetchProperty} />
-        <AssignedStaffCard staff={[]} />
+        <AssignedStaffCard staff={[]} propertyId={property.id} />
       </div>
 
       {/* Units section */}

@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import AssignStaffStep from "../components/AssignStaffStep";
 import SelectStaffStep from "../components/SelectStaffStep";
 import PropertyInfoStep, {
@@ -10,7 +10,12 @@ import PropertyInfoStep, {
   PropertyInfoStepHandle
 } from "../components/PropertyInfoStep";
 import UnitInfoStep, { UnitEntry } from "../components/UnitInfoStep";
-import { bulkUpsertUnits, getPropertyById, upsertProperty } from "../services";
+import {
+  bulkAssignManagersToProperties,
+  bulkUpsertUnits,
+  getPropertyById,
+  upsertProperty
+} from "../services";
 import { toast } from "sonner";
 import { Property } from "../types";
 import { PropertyPurpose, PropertyType } from "../types/enums";
@@ -51,13 +56,12 @@ const AddManualPropertyView = () => {
 
   const [step, setStep] = useState(1);
   const [propertyId, setPropertyId] = useState<string | null>(null);
-  const [prefillValues, setPrefillValues] = useState<Partial<PropertyFormData>>(
-    {}
-  );
+  const [prefillValues, setPrefillValues] = useState<Partial<PropertyFormData>>({});
   const [units, setUnits] = useState<UnitEntry[]>([]);
   const [floorsCount, setFloorsCount] = useState(1);
   const [unitsPerFloor, setUnitsPerFloor] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedStaffIds, setSelectedStaffIds] = useState<string[]>([]);
   const propertyInfoRef = useRef<PropertyInfoStepHandle>(null);
 
   // Restore state from URL on mount
@@ -146,10 +150,26 @@ const AddManualPropertyView = () => {
     setStep(3);
   };
 
+  const handleStep3Submit = async () => {
+    if (!propertyId) return;
+
+    if (selectedStaffIds.length > 0) {
+      setIsSubmitting(true);
+      const { error } = await bulkAssignManagersToProperties({
+        manager_ids: selectedStaffIds,
+        property_ids: [propertyId]
+      });
+      setIsSubmitting(false);
+      if (error) return;
+    }
+
+    syncUrl(4, propertyId);
+    setStep(4);
+  };
+
   const handlePrevious = async () => {
     if (step <= 1) return;
 
-    // Going back to step 1 from step 2: fetch latest saved data to prefill
     if (step === 2 && propertyId) {
       setIsSubmitting(true);
       const { data } = await getPropertyById(propertyId);
@@ -157,6 +177,8 @@ const AddManualPropertyView = () => {
       setIsSubmitting(false);
       syncUrl(1, propertyId);
     }
+
+    if (step === 4 && propertyId) syncUrl(3, propertyId);
 
     setStep((s) => s - 1);
   };
@@ -169,18 +191,19 @@ const AddManualPropertyView = () => {
     });
   };
 
+  const handleStaffSelectionChange = useCallback((ids: string[]) => {
+    setSelectedStaffIds(ids);
+  }, []);
+
   const handleContinue = () => {
-    if (step === 1) {
-      propertyInfoRef.current?.submitForm();
-      return;
-    }
-    if (step === 2) return handleStep2Submit();
+    if (step === 1) { propertyInfoRef.current?.submitForm(); return; }
+    if (step === 2) { handleStep2Submit(); return; }
+    if (step === 3) { handleStep3Submit(); return; }
     if (step === 4) {
       toast.success("Property added successfully");
       router.push("/property");
       return;
     }
-    setStep((s) => s + 1);
   };
 
   return (
@@ -231,8 +254,13 @@ const AddManualPropertyView = () => {
               onUnitChange={handleUnitChange}
             />
           )}
-          {step === 3 && <AssignStaffStep onInviteStaff={() => setStep(4)} />}
-          {step === 4 && <SelectStaffStep />}
+          {step === 3 && (
+            <AssignStaffStep
+              onInviteStaff={() => setStep(4)}
+              onSelectionChange={handleStaffSelectionChange}
+            />
+          )}
+          {step === 4 && <SelectStaffStep propertyId={propertyId} />}
         </div>
       </div>
 

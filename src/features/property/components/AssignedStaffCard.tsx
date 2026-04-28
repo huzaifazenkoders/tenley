@@ -9,9 +9,9 @@ import UnassignStaffModal from "./UnassignStaffModal";
 
 type StaffMember = { id: string; name: string; role: string };
 
-type Props = { staff: StaffMember[] };
+type Props = { staff: StaffMember[]; propertyId?: string | null };
 
-const AssignedStaffCard = ({ staff }: Props) => {
+const AssignedStaffCard = ({ staff, propertyId }: Props) => {
   const hasStaff = staff.length > 0;
   const [modalOpen, setModalOpen] = useState(false);
   const [unassignOpen, setUnassignOpen] = useState(false);
@@ -118,7 +118,7 @@ const AssignedStaffCard = ({ staff }: Props) => {
         )}
       </div>
 
-      <InviteStaffModal open={modalOpen} onOpenChange={setModalOpen} />
+      <InviteStaffModal open={modalOpen} onOpenChange={setModalOpen} propertyId={propertyId} />
       <UnassignStaffModal
         open={unassignOpen}
         onOpenChange={setUnassignOpen}

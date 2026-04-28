@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ClipboardList, List, Plus, UserPlus } from "lucide-react";
+import { ClipboardList, Plus, UserPlus } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { useState } from "react";
 import CreateRoleModal from "../components/CreateRoleModal";
@@ -63,7 +63,7 @@ const StaffAndRolesListingsView = () => {
           <div className="flex items-center gap-4">
             {tab === "staff" ? (
               <>
-                <Button
+                {/* <Button
                   variant="outline-transparent"
                   className="gap-2"
                   onClick={() => setInviteStaffOpen(true)}
@@ -74,7 +74,7 @@ const StaffAndRolesListingsView = () => {
                 <Button className="gap-2" link="/staff-and-roles/bulk-assign">
                   <List className="size-4" />
                   Bulk Assign
-                </Button>
+                </Button> */}
               </>
             ) : (
               <Button className="gap-2" onClick={() => setCreateRoleOpen(true)}>
