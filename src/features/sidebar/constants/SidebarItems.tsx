@@ -261,7 +261,7 @@ export const navSections = [
             />
           </svg>
         ),
-        badge: "03",
+        badge: null,
         href: "/emergency-records"
       },
       {
@@ -289,7 +289,7 @@ export const navSections = [
             />
           </svg>
         ),
-        badge: "03",
+        badge: null,
         href: "/notifications"
       },
       {
