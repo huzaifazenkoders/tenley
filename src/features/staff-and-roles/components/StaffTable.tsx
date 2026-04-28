@@ -82,7 +82,7 @@ const Avatar = ({ row }: { row: CompanyStaffItem }) => {
 
   return (
     <div className="size-10 rounded-full bg-brand-Text-100 flex items-center justify-center shrink-0 text-brand-Text-600 text-sm font-semibold">
-      {row.name[0]?.toUpperCase() ?? "?"}
+      {row.name?.[0]?.toUpperCase() ?? "?"}
     </div>
   );
 };
@@ -103,12 +103,13 @@ const StaffTable = () => {
   const isUserLoading = useUserStore((s) => s.isLoading);
   const company = useUserStore((s) => s.company);
   const isMeLoading = useUserStore((s) => s.isMeLoading);
-  const companyId = company?.id ?? company?.company_id ?? getCompanyIdFromUser(user);
+  const companyId =
+    company?.id ?? company?.company_id ?? getCompanyIdFromUser(user);
   const [offset, setOffset] = useState(0);
   const [search, setSearch] = useState("");
   const [roleId, setRoleId] = useState<string>(ALL_VALUE);
   const [status, setStatus] = useState<InviteStatus | typeof ALL_VALUE>(
-    ALL_VALUE
+    ALL_VALUE,
   );
   const [debouncedSearch] = useDebounce(search, 400);
 
@@ -250,7 +251,9 @@ const StaffTable = () => {
               <TableCell colSpan={6} className="py-16 text-center">
                 <div className="flex flex-col items-center gap-3">
                   <p className="text-brand-Text-700 text-sm font-medium">
-                    {isFiltered ? "No staff match your filters" : "No staff found"}
+                    {isFiltered
+                      ? "No staff match your filters"
+                      : "No staff found"}
                   </p>
                   {isFiltered && (
                     <Button variant="outline" size="sm" onClick={resetFilters}>
@@ -297,20 +300,29 @@ const StaffTable = () => {
                 </TableCell>
                 <TableCell>
                   <span className="text-brand-Text-800 text-sm font-normal leading-5">
-                    {row.enabled_permissions}/{row.total_permissions}
+                    {/* {row.enabled_permissions}/{row.total_permissions} */}
+                    {row.enabled_permissions}/8
                   </span>
                 </TableCell>
                 <TableCell>
                   <StatusBadge status={row.status} />
                 </TableCell>
                 <TableCell>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => router.push(`/staff-and-roles/staff/${row.id}`)}
-                  >
-                    <Eye className="size-5 text-brand-Text-700" />
-                  </Button>
+                  {row.status === "invitation_accepted" ? (
+                    <>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() =>
+                          router.push(`/staff-and-roles/staff/${row.id}`)
+                        }
+                      >
+                        <Eye className="size-5 text-brand-Text-700" />
+                      </Button>
+                    </>
+                  ) : (
+                    <>-</>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
