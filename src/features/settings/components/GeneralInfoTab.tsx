@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import PasswordInput from "@/components/ui/password-input";
 import PhoneInput from "@/components/ui/phone-input";
 import TextInput from "@/components/ui/text-input";
+import { queryKeys } from "@/query-keys";
+import { useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { Loader2, Pencil } from "lucide-react";
 import Image from "next/image";
@@ -11,11 +13,11 @@ import * as Yup from "yup";
 import {
   changePassword,
   getCurrentUser,
+  type MeResponse,
   updateProfile,
   uploadAvatar
 } from "../services/settingsService";
 import type { User } from "@supabase/supabase-js";
-import { useUserStore } from "@/store/userStore";
 
 const infoSchema = Yup.object({
   full_name: Yup.string()
@@ -73,8 +75,28 @@ const GeneralInfoTabSkeleton = () => (
   </div>
 );
 
-const GeneralInfoTab = () => {
-  const setStoreUser = useUserStore((s) => s.setUser);
+interface InfoFormValues {
+  full_name: string;
+  phone: string;
+}
+
+interface PasswordFormValues {
+  current_password: string;
+  new_password: string;
+  confirm_password: string;
+}
+
+const getProfile = (me: MeResponse | null) =>
+  me?.profile ?? me?.profile_information ?? me ?? null;
+
+const GeneralInfoTab = ({
+  me,
+  isLoading
+}: {
+  me: MeResponse | null;
+  isLoading?: boolean;
+}) => {
+  const queryClient = useQueryClient();
   const [user, setUser] = useState<User | null>(null);
   const [loadingUser, setLoadingUser] = useState(true);
   const [editingInfo, setEditingInfo] = useState(false);
@@ -90,13 +112,19 @@ const GeneralInfoTab = () => {
     });
   }, []);
 
-  const savedAvatarUrl: string | undefined = user?.user_metadata?.avatar_url;
+  const profile = getProfile(me);
+  const savedAvatarUrl =
+    profile?.profile_image_url ??
+    user?.user_metadata?.profile_image_url ??
+    user?.user_metadata?.avatar_url ??
+    "";
   const displayAvatarUrl = pendingAvatarUrl ?? savedAvatarUrl;
+  const email = profile?.email ?? me?.email ?? user?.email ?? "";
 
-  const infoFormik = useFormik({
+  const infoFormik = useFormik<InfoFormValues>({
     initialValues: {
-      full_name: user?.user_metadata?.full_name ?? "",
-      phone: user?.user_metadata?.phone ?? ""
+      full_name: profile?.full_name ?? user?.user_metadata?.full_name ?? "",
+      phone: profile?.phone ?? user?.user_metadata?.phone ?? ""
     },
     enableReinitialize: true,
     validationSchema: infoSchema,
@@ -108,25 +136,15 @@ const GeneralInfoTab = () => {
         profile_image_url: newAvatarUrl
       });
       setSubmitting(false);
-      if (!error && user) {
-        const patched = {
-          ...user,
-          user_metadata: {
-            ...user.user_metadata,
-            full_name: values.full_name.trim(),
-            phone: values.phone.trim(),
-            avatar_url: newAvatarUrl || undefined
-          }
-        } as User;
-        setUser(patched);
-        setStoreUser(patched);
+      if (!error) {
+        queryClient.invalidateQueries({ queryKey: queryKeys.auth.me });
         setPendingAvatarUrl(null);
         setEditingInfo(false);
       }
     }
   });
 
-  const passwordFormik = useFormik({
+  const passwordFormik = useFormik<PasswordFormValues>({
     initialValues: {
       current_password: "",
       new_password: "",
@@ -170,7 +188,7 @@ const GeneralInfoTab = () => {
     setEditingPassword(false);
   };
 
-  if (loadingUser) return <GeneralInfoTabSkeleton />;
+  if (loadingUser || isLoading) return <GeneralInfoTabSkeleton />;
 
   return (
     <div className="flex flex-col gap-6">
@@ -266,7 +284,7 @@ const GeneralInfoTab = () => {
               setValue={(v) => infoFormik.setFieldValue("full_name", v)}
               onBlur={infoFormik.handleBlur}
               name="full_name"
-              disabled={!editingInfo}
+              disabled={!editingInfo || isLoading}
               containerClassName="flex-1"
               placeholder="Enter your full name"
               error={
@@ -280,7 +298,7 @@ const GeneralInfoTab = () => {
               value={infoFormik.values.phone}
               onChange={(v) => infoFormik.setFieldValue("phone", v)}
               onBlur={infoFormik.handleBlur}
-              disabled={!editingInfo}
+              disabled={!editingInfo || isLoading}
               containerClassName="flex-1"
               placeholder="Enter contact number"
               defaultCountry="us"
@@ -292,7 +310,7 @@ const GeneralInfoTab = () => {
             />
             <TextInput
               label="Email"
-              value={user?.email ?? ""}
+              value={email}
               disabled
               containerClassName="flex-1"
               placeholder="Email address"

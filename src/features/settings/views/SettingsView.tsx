@@ -12,7 +12,7 @@ import { getMe } from "../services/settingsService";
 const tabs = [
   { id: "general", label: "General Info", icon: User },
   { id: "company", label: "Company Info", icon: Building2 },
-  { id: "billing", label: "Billing", icon: CreditCard }
+  { id: "billing", label: "Billing", icon: CreditCard },
   // { id: "payment", label: "Payment Methods", icon: Wallet }
 ];
 
@@ -20,7 +20,7 @@ const SettingsView = () => {
   const [tab, setTab] = useQueryState("tab", { defaultValue: "general" });
   const { data: meResponse, isLoading } = useQuery({
     queryKey: queryKeys.auth.me,
-    queryFn: getMe
+    queryFn: getMe,
   });
   const me = meResponse?.data ?? null;
 
@@ -47,7 +47,7 @@ const SettingsView = () => {
                 "px-6 py-2 rounded-full flex items-center gap-2 text-xs font-medium leading-4 transition-all duration-200",
                 isActive
                   ? "bg-white shadow-[3px_3px_8px_0px_rgba(0,0,0,0.06)] text-brand-Text-950-d font-medium"
-                  : "text-brand-Text-600 font-normal"
+                  : "text-brand-Text-600 font-normal",
               )}
             >
               <Icon className="size-4" />
