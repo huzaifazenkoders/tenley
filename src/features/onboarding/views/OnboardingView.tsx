@@ -9,10 +9,13 @@ import { Loader2 } from "lucide-react";
 
 const stepFromOnboardingSteps = (onboardingSteps?: string): number => {
   switch (onboardingSteps) {
-    case "company_profile": return 2;
+    case "company_profile":
+      return 2;
     case "subscription":
-    case "terms_privacy": return 3;
-    default: return 1;
+    case "terms_privacy":
+      return 3;
+    default:
+      return 1;
   }
 };
 
@@ -30,7 +33,7 @@ const OnboardingView = () => {
 
   if (!initialized) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-full items-center justify-center w-full">
         <Loader2 className="size-10 animate-spin text-brand-primary-red-600-d" />
       </div>
     );
