@@ -152,7 +152,18 @@ const ArchivedTenantSheet = ({ open, onOpenChange, tenantId }: Props) => {
 
   return (
     <>
-      <AssignPropertyModal open={assignOpen} onOpenChange={setAssignOpen} />
+      {tenantId && (
+        <AssignPropertyModal
+          open={assignOpen}
+          onOpenChange={setAssignOpen}
+          tenantId={tenantId}
+          onSuccess={() => {
+            setAssignOpen(false);
+            onOpenChange(false);
+            setTab("active");
+          }}
+        />
+      )}
       {reassignTarget && details && tenantId && (
         <ReassignPropertyModal
           open
@@ -173,7 +184,7 @@ const ArchivedTenantSheet = ({ open, onOpenChange, tenantId }: Props) => {
       <Sheet
         open={open}
         onOpenChange={onOpenChange}
-        className="w-[743px] flex flex-col"
+        className="w-185.75 flex flex-col"
       >
         {/* Header */}
         <Dialog.DialogTitle className="px-6 pt-8 pb-4 flex items-center gap-3 border-b border-brand-Text-100">

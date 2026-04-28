@@ -56,6 +56,26 @@ export const getArchivedTenantDetails = async (
   return { data, error: null };
 };
 
+export const assignTenantProperty = async (
+  tenantId: string,
+  propertyId: string | null,
+  unitId?: string | null
+): Promise<AuthResponse<null>> => {
+  const { data, error } = await supabase.rpc("assign_tenant_property", {
+    p_tenant_id: tenantId,
+    p_property_id: propertyId ?? null,
+    p_unit_id: unitId ?? null
+  });
+
+  if (error) {
+    const message = getErrorMessage(error);
+    toast.error(message);
+    return { data: null, error: message };
+  }
+  toast.success("Property assigned successfully");
+  return { data, error: null };
+};
+
 export const reassignTenant = async (
   tenantId: string,
   propertyId: string,

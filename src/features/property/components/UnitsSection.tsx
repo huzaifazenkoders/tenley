@@ -195,7 +195,7 @@ const UnitCard = ({
       {unit.tenants.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {unit.tenants.map((t) => (
-            <TenantCard key={t.id} tenant={t} />
+            <TenantCard key={t.tenant_id} tenant={t} />
           ))}
         </div>
       ) : (
