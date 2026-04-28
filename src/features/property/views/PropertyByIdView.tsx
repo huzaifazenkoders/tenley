@@ -10,9 +10,12 @@ import { getPropertyById } from "../services";
 import type { PropertyByIdResponse } from "../types";
 import { PropertyPurpose } from "../types/enums";
 import ResidentialPropertyView from "./ResidentialPropertyView";
+import UnitsSection from "../components/UnitsSection";
 
 const Skeleton = ({ className }: { className?: string }) => (
-  <div className={`animate-pulse rounded-lg bg-brand-Text-100 ${className ?? ""}`} />
+  <div
+    className={`animate-pulse rounded-lg bg-brand-Text-100 ${className ?? ""}`}
+  />
 );
 
 const PropertyByIdSkeleton = () => (
@@ -76,6 +79,7 @@ const PropertyByIdView = () => {
         tenants={tenants}
         managers={managers}
         onRefetch={fetchProperty}
+        units={units}
       />
     );
   }
@@ -128,9 +132,21 @@ const PropertyByIdView = () => {
       {/* Info + Staff row */}
       <div className="flex items-start gap-6">
         <PropertyInfoCard property={property} onSuccess={fetchProperty} />
-        <AssignedStaffCard managers={managers} propertyId={property.id} onRefetch={fetchProperty} />
+        <AssignedStaffCard
+          managers={managers}
+          propertyId={property.id}
+          onRefetch={fetchProperty}
+        />
       </div>
 
+      {/* Units section */}
+      <UnitsSection
+        propertyId={property.id}
+        unitsPerFloor={property.number_of_unit ?? 0}
+        floors={property.number_of_floors ?? 1}
+        units={units}
+        onRefetch={fetchProperty}
+      />
       <ImportPropertyCSVModal
         open={csvModalOpen}
         onOpenChange={setCsvModalOpen}
