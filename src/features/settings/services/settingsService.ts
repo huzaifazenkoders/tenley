@@ -14,6 +14,8 @@ export interface ProfileInfo {
 }
 
 export interface CompanyInfo {
+  id?: string;
+  company_id?: string;
   company_name?: string;
   company_email?: string;
   website_url?: string | null;

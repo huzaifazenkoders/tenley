@@ -5,9 +5,7 @@ import { useQueryState } from "nuqs";
 import GeneralInfoTab from "../components/GeneralInfoTab";
 import CompanyInfoTab from "../components/CompanyInfoTab";
 import BillingTab from "../components/BillingTab";
-import { useQuery } from "@tanstack/react-query";
-import { queryKeys } from "@/query-keys";
-import { getMe } from "../services/settingsService";
+import { useUserStore } from "@/store/userStore";
 
 const tabs = [
   { id: "general", label: "General Info", icon: User },
@@ -18,11 +16,8 @@ const tabs = [
 
 const SettingsView = () => {
   const [tab, setTab] = useQueryState("tab", { defaultValue: "general" });
-  const { data: meResponse, isLoading } = useQuery({
-    queryKey: queryKeys.auth.me,
-    queryFn: getMe,
-  });
-  const me = meResponse?.data ?? null;
+  const me = useUserStore((s) => s.me);
+  const isLoading = useUserStore((s) => s.isMeLoading);
 
   return (
     <div className="px-6 pt-10 pb-6 flex flex-col gap-6 w-full">

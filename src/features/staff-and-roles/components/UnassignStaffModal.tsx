@@ -5,9 +5,16 @@ import { UserMinus } from "lucide-react";
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onConfirm: () => void;
+  isPending?: boolean;
 };
 
-const UnassignStaffModal = ({ open, onOpenChange }: Props) => (
+const UnassignStaffModal = ({
+  open,
+  onOpenChange,
+  onConfirm,
+  isPending,
+}: Props) => (
   <Modal open={open} onOpenChange={onOpenChange} className="w-[586px] p-6 flex flex-col gap-5">
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2">
@@ -24,11 +31,16 @@ const UnassignStaffModal = ({ open, onOpenChange }: Props) => (
     <div className="h-px bg-brand-Text-100" />
 
     <div className="flex justify-end items-center gap-6">
-      <Button variant="outline-transparent" size="lg" onClick={() => onOpenChange(false)}>
+      <Button
+        variant="outline-transparent"
+        size="lg"
+        onClick={() => onOpenChange(false)}
+        disabled={isPending}
+      >
         Cancel
       </Button>
-      <Button size="lg" onClick={() => onOpenChange(false)}>
-        Yes, Unassign
+      <Button size="lg" onClick={onConfirm} disabled={isPending}>
+        {isPending ? "Unassigning..." : "Yes, Unassign"}
       </Button>
     </div>
   </Modal>

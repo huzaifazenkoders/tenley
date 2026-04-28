@@ -15,7 +15,10 @@ export type Role = {
   id: string;
   name: string;
   description: string;
-  permissions: RolePermission[];
+  is_active?: boolean;
+  created_at?: string;
+  updated_at?: string;
+  permissions?: RolePermission[];
 };
 
 export type RolePermissionDetail = {
@@ -30,6 +33,7 @@ export type RoleDetails = {
   name: string;
   description: string;
   permissions: RolePermissionDetail[];
+  assigned_users_count: number;       
 };
 
 export type CreateRolePayload = {
@@ -45,13 +49,16 @@ export type UpdateRolePayload = {
 };
 
 export const getRoles = async (): Promise<AuthResponse<Role[]>> => {
-  const { data, error } = await supabase.rpc("get_roles");
+  const { data, error } = await supabase.rpc("list_roles");
   if (error) {
     const message = getErrorMessage(error);
     toast.error(message);
     return { data: null, error: message };
   }
-  return { data, error: null };
+  const roles = Array.isArray(data)
+    ? data
+    : ((data as { data?: Role[] } | null)?.data ?? []);
+  return { data: roles, error: null };
 };
 
 export const getRoleDetails = async (

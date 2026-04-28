@@ -5,7 +5,7 @@ import { queryKeys } from "@/query-keys";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FileText, Pencil, ShieldOff } from "lucide-react";
 import { Switch } from "radix-ui";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { PERMISSION_LABELS } from "../services/permission.constants";
 import { getPermissions } from "../services/permission.service";
@@ -57,22 +57,17 @@ const RolesPermissionsView = () => {
     queryFn: getPermissions,
   });
 
+  const roles = rolesData?.data ?? [];
+  const activeRoleId = selectedRoleId ?? roles[0]?.id ?? null;
+
   const { data: roleDetailsData, isLoading: roleDetailsLoading } = useQuery({
-    queryKey: queryKeys.roles.details(selectedRoleId ?? ""),
-    queryFn: () => getRoleDetails(selectedRoleId!),
-    enabled: !!selectedRoleId,
+    queryKey: queryKeys.roles.details(activeRoleId ?? ""),
+    queryFn: () => getRoleDetails(activeRoleId!),
+    enabled: !!activeRoleId,
   });
 
-  const roles = rolesData?.data ?? [];
   const allPermissions = permissionsData?.data ?? [];
   const roleDetails = roleDetailsData?.data;
-
-  // Auto-select first role
-  useEffect(() => {
-    if (roles.length > 0 && !selectedRoleId) {
-      setSelectedRoleId(roles[0].id);
-    }
-  }, [roles, selectedRoleId]);
 
   // Build merged permissions list: all permissions with enabled state from role
   const mergedPermissions: RolePermissionDetail[] = allPermissions.map((p) => {
@@ -89,13 +84,13 @@ const RolesPermissionsView = () => {
 
   const { mutate: saveRole, isPending } = useMutation({
     mutationFn: () =>
-      updateRole(selectedRoleId!, {
+      updateRole(activeRoleId!, {
         permissions: draft.map((p) => ({ key: p.key, enabled: p.enabled })),
       }),
     onSuccess: ({ error }) => {
       if (error) { toast.error(error); return; }
       toast.success("Role updated successfully");
-      queryClient.invalidateQueries({ queryKey: queryKeys.roles.details(selectedRoleId!) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.roles.details(activeRoleId!) });
       setEditing(false);
     },
   });
@@ -110,9 +105,9 @@ const RolesPermissionsView = () => {
       prev.map((p) => (p.key === key ? { ...p, enabled: !p.enabled } : p))
     );
 
-  const selectedRole = roles.find((r) => r.id === selectedRoleId);
+  const selectedRole = roles.find((r) => r.id === activeRoleId);
   const userCount = selectedRole
-    ? (rolesData?.data?.find((r) => r.id === selectedRoleId)?.permissions.length ?? 0)
+    ? (rolesData?.data?.find((r) => r.id === activeRoleId)?.permissions?.length ?? 0)
     : 0;
 
   const permissionsLoaderVisible = roleDetailsLoading || permissionsLoading;
@@ -146,7 +141,7 @@ const RolesPermissionsView = () => {
             </div>
           ) : (
             roles.map((role) => {
-              const isActive = selectedRoleId === role.id;
+              const isActive = activeRoleId === role.id;
               return (
                 <button
                   key={role.id}
@@ -172,10 +167,10 @@ const RolesPermissionsView = () => {
         <div className="flex-1 p-4 bg-brand-base-white rounded-xl shadow-[0px_1px_10px_0px_rgba(0,0,0,0.08)] outline outline-1 -outline-offset-1 outline-brand-Text-100 flex flex-col items-end gap-4">
           <div className="w-full flex justify-between items-center">
             <span className="text-brand-Text-950-d text-base font-semibold leading-5">Permissions</span>
-            {selectedRoleId && (
+            {activeRoleId && (
               <div className="flex items-center gap-6">
                 <span className="px-2.5 py-1 bg-brand-primary-blue-50 rounded-lg outline outline-1 -outline-offset-1 outline-brand-primary-blue-200 text-brand-primary-blue-600 text-xs font-medium leading-4">
-                  {userCount} Users
+                  {roleDetails?.assigned_users_count} Users
                 </span>
                 {!editing && (
                   <button className="p-1.5 bg-brand-Text-50 rounded-full" onClick={handleEditClick}>
@@ -188,7 +183,7 @@ const RolesPermissionsView = () => {
 
           {permissionsLoaderVisible ? (
             <PermissionsSkeleton />
-          ) : !selectedRoleId ? (
+          ) : !activeRoleId ? (
             <div className="w-full flex flex-col items-center justify-center gap-2 py-10 text-center">
               <ShieldOff className="size-8 text-brand-Text-300" />
               <span className="text-brand-Text-600 text-sm font-medium">No role selected</span>

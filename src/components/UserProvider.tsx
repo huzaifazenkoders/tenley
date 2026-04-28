@@ -1,7 +1,10 @@
 "use client";
 
 import { createClient } from "@/features/supabase/client";
+import { getMe } from "@/features/settings/services/settingsService";
+import { queryKeys } from "@/query-keys";
 import { useUserStore } from "@/store/userStore";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 export default function UserProvider({
@@ -9,23 +12,49 @@ export default function UserProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const { setUser } = useUserStore();
+  const { setUser, setMe, setMeLoading } = useUserStore();
+  const user = useUserStore((s) => s.user);
+
+  const { data: meResponse, isLoading: isMeLoading } = useQuery({
+    queryKey: queryKeys.auth.me,
+    queryFn: getMe,
+    enabled: Boolean(user),
+  });
 
   useEffect(() => {
     const supabase = createClient();
 
     // Fetch current session on mount
-    supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+      if (!user) {
+        setMe(null);
+      }
+    });
 
     // Keep store in sync on sign-in / sign-out / token refresh
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      const nextUser = session?.user ?? null;
+      setUser(nextUser);
+      if (!nextUser) {
+        setMe(null);
+      }
     });
 
     return () => subscription.unsubscribe();
-  }, [setUser]);
+  }, [setMe, setUser]);
+
+  useEffect(() => {
+    setMeLoading(isMeLoading);
+  }, [isMeLoading, setMeLoading]);
+
+  useEffect(() => {
+    if (meResponse) {
+      setMe(meResponse.data);
+    }
+  }, [meResponse, setMe]);
 
   return <>{children}</>;
 }
