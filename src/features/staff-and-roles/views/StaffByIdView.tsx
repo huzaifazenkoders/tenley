@@ -24,7 +24,8 @@ const StaffByIdView = () => {
   const isUserLoading = useUserStore((s) => s.isLoading);
   const company = useUserStore((s) => s.company);
   const isMeLoading = useUserStore((s) => s.isMeLoading);
-  const companyId = company?.id ?? company?.company_id ?? getCompanyIdFromUser(user);
+  const companyId =
+    company?.id ?? company?.company_id ?? getCompanyIdFromUser(user);
 
   const {
     data: staff,
@@ -73,10 +74,8 @@ const StaffByIdView = () => {
           <div className="flex flex-col gap-6">
             <StaffProfileCard
               name={staff.full_name}
-              title={staff.designation ?? "-"}
+              title={staff.designation}
               email={staff.email}
-              role={staff.role?.name ?? "Unassigned"}
-              permissions={`${staff.permissions.enabled}/${staff.permissions.total}`}
               status={staff.status}
               profileImageUrl={staff.profile_image_url}
             />

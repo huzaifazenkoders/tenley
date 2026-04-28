@@ -2,11 +2,9 @@ import Image from "next/image";
 
 type Props = {
   name: string;
-  title: string;
+  title?: string | null;
   email: string;
-  role: string;
-  permissions: string;
-  status: string;
+  status?: string | null;
   profileImageUrl?: string | null;
 };
 
@@ -21,8 +19,6 @@ const StaffProfileCard = ({
   name,
   title,
   email,
-  role,
-  permissions,
   status,
   profileImageUrl,
 }: Props) => (
@@ -48,41 +44,29 @@ const StaffProfileCard = ({
             <span className="text-brand-Text-950-d text-xl font-semibold leading-6">
               {name}
             </span>
-            <span className="text-brand-Text-600 text-xs font-normal leading-4">
-              {title}
-            </span>
+            {title && (
+              <span className="text-brand-Text-600 text-xs font-normal leading-4">
+                {title}
+              </span>
+            )}
           </div>
-          <span
-            className={`px-2.5 py-[3px] rounded-xl text-sm font-normal leading-5 ${status === "invitation_accepted" ? "bg-green-600/10 text-green-600" : "bg-blue-600/10 text-Active-Blue-50"}`}
-          >
-            {getStatusLabel(status)}
-          </span>
+          {status && (
+            <span
+              className={`px-2.5 py-[3px] rounded-xl text-sm font-normal leading-5 ${status === "invitation_accepted" ? "bg-green-600/10 text-green-600" : "bg-blue-600/10 text-Active-Blue-50"}`}
+            >
+              {getStatusLabel(status)}
+            </span>
+          )}
         </div>
 
         {/* Info fields */}
-        <div className="flex justify-between items-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="flex-1 flex flex-col justify-between gap-1">
             <span className="text-brand-Text-600 text-sm font-normal leading-5">
               Email
             </span>
             <span className="text-brand-Text-950-d text-sm font-normal leading-5">
               {email}
-            </span>
-          </div>
-          <div className="flex-1 flex flex-col gap-1">
-            <span className="text-brand-Text-600 text-sm font-normal leading-5">
-              Role
-            </span>
-            <span className="px-3 py-1 bg-brand-primary-red-50 rounded-full outline outline-1 -outline-offset-1 outline-brand-primary-red-200 inline-flex w-fit text-brand-primary-red-500 text-sm font-medium leading-5">
-              {role}
-            </span>
-          </div>
-          <div className="flex-1 flex flex-col justify-between gap-1">
-            <span className="text-brand-Text-600 text-sm font-normal leading-5">
-              Permissions
-            </span>
-            <span className="text-brand-Text-950-d text-sm font-normal leading-5">
-              {permissions}
             </span>
           </div>
         </div>
