@@ -50,6 +50,23 @@ const AssignedStaffCard = ({ managers, propertyId, onRefetch }: Props) => {
               const displayName = manager.full_name ?? manager.invited_email;
               const displayRole =
                 manager.role?.role_name ?? manager.designation ?? "—";
+              const statusLabel =
+                manager.status === "invitation_accepted"
+                  ? "Active"
+                  : manager.status === "invitation_sent"
+                    ? "Invitation Sent"
+                    : manager.status === "invitation_rejected"
+                      ? "Invitation Rejected"
+                      : manager.status === "invitation_expired"
+                        ? "Invitation Expired"
+                        : manager.status;
+              const statusClass =
+                manager.status === "invitation_accepted"
+                  ? "bg-green-600/10 text-green-600"
+                  : manager.status === "invitation_rejected" ||
+                      manager.status === "invitation_expired"
+                    ? "bg-gray-500/10 text-neutral-500"
+                    : "bg-blue-600/10 text-Active-Blue-50";
               return (
                 <div
                   key={manager.property_manager_id}
@@ -71,9 +88,19 @@ const AssignedStaffCard = ({ managers, propertyId, onRefetch }: Props) => {
                       </div>
                     )}
                     <div className="flex flex-col gap-1">
-                      <span className="text-brand-Text-950-d text-base font-semibold leading-5">
-                        {displayName}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-brand-Text-950-d text-base font-semibold leading-5">
+                          {displayName}
+                        </span>
+                        <span
+                          className={
+                            "px-2 py-0.5 rounded-xl text-xs font-normal leading-4 " +
+                            statusClass
+                          }
+                        >
+                          {statusLabel}
+                        </span>
+                      </div>
                       <span className="text-brand-Text-600 text-xs font-normal leading-4">
                         {displayRole}
                       </span>
