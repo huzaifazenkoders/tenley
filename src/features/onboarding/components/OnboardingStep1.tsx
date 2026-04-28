@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import TextInput from "@/components/ui/text-input";
+import PhoneInput from "@/components/ui/phone-input";
 import { TypographyStyles } from "@/styles/common-typography";
 import { ChevronRight } from "lucide-react";
 import { useFormik } from "formik";
@@ -9,6 +10,9 @@ import * as Yup from "yup";
 import { upsertCompanyProfile } from "../services/onboardingService";
 import { toast } from "sonner";
 import LogoUploader from "./LogoUploader";
+import { getMe } from "@/features/settings/services/settingsService";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 const validationSchema = Yup.object({
   company_name: Yup.string()
@@ -22,7 +26,7 @@ const validationSchema = Yup.object({
     .required("Company email is required"),
   website_url: Yup.string()
     .trim()
-    .url("Must be a valid URL")
+    .isValidLink("Must be a valid URL")
     .max(255, "URL must be at most 255 characters"),
   registration_number: Yup.string()
     .trim()
@@ -37,20 +41,80 @@ const validationSchema = Yup.object({
     .trim()
     .min(5, "Address must be at least 5 characters")
     .max(255, "Address must be at most 255 characters")
-    .required("Address is required"),
+    .required("Address is required")
 });
 
-const OnboardingStep1 = ({ setStep }: { setStep: (step: number) => void }) => {
+type Step1InitialValues = {
+  logo_url: string;
+  company_name: string;
+  company_email: string;
+  website_url: string;
+  registration_number: string;
+  phone_number: string;
+  address: string;
+};
+
+const Skeleton = ({ className }: { className?: string }) => (
+  <div className={cn("animate-pulse rounded-lg bg-brand-Text-100", className)} />
+);
+
+const Step1Skeleton = () => (
+  <div className="flex-col-10">
+    <div className="flex-col-2">
+      <Skeleton className="h-8 w-64" />
+      <Skeleton className="h-5 w-80" />
+    </div>
+    <div className="grid grid-cols-2 gap-5">
+      {/* Logo uploader placeholder */}
+      <div className="col-span-2">
+        <Skeleton className="h-24 w-full" />
+      </div>
+      {/* Company name */}
+      <div className="col-span-2 flex flex-col gap-1.5">
+        <Skeleton className="h-4 w-28" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+      {/* Company email */}
+      <div className="flex flex-col gap-1.5">
+        <Skeleton className="h-4 w-28" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+      {/* Website */}
+      <div className="flex flex-col gap-1.5">
+        <Skeleton className="h-4 w-28" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+      {/* Registration */}
+      <div className="flex flex-col gap-1.5">
+        <Skeleton className="h-4 w-28" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+      {/* Phone */}
+      <div className="flex flex-col gap-1.5">
+        <Skeleton className="h-4 w-28" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+      {/* Address */}
+      <div className="col-span-2 flex flex-col gap-1.5">
+        <Skeleton className="h-4 w-28" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+      {/* Button */}
+      <div className="col-span-2">
+        <Skeleton className="h-11 w-full" />
+      </div>
+    </div>
+  </div>
+);
+
+type Step1FormProps = {
+  initialValues: Step1InitialValues;
+  setStep: (step: number) => void;
+};
+
+const Step1Form = ({ initialValues, setStep }: Step1FormProps) => {
   const formik = useFormik({
-    initialValues: {
-      logo_url: "",
-      company_name: "",
-      company_email: "",
-      website_url: "",
-      registration_number: "",
-      phone_number: "",
-      address: "",
-    },
+    initialValues,
     validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
       const { error } = await upsertCompanyProfile({
@@ -60,12 +124,15 @@ const OnboardingStep1 = ({ setStep }: { setStep: (step: number) => void }) => {
         website_url: values.website_url?.trim() || undefined,
         registration_number: values.registration_number.trim(),
         phone_number: values.phone_number.trim(),
-        address: values.address.trim(),
+        address: values.address.trim()
       });
       setSubmitting(false);
-      if (error) { toast.error(error); return; }
+      if (error) {
+        toast.error(error);
+        return;
+      }
       setStep(2);
-    },
+    }
   });
 
   return (
@@ -109,10 +176,14 @@ const OnboardingStep1 = ({ setStep }: { setStep: (step: number) => void }) => {
           {...formik.getFieldProps("registration_number")}
           error={formik.touched.registration_number ? formik.errors.registration_number : undefined}
         />
-        <TextInput
+        <PhoneInput
           label="Phone Number"
           id="phone_number"
-          {...formik.getFieldProps("phone_number")}
+          value={formik.values.phone_number}
+          onChange={(val) => {
+            formik.setFieldValue("phone_number", val);
+            formik.setFieldTouched("phone_number", true, false);
+          }}
           error={formik.touched.phone_number ? formik.errors.phone_number : undefined}
         />
         <div className="col-span-2">
@@ -131,6 +202,29 @@ const OnboardingStep1 = ({ setStep }: { setStep: (step: number) => void }) => {
       </div>
     </form>
   );
+};
+
+const OnboardingStep1 = ({ setStep }: { setStep: (step: number) => void }) => {
+  const [initialValues, setInitialValues] = useState<Step1InitialValues | null>(null);
+
+  useEffect(() => {
+    getMe().then(({ data }) => {
+      const c = data?.company ?? data?.company_profile ?? null;
+      setInitialValues({
+        logo_url: c?.logo ?? "",
+        company_name: c?.company_name ?? "",
+        company_email: c?.company_email ?? "",
+        website_url: c?.website_url ?? "",
+        registration_number: c?.registration_number ?? "",
+        phone_number: c?.phone_number ?? "",
+        address: c?.address ?? ""
+      });
+    });
+  }, []);
+
+  if (!initialValues) return <Step1Skeleton />;
+
+  return <Step1Form initialValues={initialValues} setStep={setStep} />;
 };
 
 export default OnboardingStep1;

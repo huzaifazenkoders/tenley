@@ -50,9 +50,9 @@ const PropertyInfoCard = ({ property, onSuccess }: Props) => {
       </div>
 
       {/* Images */}
-      {property.property_images.length > 0 && (
+      {property?.property_images?.length > 0 && (
         <div className="flex items-center gap-3">
-          {property.property_images.map((src, i) => (
+          {property?.property_images?.map((src, i) => (
             <Image
               key={i}
               src={src}
@@ -74,8 +74,14 @@ const PropertyInfoCard = ({ property, onSuccess }: Props) => {
         </div>
         <hr className="border-brand-Text-100" />
         <div className="flex items-center flex-col md:flex-row">
-          <InfoRow label="Number of Units" value={String(property.number_of_unit ?? 0)} />
-          <InfoRow label="Number of Floors" value={String(property.number_of_floors ?? 0)} />
+          <InfoRow
+            label="Number of Units"
+            value={String(property.number_of_unit ?? 0)}
+          />
+          <InfoRow
+            label="Number of Floors"
+            value={String(property.number_of_floors ?? 0)}
+          />
         </div>
         <hr className="border-brand-Text-100" />
         <div className="flex items-start flex-col md:flex-row">
