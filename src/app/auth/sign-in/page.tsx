@@ -1,8 +1,12 @@
 import SignInView from "@/features/auth/views/SignInView";
-import React from "react";
+import { Suspense } from "react";
 
 const page = () => {
-  return <SignInView />;
+  return (
+    <Suspense>
+      <SignInView />
+    </Suspense>
+  );
 };
 
 export default page;

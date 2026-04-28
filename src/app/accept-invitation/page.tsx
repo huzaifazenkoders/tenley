@@ -3,9 +3,9 @@ import { acceptInvitation } from "@/features/auth/services";
 import { createClient } from "@/features/supabase/client";
 import { Loader2, XCircle } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 
-const AcceptInvitationPage = () => {
+const AcceptInvitationContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token") ?? "";
@@ -63,5 +63,11 @@ const AcceptInvitationPage = () => {
     </div>
   );
 };
+
+const AcceptInvitationPage = () => (
+  <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><Loader2 className="size-10 animate-spin text-brand-primary-red-600-d" /></div>}>
+    <AcceptInvitationContent />
+  </Suspense>
+);
 
 export default AcceptInvitationPage;
