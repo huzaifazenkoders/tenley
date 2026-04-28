@@ -42,10 +42,12 @@ const getCompanyAndUser = async () => {
 
 export const searchStaffByEmail = async (
   keyword: string,
+  company_id: string,
   limit = 10,
 ): Promise<AuthResponse<SearchStaffItem[]>> => {
   const { data, error } = await supabase.rpc("search_staff_by_email", {
     p_keyword: keyword,
+    p_company_id: company_id,
     p_limit: limit,
   });
   if (error) {
@@ -78,6 +80,42 @@ export const inviteManager = async (
   }
   toast.success("Invitation sent successfully");
   return { data, error: null };
+};
+
+export type UnassignManagerAction =
+  | "removed_from_company"
+  | "unassigned_from_property";
+
+export interface UnassignManagerResponse {
+  success: boolean;
+  action: UnassignManagerAction;
+  property_id?: string;
+}
+
+export interface UnassignManagerParams {
+  manager_id: string;
+  property_id?: string | null;
+  remove_from_company?: boolean;
+}
+
+export const unassignManager = async (
+  params: UnassignManagerParams,
+): Promise<AuthResponse<UnassignManagerResponse>> => {
+  const { company_id } = await getCompanyAndUser();
+  if (!company_id) return { data: null, error: "Company ID not found" };
+  const { data, error } = await supabase.rpc("unassign_manager", {
+    p_manager_id: params.manager_id,
+    p_company_id: company_id,
+    p_property_id: params.property_id ?? null,
+    p_remove_from_company: params.remove_from_company ?? false,
+  });
+  if (error) {
+    const message = getErrorMessage(error);
+    toast.error(message);
+    return { data: null, error: message };
+  }
+  toast.success("Staff unassigned successfully");
+  return { data: data as UnassignManagerResponse, error: null };
 };
 
 export const bulkAssignManagersToProperties = async (params: {

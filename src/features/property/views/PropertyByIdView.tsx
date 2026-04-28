@@ -6,14 +6,16 @@ import { useEffect, useState } from "react";
 import AssignedStaffCard from "../components/AssignedStaffCard";
 import ImportPropertyCSVModal from "../components/ImportPropertyCSVModal";
 import PropertyInfoCard from "../components/PropertyInfoCard";
-import UnitsSection from "../components/UnitsSection";
 import { getPropertyById } from "../services";
 import type { PropertyByIdResponse } from "../types";
 import { PropertyPurpose } from "../types/enums";
 import ResidentialPropertyView from "./ResidentialPropertyView";
+import UnitsSection from "../components/UnitsSection";
 
 const Skeleton = ({ className }: { className?: string }) => (
-  <div className={`animate-pulse rounded-lg bg-brand-Text-100 ${className ?? ""}`} />
+  <div
+    className={`animate-pulse rounded-lg bg-brand-Text-100 ${className ?? ""}`}
+  />
 );
 
 const PropertyByIdSkeleton = () => (
@@ -67,7 +69,7 @@ const PropertyByIdView = () => {
   if (loading) return <PropertyByIdSkeleton />;
   if (!propertyData) return null;
 
-  const { property, units = [] } = propertyData;
+  const { property, units = [], managers = [] } = propertyData;
 
   if (property.property_purpose === PropertyPurpose.Residential) {
     const tenants = propertyData.tenants || units.flatMap((u) => u.tenants);
@@ -75,7 +77,9 @@ const PropertyByIdView = () => {
       <ResidentialPropertyView
         property={property}
         tenants={tenants}
+        managers={managers}
         onRefetch={fetchProperty}
+        units={units}
       />
     );
   }
@@ -128,7 +132,11 @@ const PropertyByIdView = () => {
       {/* Info + Staff row */}
       <div className="flex items-start gap-6">
         <PropertyInfoCard property={property} onSuccess={fetchProperty} />
-        <AssignedStaffCard staff={[]} propertyId={property.id} />
+        <AssignedStaffCard
+          managers={managers}
+          propertyId={property.id}
+          onRefetch={fetchProperty}
+        />
       </div>
 
       {/* Units section */}
@@ -139,7 +147,6 @@ const PropertyByIdView = () => {
         units={units}
         onRefetch={fetchProperty}
       />
-
       <ImportPropertyCSVModal
         open={csvModalOpen}
         onOpenChange={setCsvModalOpen}

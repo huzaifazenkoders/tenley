@@ -3,6 +3,8 @@ import { cn } from "@/lib/utils";
 import { Popover } from "radix-ui";
 import { ChevronUp, Loader2, Search, UserPlus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useUserStore } from "@/store/userStore";
+import { getCompanyIdFromUser } from "@/features/staff-and-roles/utils/company";
 import { searchStaffByEmail, type SearchStaffItem } from "../services/staffService";
 import Image from "next/image";
 
@@ -13,28 +15,42 @@ type Props = {
 };
 
 const StaffSelectDropdown = ({ selectedIds, onToggle, onInviteNew }: Props) => {
+  const user = useUserStore((s) => s.user);
+  const company = useUserStore((s) => s.company);
+  const companyId =
+    company?.id ?? company?.company_id ?? getCompanyIdFromUser(user) ?? "";
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [results, setResults] = useState<SearchStaffItem[]>([]);
+  const [defaultResults, setDefaultResults] = useState<SearchStaffItem[]>([]);
   const [loading, setLoading] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    if (!companyId) return;
+    searchStaffByEmail("", companyId).then(({ data }) => {
+      if (data) setDefaultResults(data);
+    });
+  }, [companyId]);
+
+  useEffect(() => {
     if (timerRef.current) clearTimeout(timerRef.current);
-    if (!search.trim()) {
+    if (!search.trim() || !companyId) {
       setResults([]);
       return;
     }
     timerRef.current = setTimeout(async () => {
       setLoading(true);
-      const { data } = await searchStaffByEmail(search.trim());
+      const { data } = await searchStaffByEmail(search.trim(), companyId);
       setResults(data ?? []);
       setLoading(false);
     }, 400);
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [search]);
+  }, [search, companyId]);
+
+  const displayed = search.trim() ? results : defaultResults;
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
@@ -73,17 +89,12 @@ const StaffSelectDropdown = ({ selectedIds, onToggle, onInviteNew }: Props) => {
                 <Loader2 className="size-4 animate-spin text-brand-Text-400" />
               </div>
             )}
-            {!loading && search.trim() && results.length === 0 && (
+            {!loading && displayed.length === 0 && (
               <p className="text-center text-brand-Text-400 text-sm py-4">
                 No staff found
               </p>
             )}
-            {!loading && !search.trim() && (
-              <p className="text-center text-brand-Text-400 text-sm py-4">
-                Type to search staff
-              </p>
-            )}
-            {results.map((member) => (
+            {displayed.map((member) => (
               <button
                 key={member.id}
                 onClick={() => onToggle(member)}

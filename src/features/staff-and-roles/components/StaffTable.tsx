@@ -33,40 +33,6 @@ import { getCompanyIdFromUser } from "../utils/company";
 const LIMIT = 10;
 const ALL_VALUE = "all";
 
-const statusLabels: Record<InviteStatus, string> = {
-  invitation_sent: "Invitation Sent",
-  invitation_accepted: "Active",
-  invitation_rejected: "Invitation Rejected",
-  invitation_expired: "Invitation Expired",
-};
-
-const RoleBadge = ({ role }: { role: string }) => (
-  <span className="px-2 py-1 bg-brand-primary-red-50 rounded-full outline outline-1 -outline-offset-1 outline-brand-primary-red-200 text-brand-primary-red-500 text-sm font-medium leading-5 whitespace-nowrap">
-    {role}
-  </span>
-);
-
-const StatusBadge = ({ status }: { status: InviteStatus }) => {
-  const isAccepted = status === "invitation_accepted";
-  const isRejectedOrExpired =
-    status === "invitation_rejected" || status === "invitation_expired";
-
-  return (
-    <span
-      className={
-        "px-2.5 py-[3px] rounded-xl text-sm font-normal leading-5 " +
-        (isAccepted
-          ? "bg-green-600/10 text-green-600"
-          : isRejectedOrExpired
-            ? "bg-gray-500/10 text-neutral-500"
-            : "bg-blue-600/10 text-Active-Blue-50")
-      }
-    >
-      {statusLabels[status]}
-    </span>
-  );
-};
-
 const Avatar = ({ row }: { row: CompanyStaffItem }) => {
   if (row.profile_image_url) {
     return (
@@ -89,7 +55,7 @@ const Avatar = ({ row }: { row: CompanyStaffItem }) => {
 
 const SkeletonRow = () => (
   <TableRow>
-    {Array.from({ length: 6 }).map((_, i) => (
+    {Array.from({ length: 4 }).map((_, i) => (
       <TableCell key={i}>
         <div className="h-4 bg-gray-100 rounded animate-pulse" />
       </TableCell>
@@ -211,15 +177,13 @@ const StaffTable = () => {
         </div>
       </div>
 
-      <Table>
+      <Table className="table-fixed">
         <TableHeader>
           <TableRow className="bg-gray-light-50">
-            <TableHead className="w-80">Staff Name</TableHead>
-            <TableHead className="w-64">Role</TableHead>
-            <TableHead>Properties</TableHead>
-            <TableHead>Permissions</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="w-20">Actions</TableHead>
+            <TableHead className="w-1/4">Staff Name</TableHead>
+            <TableHead className="w-1/4">Staff Email</TableHead>
+            <TableHead className="w-1/4">Assigned Properties</TableHead>
+            <TableHead className="w-1/4">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -227,7 +191,7 @@ const StaffTable = () => {
             Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)}
           {!isInitialLoading && !companyId && (
             <TableRow>
-              <TableCell colSpan={6} className="py-16 text-center">
+              <TableCell colSpan={4} className="py-16 text-center">
                 <div className="flex flex-col items-center gap-2">
                   <ShieldOff className="size-8 text-brand-Text-300" />
                   <p className="text-brand-Text-700 text-sm font-medium">
@@ -239,7 +203,7 @@ const StaffTable = () => {
           )}
           {!isInitialLoading && companyId && isError && (
             <TableRow>
-              <TableCell colSpan={6} className="py-16 text-center">
+              <TableCell colSpan={4} className="py-16 text-center">
                 <p className="text-Error-Red-60 text-sm font-medium">
                   Unable to load staff.
                 </p>
@@ -248,7 +212,7 @@ const StaffTable = () => {
           )}
           {!isInitialLoading && companyId && !isError && rows.length === 0 && (
             <TableRow>
-              <TableCell colSpan={6} className="py-16 text-center">
+              <TableCell colSpan={4} className="py-16 text-center">
                 <div className="flex flex-col items-center gap-3">
                   <p className="text-brand-Text-700 text-sm font-medium">
                     {isFiltered
@@ -291,38 +255,26 @@ const StaffTable = () => {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <RoleBadge role={row.role_name ?? "Unassigned"} />
+                  <span className="text-brand-Text-800 text-sm font-normal leading-5">
+                    {row.email || "-"}
+                  </span>
                 </TableCell>
                 <TableCell>
                   <span className="text-brand-Text-800 text-sm font-normal leading-5">
                     {row.property_count || "-"}
                   </span>
                 </TableCell>
+
                 <TableCell>
-                  <span className="text-brand-Text-800 text-sm font-normal leading-5">
-                    {/* {row.enabled_permissions}/{row.total_permissions} */}
-                    {row.enabled_permissions}/8
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <StatusBadge status={row.status} />
-                </TableCell>
-                <TableCell>
-                  {row.status === "invitation_accepted" ? (
-                    <>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() =>
-                          router.push(`/staff-and-roles/staff/${row.id}`)
-                        }
-                      >
-                        <Eye className="size-5 text-brand-Text-700" />
-                      </Button>
-                    </>
-                  ) : (
-                    <>-</>
-                  )}
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() =>
+                      router.push(`/staff-and-roles/staff/${row.id}`)
+                    }
+                  >
+                    <Eye className="size-5 text-brand-Text-700" />
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}

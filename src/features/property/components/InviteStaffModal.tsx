@@ -10,6 +10,7 @@ import { Loader2, Users } from "lucide-react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { inviteManager } from "../services/staffService";
+import StaffEmailSearch from "./StaffEmailSearch";
 import {
   getRoles,
   getRoleDetails,
@@ -20,10 +21,9 @@ import {
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  propertyId?: string | null;
+  propertyId: string;
   onSuccess?: () => void;
 };
-
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -44,14 +44,21 @@ const Toggle = ({ checked }: { checked: boolean }) => (
     aria-checked={checked}
     className={cn(
       "w-9 h-5 p-0.5 rounded-xl flex items-center cursor-not-allowed opacity-70",
-      checked ? "bg-brand-primary-red-600-d justify-end" : "bg-Text-200 justify-start"
+      checked
+        ? "bg-brand-primary-red-600-d justify-end"
+        : "bg-Text-200 justify-start"
     )}
   >
     <div className="size-4 bg-white rounded-full shadow-[0px_1px_2px_0px_rgba(16,24,40,0.06),0px_1px_3px_0px_rgba(16,24,40,0.10)]" />
   </div>
 );
 
-const InviteStaffModal = ({ open, onOpenChange, propertyId, onSuccess }: Props) => {
+const InviteStaffModal = ({
+  open,
+  onOpenChange,
+  propertyId,
+  onSuccess
+}: Props) => {
   const [roles, setRoles] = useState<Role[]>([]);
   const [roleDetails, setRoleDetails] = useState<RoleDetails | null>(null);
   const [roleDetailsLoading, setRoleDetailsLoading] = useState(false);
@@ -133,16 +140,21 @@ const InviteStaffModal = ({ open, onOpenChange, propertyId, onSuccess }: Props) 
       </div>
 
       {/* Form */}
-      <form onSubmit={formik.handleSubmit} className="p-4 rounded-2xl flex flex-col gap-6">
+      <form
+        onSubmit={formik.handleSubmit}
+        className="p-4 rounded-2xl flex flex-col gap-6"
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <TextInput
-            label="Email"
-            id="email"
-            {...formik.getFieldProps("email")}
-            placeholder="alexander@example.com"
-            type="email"
-            containerClassName="flex-1"
+          <StaffEmailSearch
+            value={formik.values.email}
+            onChange={(v) => formik.setFieldValue("email", v)}
+            onBlur={() => formik.setFieldTouched("email", true)}
+            onSelect={(item) => {
+              formik.setFieldValue("email", item.email);
+              formik.setFieldValue("full_name", item.full_name);
+            }}
             error={formik.touched.email ? formik.errors.email : undefined}
+            containerClassName="flex-1"
           />
           <TextInput
             label="Name"
@@ -150,7 +162,9 @@ const InviteStaffModal = ({ open, onOpenChange, propertyId, onSuccess }: Props) 
             {...formik.getFieldProps("full_name")}
             placeholder="Alexander McGurk"
             containerClassName="flex-1"
-            error={formik.touched.full_name ? formik.errors.full_name : undefined}
+            error={
+              formik.touched.full_name ? formik.errors.full_name : undefined
+            }
           />
           <TextInput
             label="Designation"
@@ -158,7 +172,9 @@ const InviteStaffModal = ({ open, onOpenChange, propertyId, onSuccess }: Props) 
             {...formik.getFieldProps("designation")}
             placeholder="Jr. Maintenance Supervisor"
             containerClassName="flex-1"
-            error={formik.touched.designation ? formik.errors.designation : undefined}
+            error={
+              formik.touched.designation ? formik.errors.designation : undefined
+            }
           />
           <Select
             label="Role"
@@ -203,7 +219,8 @@ const InviteStaffModal = ({ open, onOpenChange, propertyId, onSuccess }: Props) 
                     key={p.key}
                     className={cn(
                       "px-4 py-2 bg-brand-Text-50 flex items-center justify-between",
-                      i < permissions.length - 1 && "border-b border-brand-Text-100"
+                      i < permissions.length - 1 &&
+                        "border-b border-brand-Text-100"
                     )}
                   >
                     <span className="text-brand-Text-800 text-sm font-medium leading-5">
