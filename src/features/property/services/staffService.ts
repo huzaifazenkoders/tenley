@@ -42,11 +42,11 @@ const getCompanyAndUser = async () => {
 
 export const searchStaffByEmail = async (
   keyword: string,
-  limit = 10
+  limit = 10,
 ): Promise<AuthResponse<SearchStaffItem[]>> => {
   const { data, error } = await supabase.rpc("search_staff_by_email", {
     p_keyword: keyword,
-    p_limit: limit
+    p_limit: limit,
   });
   if (error) {
     return { data: null, error: getErrorMessage(error) };
@@ -55,20 +55,21 @@ export const searchStaffByEmail = async (
 };
 
 export const inviteManager = async (
-  payload: InviteManagerPayload
+  payload: InviteManagerPayload,
 ): Promise<
   AuthResponse<{ success: boolean; messageId: string; inviteLink: string }>
 > => {
   const { user_id, company_id } = await getCompanyAndUser();
+  if (!company_id) return { data: null, error: "Company ID not found" };
   const { data, error } = await supabaseEdge.functions.invoke(
-    "invite_manager",
+    "invite-property-manager",
     {
       body: {
         ...payload,
         company_id: company_id || undefined,
-        added_by: user_id
-      }
-    }
+        added_by: user_id,
+      },
+    },
   );
   if (error) {
     const message = getErrorMessage(error);
@@ -89,8 +90,8 @@ export const bulkAssignManagersToProperties = async (params: {
     {
       p_company_id: company_id,
       p_manager_ids: params.manager_ids,
-      p_property_ids: params.property_ids
-    }
+      p_property_ids: params.property_ids,
+    },
   );
   if (error) {
     const message = getErrorMessage(error);
