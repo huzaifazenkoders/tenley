@@ -1,26 +1,70 @@
+import { createClient } from "@/features/supabase/client";
+import { getErrorMessage } from "@/features/supabase/errors";
 import type { AuthResponse } from "@/features/auth/services/types";
-import type { BulkUnitPayload, Unit, UnitByIdResponse, UpdateUnitPayload } from "../types";
+import type {
+  BulkUnitPayload,
+  Unit,
+  UnitByIdResponse,
+  UpdateUnitPayload
+} from "../types";
+import { toast } from "sonner";
+
+const supabase = createClient();
 
 export const bulkUpsertUnits = async (
-  _units: BulkUnitPayload[]
+  units: BulkUnitPayload[]
 ): Promise<AuthResponse<Unit[]>> => {
-  return { data: [], error: null };
+  const { data, error } = await supabase.rpc("bulk_upsert_units", {
+    p_units: units
+  });
+
+  if (error) {
+    toast.error(getErrorMessage(error));
+    return { data: null, error: getErrorMessage(error) };
+  }
+  return { data, error: null };
 };
 
 export const updateUnit = async (
-  _payload: UpdateUnitPayload
+  payload: UpdateUnitPayload
 ): Promise<AuthResponse<Unit>> => {
-  return { data: null, error: null };
+  const { data, error } = await supabase.rpc("update_unit", {
+    p_unit_id: payload.unit_id,
+    p_unit_name: payload.unit_name ?? null,
+    p_unit_number: payload.unit_number ?? null
+  });
+
+  if (error) {
+    toast.error(getErrorMessage(error));
+    return { data: null, error: getErrorMessage(error) };
+  }
+  return { data, error: null };
 };
 
 export const toggleUnitStatus = async (
-  _unitId: string
+  unitId: string
 ): Promise<AuthResponse<Unit>> => {
-  return { data: null, error: null };
+  const { data, error } = await supabase.rpc("toggle_unit_status", {
+    p_unit_id: unitId
+  });
+
+  if (error) {
+    toast.error(getErrorMessage(error));
+    return { data: null, error: getErrorMessage(error) };
+  }
+  return { data, error: null };
 };
 
 export const getUnitById = async (
-  _unitId: string
+  unitId: string
 ): Promise<AuthResponse<UnitByIdResponse>> => {
-  return { data: null, error: null };
+  const { data, error } = await supabase.rpc("get_unit_by_id", {
+    p_unit_id: unitId
+  });
+
+  if (error) {
+    toast.error(getErrorMessage(error));
+    return { data: null, error: getErrorMessage(error) };
+  }
+  return { data, error: null };
 };
