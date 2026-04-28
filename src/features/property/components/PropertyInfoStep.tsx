@@ -52,7 +52,7 @@ type Props = {
 
 const positiveInt = (s: Yup.StringSchema) =>
   s.test("is-positive-int", "Must be a positive whole number", (v) => {
-    if (!v) return false;
+    if (!v) return true; // optional — required check handled separately
     const n = Number(v);
     return Number.isInteger(n) && n > 0;
   });
@@ -72,8 +72,18 @@ const validationSchema = Yup.object({
     .trim()
     .max(10, "ID prefix must be at most 10 characters")
     .matches(/^[A-Za-z0-9]*$/, "Only letters and numbers allowed"),
-  units: positiveInt(Yup.string().required("Units per floor is required")),
-  floors: positiveInt(Yup.string().required("Number of floors is required")),
+  units: Yup.string().when("propertyType", {
+    is: PropertyType.Bungalow,
+    then: (s) => positiveInt(s.optional()),
+    otherwise: (s) =>
+      positiveInt(s.required("Units per floor is required"))
+  }),
+  floors: Yup.string().when("propertyType", {
+    is: PropertyType.Bungalow,
+    then: (s) => positiveInt(s.optional()),
+    otherwise: (s) =>
+      positiveInt(s.required("Number of floors is required"))
+  }),
   city: Yup.string().trim().max(100, "City must be at most 100 characters"),
   state: Yup.string().trim().max(100, "State must be at most 100 characters"),
   accessDetails: Yup.string()
@@ -116,8 +126,10 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
       }
     };
 
+    const isBungalow = formik.values.propertyType === PropertyType.Bungalow;
+
     const totalUnits =
-      formik.values.units && formik.values.floors
+      !isBungalow && formik.values.units && formik.values.floors
         ? (parseInt(formik.values.units) || 0) *
           (parseInt(formik.values.floors) || 0)
         : null;
@@ -238,51 +250,53 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
           </div>
         </div>
 
-        {/* Units per Floor + Number of Floors */}
-        <div className="flex flex-col gap-1">
-          <div className="flex items-start gap-6">
-            <TextInput
-              id="units"
-              label="Units per Floor"
-              value={formik.values.units}
-              setValue={(v) => formik.setFieldValue("units", v)}
-              onBlur={formik.handleBlur}
-              placeholder="e.g. 6"
-              type="number"
-              containerClassName="flex-1"
-              error={
-                formik.touched.units && formik.errors.units
-                  ? formik.errors.units
-                  : undefined
-              }
-            />
-            <TextInput
-              id="floors"
-              label="Number of Floors"
-              value={formik.values.floors}
-              setValue={(v) => formik.setFieldValue("floors", v)}
-              onBlur={formik.handleBlur}
-              placeholder="e.g. 10"
-              type="number"
-              containerClassName="flex-1"
-              error={
-                formik.touched.floors && formik.errors.floors
-                  ? formik.errors.floors
-                  : undefined
-              }
-            />
-          </div>
-          {totalUnits !== null && totalUnits > 0 && (
-            <div className="h-10 flex items-center">
-              <span className="text-brand-Text-500 text-sm font-normal">
-                Total units:{" "}
-                <span className="text-brand-Text-950-d font-semibold">
-                  {totalUnits}
-                </span>
-              </span>
+        {/* Units per Floor + Number of Floors — hidden for bungalow */}
+        {!isBungalow && (
+          <div className="flex flex-col gap-1">
+            <div className="flex items-start gap-6">
+              <TextInput
+                id="units"
+                label="Units per Floor"
+                value={formik.values.units}
+                setValue={(v) => formik.setFieldValue("units", v)}
+                onBlur={formik.handleBlur}
+                placeholder="e.g. 6"
+                type="number"
+                containerClassName="flex-1"
+                error={
+                  formik.touched.units && formik.errors.units
+                    ? formik.errors.units
+                    : undefined
+                }
+              />
+              <TextInput
+                id="floors"
+                label="Number of Floors"
+                value={formik.values.floors}
+                setValue={(v) => formik.setFieldValue("floors", v)}
+                onBlur={formik.handleBlur}
+                placeholder="e.g. 10"
+                type="number"
+                containerClassName="flex-1"
+                error={
+                  formik.touched.floors && formik.errors.floors
+                    ? formik.errors.floors
+                    : undefined
+                }
+              />
             </div>
-          )}
-        </div>
+            {totalUnits !== null && totalUnits > 0 && (
+              <div className="h-10 flex items-center">
+                <span className="text-brand-Text-500 text-sm font-normal">
+                  Total units:{" "}
+                  <span className="text-brand-Text-950-d font-semibold">
+                    {totalUnits}
+                  </span>
+                </span>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Access Details */}
         <Textarea

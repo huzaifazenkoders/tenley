@@ -4,18 +4,21 @@ import Dropdown from "@/components/ui/dropdown";
 import { MoreVertical, UserPlus, Users } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import type { PropertyManager } from "../types";
 import InviteStaffModal from "./InviteStaffModal";
 import UnassignStaffModal from "./UnassignStaffModal";
 
-type StaffMember = { id: string; name: string; role: string };
+type Props = {
+  managers: PropertyManager[];
+  propertyId: string;
+  onRefetch?: () => void;
+};
 
-type Props = { staff: StaffMember[]; propertyId?: string | null };
-
-const AssignedStaffCard = ({ staff, propertyId }: Props) => {
-  const hasStaff = staff.length > 0;
+const AssignedStaffCard = ({ managers, propertyId, onRefetch }: Props) => {
+  const hasStaff = managers.length > 0;
   const [modalOpen, setModalOpen] = useState(false);
   const [unassignOpen, setUnassignOpen] = useState(false);
-  const [, setSelectedMemberId] = useState<string | null>(null);
+  const [selectedManagerId, setSelectedManagerId] = useState<string | null>(null);
 
   return (
     <>
@@ -43,59 +46,70 @@ const AssignedStaffCard = ({ staff, propertyId }: Props) => {
 
         {hasStaff ? (
           <div className="flex flex-col gap-4">
-            {staff.map((member) => (
-              <div
-                key={member.id}
-                className="p-3 bg-stone-50 rounded-lg outline-1 -outline-offset-1 outline-brand-Text-100 flex items-center justify-between w-full gap-2"
-              >
-                <div className="flex-1 flex items-center gap-2">
-                  <Image
-                    src="/assets/mock/person1.png"
-                    alt={member.name}
-                    width={44}
-                    height={44}
-                    className="size-11 rounded-full object-cover"
-                    unoptimized
-                  />
-                  <div className="flex flex-col gap-1">
-                    <span className="text-brand-Text-950-d text-base font-semibold leading-5">
-                      {member.name}
-                    </span>
-                    <span className="text-brand-Text-600 text-xs font-normal leading-4">
-                      {member.role}
-                    </span>
+            {managers.map((manager) => {
+              const displayName = manager.full_name ?? manager.invited_email;
+              const displayRole =
+                manager.role?.role_name ?? manager.designation ?? "—";
+              return (
+                <div
+                  key={manager.property_manager_id}
+                  className="p-3 bg-stone-50 rounded-lg outline-1 -outline-offset-1 outline-brand-Text-100 flex items-center justify-between w-full gap-2"
+                >
+                  <div className="flex-1 flex items-center gap-2">
+                    {manager.profile_image_url ? (
+                      <Image
+                        src={manager.profile_image_url}
+                        alt={displayName}
+                        width={44}
+                        height={44}
+                        className="size-11 rounded-full object-cover"
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="size-11 rounded-full bg-brand-Text-100 flex items-center justify-center">
+                        <Users className="size-5 text-brand-Text-400" />
+                      </div>
+                    )}
+                    <div className="flex flex-col gap-1">
+                      <span className="text-brand-Text-950-d text-base font-semibold leading-5">
+                        {displayName}
+                      </span>
+                      <span className="text-brand-Text-600 text-xs font-normal leading-4">
+                        {displayRole}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="">
+                    <Dropdown
+                      items={[
+                        // {
+                        //   value: "resend",
+                        //   label: "Re-Send Invitation",
+                        //   onClick: () => {}
+                        // },
+                        {
+                          value: "unassign",
+                          label: (
+                            <span className="text-brand-primary-red-600-d">
+                              Unassign
+                            </span>
+                          ),
+                          onClick: () => {
+                            setSelectedManagerId(manager.manager_id);
+                            setUnassignOpen(true);
+                          }
+                        }
+                      ]}
+                      contentClassName="w-44"
+                    >
+                      <button className="size-6 flex items-center justify-center text-brand-Text-800 hover:text-brand-Text-950-d transition-colors">
+                        <MoreVertical className="size-4" />
+                      </button>
+                    </Dropdown>
                   </div>
                 </div>
-                <div className="">
-                  <Dropdown
-                    items={[
-                      {
-                        value: "resend",
-                        label: "Re-Send Invitation",
-                        onClick: () => {}
-                      },
-                      {
-                        value: "unassign",
-                        label: (
-                          <span className="text-brand-primary-red-600-d">
-                            Unassign
-                          </span>
-                        ),
-                        onClick: () => {
-                          setSelectedMemberId(member.id);
-                          setUnassignOpen(true);
-                        }
-                      }
-                    ]}
-                    contentClassName="w-44"
-                  >
-                    <button className="size-6 flex items-center justify-center text-brand-Text-800 hover:text-brand-Text-950-d transition-colors">
-                      <MoreVertical className="size-4" />
-                    </button>
-                  </Dropdown>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center gap-4 py-10">
@@ -118,11 +132,21 @@ const AssignedStaffCard = ({ staff, propertyId }: Props) => {
         )}
       </div>
 
-      <InviteStaffModal open={modalOpen} onOpenChange={setModalOpen} propertyId={propertyId} />
+      <InviteStaffModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        propertyId={propertyId}
+        onSuccess={onRefetch}
+      />
       <UnassignStaffModal
         open={unassignOpen}
         onOpenChange={setUnassignOpen}
-        onConfirm={() => setSelectedMemberId(null)}
+        managerId={selectedManagerId}
+        propertyId={propertyId}
+        onSuccess={() => {
+          setSelectedManagerId(null);
+          onRefetch?.();
+        }}
       />
     </>
   );

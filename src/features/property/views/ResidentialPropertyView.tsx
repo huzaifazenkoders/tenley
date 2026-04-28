@@ -6,15 +6,16 @@ import AssignedStaffCard from "../components/AssignedStaffCard";
 import EmergenciesCard from "../components/EmergenciesCard";
 import PropertyInfoCard from "../components/PropertyInfoCard";
 import TenantInfoCard from "../components/TenantInfoCard";
-import type { Property, Tenant } from "../types";
+import type { Property, PropertyManager, Tenant } from "../types";
 
 type Props = {
   property: Property;
   tenants: Tenant[];
+  managers: PropertyManager[];
   onRefetch: () => void;
 };
 
-const ResidentialPropertyView = ({ property, tenants, onRefetch }: Props) => (
+const ResidentialPropertyView = ({ property, tenants, managers, onRefetch }: Props) => (
   <div className="px-6 pt-10 pb-6 flex flex-col gap-6 w-full">
     {/* Breadcrumb */}
     <div className="flex items-center gap-2">
@@ -23,7 +24,9 @@ const ResidentialPropertyView = ({ property, tenants, onRefetch }: Props) => (
         className="flex items-center gap-1 text-brand-Text-950-d hover:opacity-70 transition-opacity"
       >
         <ChevronLeft className="size-4" />
-        <span className="text-base font-normal leading-5">Property Details</span>
+        <span className="text-base font-normal leading-5">
+          Property Details
+        </span>
       </Link>
     </div>
 
@@ -68,10 +71,11 @@ const ResidentialPropertyView = ({ property, tenants, onRefetch }: Props) => (
         />
       </div>
       <div className="flex-1 flex flex-col gap-6">
-        <AssignedStaffCard staff={[]} />
+        <AssignedStaffCard managers={managers} propertyId={property.id} onRefetch={onRefetch} />
         <EmergenciesCard />
       </div>
     </div>
+
   </div>
 );
 

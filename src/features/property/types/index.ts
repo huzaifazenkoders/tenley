@@ -96,10 +96,27 @@ export interface UnitWithTenants {
   tenants: Tenant[];
 }
 
+export interface PropertyManager {
+  property_manager_id: string;
+  manager_id: string | null;
+  full_name: string | null;
+  invited_email: string;
+  designation: string | null;
+  status: string;
+  assigned_at: string;
+  profile_image_url: string | null;
+  role: {
+    role_id: string;
+    role_name: string;
+    description: string;
+  } | null;
+}
+
 export interface PropertyByIdResponse {
   property: Property;
   units: UnitWithTenants[];
   tenants: Tenant[];
+  managers: PropertyManager[];
 }
 
 export interface UnitByIdResponse {

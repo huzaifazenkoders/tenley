@@ -56,11 +56,17 @@ const AddManualPropertyView = () => {
 
   const [step, setStep] = useState(1);
   const [propertyId, setPropertyId] = useState<string | null>(null);
-  const [prefillValues, setPrefillValues] = useState<Partial<PropertyFormData>>({});
+  const [isBungalow, setIsBungalow] = useState(false);
+  const [prefillValues, setPrefillValues] = useState<Partial<PropertyFormData>>(
+    {}
+  );
   const [units, setUnits] = useState<UnitEntry[]>([]);
   const [floorsCount, setFloorsCount] = useState(1);
   const [unitsPerFloor, setUnitsPerFloor] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFetchingProperty, setIsFetchingProperty] = useState(
+    () => !!searchParams.get("propertyId")
+  );
   const [selectedStaffIds, setSelectedStaffIds] = useState<string[]>([]);
   const propertyInfoRef = useRef<PropertyInfoStepHandle>(null);
 
@@ -75,15 +81,17 @@ const AddManualPropertyView = () => {
     setStep(urlStep);
 
     getPropertyById(urlPropertyId).then(({ data }) => {
-      if (!data) return;
-      setPrefillValues(mapPropertyToFormData(data.property));
-      if (urlStep >= 2) {
-        const upf = data.property.number_of_unit ?? 0;
-        const fl = data.property.number_of_floors ?? 1;
-        setUnitsPerFloor(upf);
-        setFloorsCount(fl);
-        setUnits(generateUnits(data.property));
+      if (data) {
+        setPrefillValues(mapPropertyToFormData(data.property));
+        if (urlStep >= 2) {
+          const upf = data.property.number_of_unit ?? 0;
+          const fl = data.property.number_of_floors ?? 1;
+          setUnitsPerFloor(upf);
+          setFloorsCount(fl);
+          setUnits(generateUnits(data.property));
+        }
       }
+      setIsFetchingProperty(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -120,14 +128,19 @@ const AddManualPropertyView = () => {
     const pid = data.id;
     setPropertyId(pid);
 
+    const bungalow = values.propertyType === PropertyType.Bungalow;
+    setIsBungalow(bungalow);
+
     const floors = parseInt(values.floors) || 1;
     setFloorsCount(floors);
     setUnitsPerFloor(unitCount);
     const generatedUnits = buildUnits(unitCount, floors);
     setUnits(generatedUnits);
     setIsSubmitting(false);
-    syncUrl(2, pid);
-    setStep(2);
+
+    const nextStep = bungalow ? 3 : 2;
+    syncUrl(nextStep, pid);
+    setStep(nextStep);
   };
 
   const handleStep2Submit = async () => {
@@ -176,11 +189,23 @@ const AddManualPropertyView = () => {
       if (data) setPrefillValues(mapPropertyToFormData(data.property));
       setIsSubmitting(false);
       syncUrl(1, propertyId);
+      setStep(1);
+      return;
     }
 
-    if (step === 4 && propertyId) syncUrl(3, propertyId);
+    if (step === 3 && isBungalow && propertyId) {
+      setIsSubmitting(true);
+      const { data } = await getPropertyById(propertyId);
+      if (data) setPrefillValues(mapPropertyToFormData(data.property));
+      setIsSubmitting(false);
+      syncUrl(1, propertyId);
+      setStep(1);
+      return;
+    }
 
-    setStep((s) => s - 1);
+    const prevStep = step - 1;
+    if (propertyId) syncUrl(prevStep, propertyId);
+    setStep(prevStep);
   };
 
   const handleUnitChange = (index: number, patch: Partial<UnitEntry>) => {
@@ -196,9 +221,18 @@ const AddManualPropertyView = () => {
   }, []);
 
   const handleContinue = () => {
-    if (step === 1) { propertyInfoRef.current?.submitForm(); return; }
-    if (step === 2) { handleStep2Submit(); return; }
-    if (step === 3) { handleStep3Submit(); return; }
+    if (step === 1) {
+      propertyInfoRef.current?.submitForm();
+      return;
+    }
+    if (step === 2) {
+      handleStep2Submit();
+      return;
+    }
+    if (step === 3) {
+      handleStep3Submit();
+      return;
+    }
     if (step === 4) {
       toast.success("Property added successfully");
       router.push("/property");
@@ -237,31 +271,42 @@ const AddManualPropertyView = () => {
       </div>
 
       {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto px-6 pb-32">
-        <div className="max-w-[836px] mx-auto">
-          {step === 1 && (
-            <PropertyInfoStep
-              ref={propertyInfoRef}
-              onValidSubmit={handlePropertyInfoSubmit}
-              defaultValues={prefillValues}
-            />
-          )}
-          {step === 2 && (
-            <UnitInfoStep
-              floors={floorsCount}
-              unitsPerFloor={unitsPerFloor}
-              units={units}
-              onUnitChange={handleUnitChange}
-            />
-          )}
-          {step === 3 && (
-            <AssignStaffStep
-              onInviteStaff={() => setStep(4)}
-              onSelectionChange={handleStaffSelectionChange}
-            />
-          )}
-          {step === 4 && <SelectStaffStep propertyId={propertyId} />}
-        </div>
+      <div className="flex-1 overflow-y-auto px-6 pb-32 w-full">
+        {isFetchingProperty ? (
+          <div className="flex items-center justify-center h-64 w-full">
+            <Loader2 className="size-8 animate-spin text-brand-Text-500" />
+          </div>
+        ) : (
+          <div className="max-w-[836px] mx-auto">
+            {step === 1 && (
+              <PropertyInfoStep
+                ref={propertyInfoRef}
+                onValidSubmit={handlePropertyInfoSubmit}
+                defaultValues={prefillValues}
+              />
+            )}
+            {step === 2 && (
+              <UnitInfoStep
+                floors={floorsCount}
+                unitsPerFloor={unitsPerFloor}
+                units={units}
+                onUnitChange={handleUnitChange}
+              />
+            )}
+            {step === 3 && (
+              <AssignStaffStep
+                onInviteStaff={() => setStep(4)}
+                onSelectionChange={handleStaffSelectionChange}
+              />
+            )}
+            {step === 4 && (
+              <SelectStaffStep
+                propertyId={propertyId}
+                onBack={() => setStep(3)}
+              />
+            )}
+          </div>
+        )}
       </div>
 
       {/* Sticky footer */}
