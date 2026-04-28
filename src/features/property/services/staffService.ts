@@ -1,11 +1,4 @@
-import { createClient, supabaseEdgeClient } from "@/features/supabase/client";
-import { getErrorMessage } from "@/features/supabase/errors";
 import type { AuthResponse } from "@/features/auth/services/types";
-import { toast } from "sonner";
-import { getMe } from "@/features/settings/services/settingsService";
-
-const supabase = createClient();
-const supabaseEdge = supabaseEdgeClient();
 
 export interface SearchStaffItem {
   id: string;
@@ -30,56 +23,20 @@ export interface BulkAssignManagersResult {
   skipped: number;
 }
 
-const getCompanyAndUser = async () => {
-  const { data: me } = await getMe();
-  const company =
-    me?.company ?? me?.company_profile ?? me?.company_information ?? null;
-  const profile = me?.profile ?? me?.profile_information ?? null;
-  const company_id = company?.company_id ?? company?.id ?? "";
-  const user_id = profile?.id ?? "";
-  return { user_id, company_id };
-};
-
 export const searchStaffByEmail = async (
-  keyword: string,
-  company_id: string,
-  limit = 10,
+  _keyword: string,
+  _company_id: string,
+  _limit = 10,
 ): Promise<AuthResponse<SearchStaffItem[]>> => {
-  const { data, error } = await supabase.rpc("search_staff_by_email", {
-    p_keyword: keyword,
-    p_company_id: company_id,
-    p_limit: limit,
-  });
-  if (error) {
-    return { data: null, error: getErrorMessage(error) };
-  }
-  return { data: (data as { data: SearchStaffItem[] }).data, error: null };
+  return { data: [], error: null };
 };
 
 export const inviteManager = async (
-  payload: InviteManagerPayload,
+  _payload: InviteManagerPayload,
 ): Promise<
   AuthResponse<{ success: boolean; messageId: string; inviteLink: string }>
 > => {
-  const { user_id, company_id } = await getCompanyAndUser();
-  if (!company_id) return { data: null, error: "Company ID not found" };
-  const { data, error } = await supabaseEdge.functions.invoke(
-    "invite-property-manager",
-    {
-      body: {
-        ...payload,
-        company_id: company_id || undefined,
-        added_by: user_id,
-      },
-    },
-  );
-  if (error) {
-    const message = getErrorMessage(error);
-    toast.error(message);
-    return { data: null, error: message };
-  }
-  toast.success("Invitation sent successfully");
-  return { data, error: null };
+  return { data: null, error: null };
 };
 
 export type UnassignManagerAction =
@@ -99,42 +56,23 @@ export interface UnassignManagerParams {
 }
 
 export const unassignManager = async (
-  params: UnassignManagerParams,
+  _params: UnassignManagerParams,
 ): Promise<AuthResponse<UnassignManagerResponse>> => {
-  const { company_id } = await getCompanyAndUser();
-  if (!company_id) return { data: null, error: "Company ID not found" };
-  const { data, error } = await supabase.rpc("unassign_manager", {
-    p_manager_id: params.manager_id,
-    p_company_id: company_id,
-    p_property_id: params.property_id ?? null,
-    p_remove_from_company: params.remove_from_company ?? false,
-  });
-  if (error) {
-    const message = getErrorMessage(error);
-    toast.error(message);
-    return { data: null, error: message };
-  }
-  toast.success("Staff unassigned successfully");
-  return { data: data as UnassignManagerResponse, error: null };
+  return { data: null, error: null };
 };
 
-export const bulkAssignManagersToProperties = async (params: {
+export const bulkAssignManagersToProperties = async (_params: {
   manager_ids: string[];
   property_ids: string[];
 }): Promise<AuthResponse<BulkAssignManagersResult>> => {
-  const { company_id } = await getCompanyAndUser();
-  const { data, error } = await supabase.rpc(
-    "bulk_assign_managers_to_properties",
-    {
-      p_company_id: company_id,
-      p_manager_ids: params.manager_ids,
-      p_property_ids: params.property_ids,
+  return {
+    data: {
+      success: true,
+      requested_assignments: 0,
+      created_assignments: 0,
+      already_assigned: 0,
+      skipped: 0,
     },
-  );
-  if (error) {
-    const message = getErrorMessage(error);
-    toast.error(message);
-    return { data: null, error: message };
-  }
-  return { data, error: null };
+    error: null,
+  };
 };

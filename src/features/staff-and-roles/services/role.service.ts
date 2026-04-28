@@ -1,9 +1,4 @@
-import { createClient } from "@/features/supabase/client";
-import { getErrorMessage } from "@/features/supabase/errors";
 import type { AuthResponse } from "@/features/auth/services/types";
-import { toast } from "sonner";
-
-const supabase = createClient();
 
 export type RolePermission = {
   key: string;
@@ -33,7 +28,7 @@ export type RoleDetails = {
   name: string;
   description: string;
   permissions: RolePermissionDetail[];
-  assigned_users_count: number;       
+  assigned_users_count: number;
 };
 
 export type CreateRolePayload = {
@@ -49,58 +44,24 @@ export type UpdateRolePayload = {
 };
 
 export const getRoles = async (): Promise<AuthResponse<Role[]>> => {
-  const { data, error } = await supabase.rpc("list_roles");
-  if (error) {
-    const message = getErrorMessage(error);
-    toast.error(message);
-    return { data: null, error: message };
-  }
-  const roles = Array.isArray(data)
-    ? data
-    : ((data as { data?: Role[] } | null)?.data ?? []);
-  return { data: roles, error: null };
+  return { data: [], error: null };
 };
 
 export const getRoleDetails = async (
-  roleId: string
+  _roleId: string
 ): Promise<AuthResponse<RoleDetails>> => {
-  const { data, error } = await supabase.rpc("get_role_details", {
-    p_role_id: roleId,
-  });
-  if (error) {
-    const message = getErrorMessage(error);
-    toast.error(message);
-    return { data: null, error: message };
-  }
-  return { data, error: null };
+  return { data: null, error: null };
 };
 
 export const createRole = async (
-  payload: CreateRolePayload
+  _payload: CreateRolePayload
 ): Promise<AuthResponse<Role>> => {
-  const { data, error } = await supabase.rpc("create_role", {
-    p_payload: payload,
-  });
-  if (error) {
-    const message = getErrorMessage(error);
-    toast.error(message);
-    return { data: null, error: message };
-  }
-  return { data, error: null };
+  return { data: null, error: null };
 };
 
 export const updateRole = async (
-  roleId: string,
-  payload: UpdateRolePayload
+  _roleId: string,
+  _payload: UpdateRolePayload
 ): Promise<AuthResponse<Role>> => {
-  const { data, error } = await supabase.rpc("update_role", {
-    p_role_id: roleId,
-    p_payload: payload,
-  });
-  if (error) {
-    const message = getErrorMessage(error);
-    toast.error(message);
-    return { data: null, error: message };
-  }
-  return { data, error: null };
+  return { data: null, error: null };
 };
