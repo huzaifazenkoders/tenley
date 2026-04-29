@@ -36,7 +36,7 @@ const AcceptInvitationContent = () => {
       if (inviteError) {
         // User has no account yet — send to sign-up with invite params pre-filled
         router.replace(
-          `/auth/sign-up?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`
+          `/auth/redirect-signup?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`
         );
         return;
       }

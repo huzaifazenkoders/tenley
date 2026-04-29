@@ -32,6 +32,24 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
+  // Sign out any current user then forward to sign-up with invite params.
+  // Handled entirely in the proxy so no page render is needed.
+  if (pathname === "/auth/redirect-signup") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/sign-up";
+    const redirectResponse = NextResponse.redirect(url);
+    if (user) {
+      await supabase.auth.signOut();
+      // Clear all Supabase auth cookies on the redirect response
+      request.cookies.getAll().forEach(({ name }) => {
+        if (name.startsWith("sb-")) {
+          redirectResponse.cookies.set(name, "", { maxAge: 0, path: "/" });
+        }
+      });
+    }
+    return redirectResponse;
+  }
+
   const isAuthRoute = pathname.startsWith("/auth");
   const isPublicRoute =
     isAuthRoute ||
