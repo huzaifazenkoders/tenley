@@ -29,7 +29,7 @@ const buttonVariants = cva(
         ghost:
           "text-text-primary hover:bg-black/5 disabled:hover:bg-transparent",
         destructive: "",
-        link: "text-primary underline-offset-4 font-normal hover:underline px-0"
+        link: "text-primary underline-offset-4 font-normal hover:underline px-0!"
       },
       size: {
         default: "h-9 px-8 py-2",
