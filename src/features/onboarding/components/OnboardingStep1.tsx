@@ -154,6 +154,7 @@ const Step1Form = ({ initialValues, setStep }: Step1FormProps) => {
           <TextInput
             label="Company Name"
             id="company_name"
+            placeholder="e.g. Acme Properties Ltd."
             {...formik.getFieldProps("company_name")}
             error={formik.touched.company_name ? formik.errors.company_name : undefined}
           />
@@ -161,18 +162,21 @@ const Step1Form = ({ initialValues, setStep }: Step1FormProps) => {
         <TextInput
           label="Company Email"
           id="company_email"
+          placeholder="e.g. contact@acme.com"
           {...formik.getFieldProps("company_email")}
           error={formik.touched.company_email ? formik.errors.company_email : undefined}
         />
         <TextInput
           label="Website URL (Optional)"
           id="website_url"
+          placeholder="e.g. https://www.acme.com"
           {...formik.getFieldProps("website_url")}
           error={formik.touched.website_url ? formik.errors.website_url : undefined}
         />
         <TextInput
           label="Registration No."
           id="registration_number"
+          placeholder="e.g. RC-123456"
           {...formik.getFieldProps("registration_number")}
           error={formik.touched.registration_number ? formik.errors.registration_number : undefined}
         />
@@ -190,6 +194,7 @@ const Step1Form = ({ initialValues, setStep }: Step1FormProps) => {
           <TextInput
             label="Address"
             id="address"
+            placeholder="e.g. 123 Main Street, Lagos, Nigeria"
             {...formik.getFieldProps("address")}
             error={formik.touched.address ? formik.errors.address : undefined}
           />

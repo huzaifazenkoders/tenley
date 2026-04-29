@@ -87,7 +87,7 @@ const OtpInput = ({
         spellCheck={false}
         disabled={disabled}
         onChange={(nextValue) => setValue?.(nextValue)}
-        containerClassName="flex items-center disabled:opacity-50"
+        containerClassName="flex items-center justify-center w-full disabled:opacity-50"
         className={cn("w-fit disabled:cursor-not-allowed", inputClassName)}
         {...rest}
       >

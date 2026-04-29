@@ -57,7 +57,7 @@ const OnboardingStep3 = ({ setStep }: { setStep: (step: number) => void }) => {
               <div className="text-text-primary text-base font-semibold leading-5">
                 {policy.title}
               </div>
-              <div className="text-text-secondary text-xs font-normal leading-4">
+              <div className="text-text-secondary text-xs font-normal leading-4 max-h-32 overflow-y-auto pr-1">
                 {policy.body}
               </div>
             </div>

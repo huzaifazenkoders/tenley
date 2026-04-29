@@ -33,7 +33,7 @@ const methods: {
 
 const AddPropertyView = () => {
   const router = useRouter();
-  const [selected, setSelected] = useState<Method>("csv");
+  const [selected, setSelected] = useState<Method>("manual");
   const [csvModalOpen, setCsvModalOpen] = useState(false);
   const [manualModalOpen, setManualModalOpen] = useState(false);
 

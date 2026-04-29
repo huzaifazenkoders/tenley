@@ -51,21 +51,23 @@ const PropertyListingsView = () => {
             Manage all your property locations
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline-transparent"
-            size="sm"
-            onClick={() => setCsvModalOpen(true)}
-          >
-            <FileUp className="size-4 text-brand-Text-500" /> Import CSV
-          </Button>
-          <Button
-            size="sm"
-            onClick={() => router.push("/property/add-property")}
-          >
-            <Plus className="size-4" /> Add Property
-          </Button>
-        </div>
+        {!showEmptyState && (
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline-transparent"
+              size="sm"
+              onClick={() => setCsvModalOpen(true)}
+            >
+              <FileUp className="size-4 text-brand-Text-500" /> Import CSV
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => router.push("/property/add-property")}
+            >
+              <Plus className="size-4" /> Add Property
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Initial load — table hasn't mounted yet */}

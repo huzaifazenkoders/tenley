@@ -29,7 +29,7 @@ const buttonVariants = cva(
         ghost:
           "text-text-primary hover:bg-black/5 disabled:hover:bg-transparent",
         destructive: "",
-        link: "text-primary underline-offset-4 hover:underline"
+        link: "text-primary underline-offset-4 font-normal hover:underline px-0"
       },
       size: {
         default: "h-9 px-8 py-2",
@@ -69,11 +69,13 @@ function Button({
   const Comp = ComponentOverride || "button";
 
   const finalVariant = variant
-    ? variant === "outline"
-      ? "bg-primary/80"
-      : ["outline-transparent", "ghost"].includes(variant)
-        ? "bg-black/50"
-        : undefined
+    ? variant === "link"
+      ? "bg-transparent"
+      : variant === "outline"
+        ? "bg-primary/80"
+        : ["outline-transparent", "ghost"].includes(variant)
+          ? "bg-black/50"
+          : undefined
     : undefined;
 
   const Loading = () => {

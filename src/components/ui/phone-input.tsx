@@ -54,7 +54,7 @@ const PhoneInput = forwardRef<HTMLInputElement, Props>(
       label,
       value,
       onChange,
-      defaultCountry,
+      defaultCountry = "us",
       error,
       labelClassName,
       ...rest
