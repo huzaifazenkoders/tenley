@@ -139,9 +139,9 @@ const PropertiesTable = ({ onCountChange, onFilteredChange, onLoadingChange }: P
           <Select
             options={[
               { label: "All Property Type", value: "all" },
-              { label: "Bungalow", value: PropertyType.Bungalow },
-              { label: "Mall", value: PropertyType.Mall },
-              { label: "Office", value: PropertyType.Office },
+              { label: "Home", value: PropertyType.Bungalow },
+              { label: "Shopping Mall", value: PropertyType.Mall },
+              { label: "Office Space", value: PropertyType.Office },
               { label: "Apartment", value: PropertyType.Apartment },
             ]}
             value={propertyType}
