@@ -46,11 +46,22 @@ const validationSchema = Yup.object({
     .required("Please confirm your password"),
 });
 
-const SignupForm = ({ setView, setEmail, setFullName, initialEmail = "", initialFullName = "" }: Props) => {
+const SignupForm = ({
+  setView,
+  setEmail,
+  setFullName,
+  initialEmail = "",
+  initialFullName = "",
+}: Props) => {
   const router = useRouter();
 
   const formik = useFormik({
-    initialValues: { full_name: initialFullName, email: initialEmail, password: "", confirm_password: "" },
+    initialValues: {
+      full_name: initialFullName,
+      email: initialEmail,
+      password: "",
+      confirm_password: "",
+    },
     validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
       const { error } = await signUp({

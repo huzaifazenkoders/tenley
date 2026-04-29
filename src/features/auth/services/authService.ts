@@ -14,6 +14,17 @@ import type {
 const supabase = createClient();
 
 export const signUp = async (payload: SignUpPayload): Promise<AuthResponse> => {
+  const { data: emailExists, error: checkError } = await supabase.rpc("email_exists", { p_email: payload.email });
+  if (checkError) {
+    const message = getErrorMessage(checkError);
+    toast.error(message);
+    return { data: null, error: message };
+  }
+  if (emailExists) {
+    const message = "This email is taken. Please try another.";
+    toast.error(message);
+    return { data: null, error: message };
+  }
   const { data, error } = await supabase.auth.signUp({
     email: payload.email,
     password: payload.password,
