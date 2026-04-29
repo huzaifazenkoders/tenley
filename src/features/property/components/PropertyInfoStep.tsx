@@ -155,9 +155,9 @@ const PropertyInfoStep = forwardRef<PropertyInfoStepHandle, Props>(
               onValueChange={(v) => formik.setFieldValue("propertyType", v)}
               placeholder="Select type"
               options={[
-                { label: "Bungalow", value: PropertyType.Bungalow },
-                { label: "Mall", value: PropertyType.Mall },
-                { label: "Office", value: PropertyType.Office },
+                { label: "Home", value: PropertyType.Bungalow },
+                { label: "Shopping Mall", value: PropertyType.Mall },
+                { label: "Office Space", value: PropertyType.Office },
                 { label: "Apartment", value: PropertyType.Apartment }
               ]}
               error={
